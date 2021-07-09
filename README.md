@@ -86,15 +86,100 @@ Fetches articles / reading material on desired topics from various sources like 
 ### Profile Tab
 ![](https://i.imgur.com/UKVVTAp.png)
 
-### [BONUS] Digital Wireframes & Mockups
-
-### [BONUS] Interactive Prototype
-
 ## Schema 
-[This section will be completed in Unit 9]
 ### Models
-[Add table of models]
+**Word**
+| Property | Type | Description |
+| -------- | -------- | -------- |
+| objectId | String | unique id for each word (default field) |
+| article | Pointer to Article | article that the translated word is found in (?) |
+| english | String | English meaning of word |
+| target | String | translation of word in target language |
+| isStarred | Boolean | whether the word is starred |
+| createdAt	| DateTime | date when word is created (default field) |
+| updatedAt	| DateTime | date when word is last updated (default field)|
+
+**Article**
+| Property | Type | Description |
+| -------- | -------- | -------- |
+| objectId | String | unique id for each article (default field) |
+| source | String | API where the content is fetched from (e.g. New York Times) |
+| title | String | title of the article |
+| body | String | body text of the article |
+| difficulty | Number | difficulty level of the article (?) |
+| isSaved | Boolean | whether the article is saved |
+| createdAt	| DateTime | date when article is created (default field) |
+| updatedAt	| DateTime | date when article is last updated (default field)|
+
+**User**
+| Property | Type | Description |
+| -------- | -------- | -------- |
+| objectId | String | unique id for each user (default field) |
+| username | String | username (default field) |
+| password | String | password (default field) |
+| targetLanguage | String | language code for user's target language |
+
 ### Networking
-- [Add list of network requests by screen ]
-- [Create basic snippets for each Parse network request]
-- [OPTIONAL: List endpoints if using existing API such as Yelp]
+#### List of network requests by screen
+* Sign up screen
+    * (Create/POST) Create new User object
+* Log in screen
+    * (Read/GET) Query User object
+* Home (feed) screen
+    * (Read/GET) Query all articles
+* Article screen
+    * (Read/GET) Query article with given objectId (or will it already be stored locally?)
+    * (Create/POST) Add word to Parse database when tapped
+    * (Read/GET) Query all words that belong to this article (will be storing locally until tapped?)
+    * (Update/PUT) Update whether a word is starred
+    * (Update/PUT) Update whether an article is saved
+* Practice screen
+    * (Read/GET) Query all words (or only starred words)
+    * (Update/PUT) Update whether a word is starred
+* Profile screen
+    * (Read/GET) Query information about current user
+    * (Update/PUT) Update user target language
+* Vocabulary screen
+    * (Read/GET) Query all words (or only starred words)
+    * (Update/PUT) Update whether a word is starred
+
+### Existing API endpoints
+**Google Cloud Translation API**
+* Base URL - https://translation.googleapis.com/language/translate/v2
+* Docs - https://cloud.google.com/translate/docs/reference/rest/v2/translate
+
+| HTTP Verb | Endpoint | Description | Parameters |
+| -------- | -------- | -------- | -------- | 
+| POST     | /   | translate input text  | q - input text (string) <br /> target - target language (string) <br /> source - source language (string) <br /> key - API key (string) |
+| POST     | /detect   | detect language of input text  | q - input text (string) <br /> key - API key (string) |
+| GET     | /languages   | return a list of languages supported for translation   | key - API key (string) |
+
+**New York Times APIs**
+* Docs - https://developer.nytimes.com/apis
+
+#### Most Popular API
+* Base URL - https://api.nytimes.com/svc/mostpopular/v2
+
+| HTTP Verb | Endpoint | Description | Parameters |
+| -------- | -------- | -------- | -------- | 
+| GET     | /viewed/{period}.json   | returns an array of the most viewed articles on NYTimes.com for specified period of time (1 day, 7 days, or 30 days) | api-key - API key (string) |
+
+#### Top Stories API
+* Base URL - https://api.nytimes.com/svc/topstories/v2
+* The possible section value are: arts, automobiles, books, business, fashion, food, health, home, insider, magazine, movies, nyregion, obituaries, opinion, politics, realestate, science, sports, sundayreview, technology, theater, t-magazine, travel, upshot, us, and world.
+
+| HTTP Verb | Endpoint | Description | Parameters |
+| -------- | -------- | -------- | -------- | 
+| GET     | /{section}.json   | returns an array of articles currently on the specified section | api-key - API key (string) |
+
+**Wikipedia API**
+* Base URL - https://wikimedia.org/api/rest_v1/
+* Docs - https://wikimedia.org/api/rest_v1/#/
+
+| HTTP Verb | Endpoint | Description | Parameters |
+| -------- | -------- | -------- | -------- | 
+| GET     | /metrics/pageviews/top/en.wikipedia.org/all-access/{year}/{month}/{day}   | returns the most viewed articles on Wikipedia | year - year in YYYY format (string) <br /> month - month in MM format (string) <br /> day - day in DD format, "all-days" if fetching top articles for whole month (string) |
+
+**Collins API**
+* Docs - http://www.collinslanguage.com/collins-api/
+* For example sentences
