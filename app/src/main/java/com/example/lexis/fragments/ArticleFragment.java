@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.os.StrictMode;
 import android.text.SpannableString;
@@ -142,10 +143,15 @@ public class ArticleFragment extends Fragment {
             spannableStringBuilder.append(words[i] + " ");
             if (curr < translatedIndices.size() && translatedIndices.get(curr).first == i) {
                 int finalCurr = curr;
+                int finalI = i;
                 ClickableSpan clickableSpan = new ClickableSpan() {
                     @Override
                     public void onClick(View textView) {
-                        Toast.makeText(getActivity(), translatedIndices.get(finalCurr).second, Toast.LENGTH_SHORT).show();
+                        String targetLanguage = words[finalI];
+                        String english = translatedIndices.get(finalCurr).second;
+                        FragmentManager fm = getActivity().getSupportFragmentManager();
+                        WordDialogFragment editNameDialogFragment = WordDialogFragment.newInstance(targetLanguage, english);
+                        editNameDialogFragment.show(fm, "fragment_dialog");
                     }
                     @Override
                     public void updateDrawState(TextPaint ds) {
