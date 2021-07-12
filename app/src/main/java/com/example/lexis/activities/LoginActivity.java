@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.example.lexis.R;
 import com.example.lexis.databinding.ActivityLoginBinding;
+import com.parse.ParseException;
 import com.parse.ParseUser;
 
 public class LoginActivity extends AppCompatActivity {
@@ -36,27 +37,30 @@ public class LoginActivity extends AppCompatActivity {
     private void loginUser(String username, String password) {
         ParseUser.logInInBackground(username, password, (user, e) -> {
             if (e != null) {
-                String errorMessage;
-                switch (e.getCode()) {
-                    case 101:
-                        errorMessage = "Invalid username/password!";
-                        break;
-                    case 200:
-                        errorMessage = "Username cannot be empty!";
-                        break;
-                    case 201:
-                        errorMessage = "Password cannot be empty!";
-                        break;
-                    default:
-                        errorMessage = "Error with log in!";
-                        break;
-                }
-                Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                showErrorMessage(e);
                 return;
             }
-
             goMainActivity();
         });
+    }
+
+    private void showErrorMessage(ParseException e) {
+        String errorMessage;
+        switch (e.getCode()) {
+            case 101:
+                errorMessage = "Invalid username/password!";
+                break;
+            case 200:
+                errorMessage = "Username cannot be empty!";
+                break;
+            case 201:
+                errorMessage = "Password cannot be empty!";
+                break;
+            default:
+                errorMessage = "Error with log in!";
+                break;
+        }
+        Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
     }
 
     private void goSignUpActivity() {
