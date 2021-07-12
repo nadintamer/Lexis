@@ -1,7 +1,6 @@
 package com.example.lexis;
 
 import com.parse.Parse;
-import com.parse.ParseUser;
 
 import android.app.Application;
 

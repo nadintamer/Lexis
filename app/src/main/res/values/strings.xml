@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Lexis</string>
+    <string name="password_label">password</string>
+    <string name="username_label">username</string>
+    <string name="log_in_label">Log in</string>
+    <string name="sign_up_text_label">Don\'t have an account yet? Sign up!</string>
+    <string name="sign_up_button_label">Sign up</string>
+    <string name="name_label">name</string>
+    <string name="language_spinner_label">I\'m learning...</string>
+    <string name="email_label">e-mail</string>
 </resources>
