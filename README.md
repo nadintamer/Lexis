@@ -1,4 +1,4 @@
-# Immersive Language Learning App (Name TBD)
+# Lexis — an immersive language learning app
 
 ## Overview
 ### Description
@@ -6,7 +6,7 @@ Fetches articles / reading material on desired topics from various sources like 
 
 ### App Evaluation
 - **Category:** Education
-- **Mobile:** Allows language learning on the go, plus games and quizzes are very suited for mobile. It could also use the camera for uploading content (?). 
+- **Mobile:** Allows language learning on the go, plus games and quizzes are very suited for mobile. It could also use the camera for uploading content. 
 - **Story:** Users can simultaneously learn their target language and get more information / current news on topics that they're interested in. Games allow them to practice their vocabulary in a more "traditional" language learning context. 
 - **Market:** Anybody who wants to practice their target language could potentially use this app. One challenge would be to ensure the difficulty is appropriate for the level of the learner (but this is probably beyond the scope of my FBU project).
 - **Habit:** Could display stats + push notifications about their vocabulary learning to keep users coming back. The content being curated to the user's interests would also help them use the app more. 
@@ -19,11 +19,10 @@ Fetches articles / reading material on desired topics from various sources like 
 **Required Must-have Stories**
 
 * User can see content with random translated words 
+* User can see a feed with content
 * User can see the meaning of translated words 
 * User can select and update their target language 
 * User can see a list of vocabulary that they've encountered 
-* User can practice their vocabulary through games or flashcards
-* User can see statistics about their language learning (# of words learned, time spent, etc.) 
 * User can sign up for a new account 
 * User can log in 
 
@@ -37,6 +36,9 @@ Fetches articles / reading material on desired topics from various sources like 
 * User can see curated content by category / topic 
 * User can add friends and see statistics about their friends' language learning
 * User can share content from within the app with friends
+* User can practice their vocabulary through games or flashcards
+* User can see statistics about their language learning (# of words learned, time spent, etc.) 
+* User can see example sentences in target language + English for translated words
 
 ### 2. Screen Archetypes
 
