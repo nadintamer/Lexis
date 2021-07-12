@@ -13,6 +13,7 @@ import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
+import android.text.style.BackgroundColorSpan;
 import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.util.Pair;
@@ -89,14 +90,17 @@ public class ArticleFragment extends Fragment {
                     binding.tvTitle.setText(article.getString("title"));
                     String intro = article.getString("extract");
                     intro = intro.replace("\n", "\n\n");
-                    words = intro.split("\\s+");
+
+                    // TODO: deal with punctuation around words (comma, parenthesis, period)
+                    words = intro.split("\\s+"); // split text on whitespace
 
                     for (int i = 3; i < words.length; i += 20) {
                         translatedIndices.add(new Pair<>(i, words[i]));
                         words[i] = translate(words[i], "fr");
                     }
 
-                    binding.tvBody.setText(TextUtils.join(" ", words));
+                    binding.tvBody.setText(embedTranslatedWords());
+                    binding.tvBody.setMovementMethod(LinkMovementMethod.getInstance());
                 } catch (JSONException e) {
                     Log.d(TAG, "JSON Exception", e);
                 }
@@ -126,5 +130,36 @@ public class ArticleFragment extends Fragment {
     public String translate(String originalWord, String targetLanguage) {
         Translation translation = translate.translate(originalWord, Translate.TranslateOption.targetLanguage(targetLanguage), Translate.TranslateOption.model("base"));
         return translation.getTranslatedText();
+    }
+
+    private SpannableStringBuilder embedTranslatedWords() {
+        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+
+        int curr = 0;
+        for (int i = 0; i < words.length; i++) {
+            int start = spannableStringBuilder.length();
+            spannableStringBuilder.append(words[i] + " ");
+            if (curr < translatedIndices.size() && translatedIndices.get(curr).first == i) {
+                int finalCurr = curr;
+                ClickableSpan clickableSpan = new ClickableSpan() {
+                    @Override
+                    public void onClick(View textView) {
+                        Toast.makeText(getActivity(), translatedIndices.get(finalCurr).second, Toast.LENGTH_SHORT).show();
+                    }
+                    @Override
+                    public void updateDrawState(TextPaint ds) {
+                        super.updateDrawState(ds);
+                        ds.setColor(getResources().getColor(R.color.black));
+                        ds.setUnderlineText(false);
+                    }
+                };
+
+                spannableStringBuilder.setSpan(clickableSpan, start, spannableStringBuilder.length() - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannableStringBuilder.setSpan(new BackgroundColorSpan(getResources().getColor(R.color.mellow_apricot)), start, spannableStringBuilder.length() - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                curr += 1;
+            }
+        }
+
+        return spannableStringBuilder;
     }
 }
