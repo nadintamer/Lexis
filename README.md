@@ -94,7 +94,6 @@ Fetches articles / reading material on desired topics from various sources like 
 | Property | Type | Description |
 | -------- | -------- | -------- |
 | objectId | String | unique id for each word (default field) |
-| article | Pointer to Article | article that the translated word is found in (?) |
 | english | String | English meaning of word |
 | target | String | translation of word in target language |
 | isStarred | Boolean | whether the word is starred |
@@ -106,6 +105,7 @@ Fetches articles / reading material on desired topics from various sources like 
 | -------- | -------- | -------- |
 | objectId | String | unique id for each article (default field) |
 | source | String | API where the content is fetched from (e.g. New York Times) |
+| indices | Array | array of indices of words that are translated |
 | title | String | title of the article |
 | body | String | body text of the article |
 | difficulty | Number | difficulty level of the article (?) |
