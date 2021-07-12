@@ -9,13 +9,13 @@
         android:title="Feed"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/action_search"
+        android:id="@+id/action_practice"
         android:enabled="true"
         android:icon="@drawable/practice_icon"
         android:title="Practice"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/action_capture"
+        android:id="@+id/action_profile"
         android:enabled="true"
         android:icon="@drawable/profile_icon"
         android:title="Profile"

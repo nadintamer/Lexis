@@ -8,4 +8,6 @@
     <string name="name_label">name</string>
     <string name="language_spinner_label">I\'m learning...</string>
     <string name="email_label">e-mail</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
