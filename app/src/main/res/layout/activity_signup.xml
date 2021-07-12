@@ -96,10 +96,11 @@
         android:background="@drawable/spinner_background_shape"
         android:entries="@array/languages_array" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSignUp"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        app:cornerRadius="10dp"
         android:text="@string/sign_up_button_label" />
 </LinearLayout>
