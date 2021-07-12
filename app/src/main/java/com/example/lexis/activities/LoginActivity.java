@@ -36,8 +36,22 @@ public class LoginActivity extends AppCompatActivity {
     private void loginUser(String username, String password) {
         ParseUser.logInInBackground(username, password, (user, e) -> {
             if (e != null) {
-                Toast.makeText(LoginActivity.this,
-                        "Incorrect username or password!", Toast.LENGTH_SHORT).show();
+                String errorMessage;
+                switch (e.getCode()) {
+                    case 101:
+                        errorMessage = "Invalid username/password!";
+                        break;
+                    case 200:
+                        errorMessage = "Username cannot be empty!";
+                        break;
+                    case 201:
+                        errorMessage = "Password cannot be empty!";
+                        break;
+                    default:
+                        errorMessage = "Error with log in!";
+                        break;
+                }
+                Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
                 return;
             }
 
