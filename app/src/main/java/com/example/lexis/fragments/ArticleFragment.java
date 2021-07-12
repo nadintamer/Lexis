@@ -31,6 +31,7 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.translate.Translate;
 import com.google.cloud.translate.TranslateOptions;
 import com.google.cloud.translate.Translation;
+import com.parse.ParseUser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -96,7 +97,7 @@ public class ArticleFragment extends Fragment {
 
                     for (int i = 3; i < words.length; i += 20) {
                         translatedIndices.add(new Pair<>(i, words[i]));
-                        words[i] = translate(words[i], "fr");
+                        words[i] = translate(words[i], ParseUser.getCurrentUser().getString("targetLanguage"));
                     }
 
                     binding.tvBody.setText(embedTranslatedWords());
