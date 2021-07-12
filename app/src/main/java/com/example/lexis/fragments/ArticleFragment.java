@@ -7,10 +7,19 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.os.StrictMode;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.RequestParams;
@@ -27,6 +36,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Headers;
 
@@ -38,6 +49,8 @@ public class ArticleFragment extends Fragment {
 
     FragmentArticleBinding binding;
     Translate translate;
+    String[] words;
+    List<Pair<Integer, String>> translatedIndices = new ArrayList<>();
 
     public ArticleFragment() {
         // Required empty public constructor
@@ -53,6 +66,8 @@ public class ArticleFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        getTranslateService();
+
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
         params.put("action", "query");
@@ -74,7 +89,14 @@ public class ArticleFragment extends Fragment {
                     binding.tvTitle.setText(article.getString("title"));
                     String intro = article.getString("extract");
                     intro = intro.replace("\n", "\n\n");
-                    binding.tvBody.setText(intro);
+                    words = intro.split("\\s+");
+
+                    for (int i = 3; i < words.length; i += 20) {
+                        translatedIndices.add(new Pair<>(i, words[i]));
+                        words[i] = translate(words[i], "fr");
+                    }
+
+                    binding.tvBody.setText(TextUtils.join(" ", words));
                 } catch (JSONException e) {
                     Log.d(TAG, "JSON Exception", e);
                 }
@@ -85,9 +107,6 @@ public class ArticleFragment extends Fragment {
                 Log.d(TAG, "onFailure to fetch Wikipedia article");
             }
         });
-
-        getTranslateService();
-        translate("online", "fr");
     }
 
     // https://medium.com/@yeksancansu/how-to-use-google-translate-api-in-android-studio-projects-7f09cae320c7
