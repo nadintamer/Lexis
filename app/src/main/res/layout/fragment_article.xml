@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".fragments.ArticleFragment"
+    android:id="@+id/scrollView"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:scrollbars="vertical"
+    android:fillViewport="true">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginHorizontal="30dp"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            tools:text="A Spy Thriller That Mixes Fact and Fiction to Harrowing Effect" />
+
+        <TextView
+            android:id="@+id/tvBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvTitle"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginHorizontal="30dp"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec quis euismod tellus. Maecenas nec elementum felis. Mauris iaculis, dui quis tristique scelerisque, erat erat varius metus, id ullamcorper lacus enim ut lectus. Nullam turpis eu fringilla volutpat. Integer et convallis risus. Cras enim neque, viverra eu urna non, sagittis posuere dui. In tincidunt ut velit ultricies mattis. Maecenas et porta justo. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Phasellus sagittis erat eu eros bibendum pretium. Vivamus efficitur ex ut nunc imperdiet tincidunt id ut ante. Etiam non iaculis purus. Vestibulum sit amet pretium metus. Sed quam nulla, iaculis sed tortor vitae, sodales suscipit lectus. Quisque euismod tortor vitae elit sollicitudin convallis. In hac habitasse platea dictumst. Pellentesque lobortis neque sit amet suscipit malesuada. Suspendisse lacus risus, vestibulum sit amet velit nec, ultrices venenatis velit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec quis euismod tellus. Maecenas nec elementum felis. Mauris iaculis, dui quis tristique scelerisque, erat erat varius metus, id ullamcorper lacus enim ut lectus. Nullam turpis eu fringilla volutpat. Integer et convallis risus. Cras enim neque, viverra eu urna non, sagittis posuere dui. In tincidunt ut velit ultricies mattis. Maecenas et porta justo. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Phasellus sagittis erat eu eros bibendum pretium. Vivamus efficitur ex ut nunc imperdiet tincidunt id ut ante. Etiam non iaculis purus. Vestibulum sit amet pretium metus. Sed quam nulla, iaculis sed tortor vitae, sodales suscipit lectus. Quisque euismod tortor vitae elit sollicitudin convallis. In hac habitasse platea dictumst. Pellentesque lobortis neque sit amet suscipit malesuada. Suspendisse lacus risus, vestibulum sit amet velit nec, ultrices venenatis velit." />
+    </RelativeLayout>
+</ScrollView>

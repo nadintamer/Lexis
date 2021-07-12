@@ -2,13 +2,19 @@ package com.example.lexis.fragments;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.lexis.R;
+import com.example.lexis.databinding.FragmentFeedBinding;
+
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -16,6 +22,8 @@ import com.example.lexis.R;
  * create an instance of this fragment.
  */
 public class FeedFragment extends Fragment {
+
+    FragmentFeedBinding binding;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -60,7 +68,24 @@ public class FeedFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_feed, container, false);
+        binding = FragmentFeedBinding.inflate(inflater);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull @NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        binding.btnArticleFragment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                final Fragment articleFragment = new ArticleFragment();
+
+                fragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainer, articleFragment)
+                        .addToBackStack("")
+                        .commit();
+            }
+        });
     }
 }
