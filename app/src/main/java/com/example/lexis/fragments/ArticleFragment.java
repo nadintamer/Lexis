@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,12 +17,16 @@ import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.example.lexis.R;
 import com.example.lexis.databinding.FragmentArticleBinding;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.translate.Translate;
+import com.google.cloud.translate.TranslateOptions;
+import com.google.cloud.translate.Translation;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Collections;
+import java.io.IOException;
+import java.io.InputStream;
 
 import okhttp3.Headers;
 
@@ -29,8 +34,10 @@ public class ArticleFragment extends Fragment {
 
     private static final String TAG = "ArticleFragment";
     private static final String TOP_STORIES_URL = "https://api.nytimes.com/svc/topstories/v2/%s.json";
-    private static final String FACEBOOK_WIKI_URL = "https://en.wikipedia.org/w/api.php";
+    private static final String WIKI_URL = "https://en.wikipedia.org/w/api.php";
+
     FragmentArticleBinding binding;
+    Translate translate;
 
     public ArticleFragment() {
         // Required empty public constructor
@@ -55,7 +62,7 @@ public class ArticleFragment extends Fragment {
         params.put("explaintext", true);
         params.put("exintro", true);
 
-        client.get(FACEBOOK_WIKI_URL, params, new JsonHttpResponseHandler() {
+        client.get(WIKI_URL, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 JSONObject jsonObject = json.jsonObject;
@@ -78,5 +85,27 @@ public class ArticleFragment extends Fragment {
                 Log.d(TAG, "onFailure to fetch Wikipedia article");
             }
         });
+
+        getTranslateService();
+        translate("online", "fr");
+    }
+
+    // https://medium.com/@yeksancansu/how-to-use-google-translate-api-in-android-studio-projects-7f09cae320c7
+    public void getTranslateService() {
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        try (InputStream is = getResources().openRawResource(R.raw.credentials)) {
+            final GoogleCredentials myCredentials = GoogleCredentials.fromStream(is);
+            TranslateOptions translateOptions = TranslateOptions.newBuilder().setCredentials(myCredentials).build();
+            translate = translateOptions.getService();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
+    }
+
+    public String translate(String originalWord, String targetLanguage) {
+        Translation translation = translate.translate(originalWord, Translate.TranslateOption.targetLanguage(targetLanguage), Translate.TranslateOption.model("base"));
+        return translation.getTranslatedText();
     }
 }

@@ -30,6 +30,11 @@ android {
     buildFeatures {
         viewBinding true
     }
+
+    packagingOptions {
+        exclude 'project.properties'
+        exclude 'META-INF/INDEX.LIST'
+    }
 }
 
 dependencies {
@@ -47,4 +52,11 @@ dependencies {
 
     // CodePath Async HTTP Client for API requests
     implementation 'com.codepath.libraries:asynchttpclient:2.1.1'
+
+    // Google Translate API for translations
+    implementation('com.google.cloud:google-cloud-translate:1.12.0') {
+        exclude group: 'org.apache.httpcomponents'
+        exclude group: 'org.json', module: 'json'
+    }
+    annotationProcessor 'com.google.cloud:google-cloud-translate:1.12.0'
 }
