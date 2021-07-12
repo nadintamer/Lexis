@@ -25,7 +25,7 @@
         app:boxCornerRadiusBottomEnd="10dp"
         app:boxStrokeWidthFocused="0dp"
         app:boxStrokeWidth="0dp">
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -44,7 +44,7 @@
         app:boxCornerRadiusBottomEnd="10dp"
         app:boxStrokeWidthFocused="0dp"
         app:boxStrokeWidth="0dp">
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -65,7 +65,7 @@
         app:boxStrokeWidthFocused="0dp"
         app:boxStrokeWidth="0dp"
         app:passwordToggleEnabled="true">
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
