@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.example.lexis.databinding.ActivityLoginBinding;
 import com.example.lexis.databinding.ActivitySignupBinding;
+import com.parse.ParseException;
 import com.parse.ParseUser;
 
 import java.util.HashMap;
@@ -39,21 +40,50 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     private void signUpUser(String username, String email, String password) {
+        if (email.isEmpty()) {
+            Toast.makeText(SignupActivity.this, "E-mail cannot be empty!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         ParseUser user = new ParseUser();
         user.setUsername(username);
         user.setEmail(email);
         user.setPassword(password);
         int selectedItemPosition = binding.spinnerLanguage.getSelectedItemPosition();
         user.put("targetLanguage", languageCodes.get(selectedItemPosition));
+
         user.signUpInBackground(e -> {
             if (e != null) {
-                Toast.makeText(SignupActivity.this,
-                        "Error with signup!", Toast.LENGTH_SHORT).show();
+                showErrorMessage(e);
                 return;
             }
-
             goMainActivity();
         });
+    }
+
+    private void showErrorMessage(ParseException e) {
+        String errorMessage;
+        switch (e.getCode()) {
+            case 101:
+                errorMessage = "Invalid username/password!";
+                break;
+            case 200:
+                errorMessage = "Username cannot be empty!";
+                break;
+            case 201:
+                errorMessage = "Password cannot be empty!";
+                break;
+            case 202:
+                errorMessage = "Username is already in use!";
+                break;
+            case 203:
+                errorMessage = "E-mail is already in use!";
+                break;
+            default:
+                errorMessage = "Error with sign-up!";
+                break;
+        }
+        Toast.makeText(SignupActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
     }
 
     private void goMainActivity() {
