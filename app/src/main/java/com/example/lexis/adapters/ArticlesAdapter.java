@@ -43,6 +43,16 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.Articl
         return articles.size();
     }
 
+    public void clear() {
+        articles.clear();
+        notifyDataSetChanged();
+    }
+
+    public void addAll(List<Article> list) {
+        articles.addAll(list);
+        notifyDataSetChanged();
+    }
+
     public class ArticleViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ItemArticleBinding binding;
 

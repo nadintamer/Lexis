@@ -64,4 +64,7 @@ dependencies {
     // Parceler for passing objects
     implementation 'org.parceler:parceler-api:1.1.12'
     annotationProcessor 'org.parceler:parceler:1.1.12'
+
+    // SwipeRefreshLayout for home feed
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 }

@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import org.jetbrains.annotations.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
+import com.example.lexis.R;
 import com.example.lexis.adapters.ArticlesAdapter;
 import com.example.lexis.databinding.FragmentFeedBinding;
 import com.example.lexis.models.Article;
@@ -65,6 +67,17 @@ public class FeedFragment extends Fragment {
         adapter = new ArticlesAdapter(this, articles);
         binding.rvArticles.setAdapter(adapter);
         binding.rvArticles.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        // set up pull to refresh
+        binding.swipeContainer.setOnRefreshListener(() -> {
+            adapter.clear();
+            fetchTopWikipediaArticles(Utils.getYesterday(), false);
+            binding.swipeContainer.setRefreshing(false);
+        });
+        binding.swipeContainer.setColorSchemeResources(R.color.tiffany_blue,
+                R.color.light_cyan,
+                R.color.orange_peel,
+                R.color.mellow_apricot);
     }
 
     /*
