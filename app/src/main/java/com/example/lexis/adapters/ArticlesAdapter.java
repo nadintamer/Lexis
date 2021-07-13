@@ -52,6 +52,9 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.Articl
             binding.getRoot().setOnClickListener(this);
         }
 
+        /*
+        Bind Article data into the ViewHolder.
+        */
         public void bind(Article article) {
             binding.tvTitle.setText(article.getTitle());
             binding.tvSnippet.setText(article.getBody());
@@ -60,6 +63,9 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.Articl
             }
         }
 
+        /*
+        Show ArticleFragment when an item is clicked.
+        */
         @Override
         public void onClick(View v) {
             int position = getAdapterPosition();
@@ -68,7 +74,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.Articl
 
             fragmentManager.beginTransaction()
                     .replace(R.id.fragmentContainer, articleFragment)
-                    .addToBackStack("")
+                    .addToBackStack(null) // add to back stack so we can return to this fragment
                     .commit();
         }
     }

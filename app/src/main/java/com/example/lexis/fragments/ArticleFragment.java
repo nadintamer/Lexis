@@ -1,6 +1,5 @@
 package com.example.lexis.fragments;
 
-import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 
@@ -10,7 +9,6 @@ import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.ClickableSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,11 +27,7 @@ import com.example.lexis.utilities.Utils;
 
 import org.parceler.Parcels;
 
-import java.util.Arrays;
-
 public class ArticleFragment extends Fragment {
-
-    private static final String TAG = "ArticleFragment";
 
     FragmentArticleBinding binding;
     Article article;
@@ -49,7 +43,7 @@ public class ArticleFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentArticleBinding.inflate(inflater);
         return binding.getRoot();
@@ -62,24 +56,30 @@ public class ArticleFragment extends Fragment {
 
         // only translate words if we haven't previously done so
         if (article.getWordList() == null) {
-            Log.i(TAG, "Translating words");
             article.translateWordsOnInterval(3, 60);
         }
         SpannableStringBuilder styledContent = styleTranslatedWords(article.getWordList());
 
         binding.tvTitle.setText(article.getTitle());
         binding.tvBody.setText(styledContent);
+
+        // needed so that translated words are clickable
         binding.tvBody.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
+    /*
+    Return a SpannableStringBuilder consisting of the article's body text, with translated words
+    highlighted and clickable to show word meaning.
+    */
     private SpannableStringBuilder styleTranslatedWords(String[] words) {
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
 
         int curr = 0; // keep track of what index of the translated words we are on
         for (int i = 0; i < words.length; i++) {
             int start = spannableStringBuilder.length();
-            spannableStringBuilder.append(words[i] + " ");
+            spannableStringBuilder.append(words[i]).append(" ");
 
+            // the index we're at represents a translated word
             if (curr < article.getTranslatedIndices().size() && article.getTranslatedIndices().get(curr) == i) {
                 final int translatedWordIndex = i;
                 final int originalWordIndex = curr;
@@ -87,6 +87,7 @@ public class ArticleFragment extends Fragment {
                 ClickableSpan clickableSpan = new ClickableSpan() {
                     @Override
                     public void onClick(View textView) {
+                        // show word meaning dialog when clicked
                         Rect wordPosition = Utils.getClickedWordPosition((TextView) textView, this);
                         String targetLanguage = words[translatedWordIndex];
                         String english = article.getOriginalWords().get(originalWordIndex);
@@ -96,6 +97,7 @@ public class ArticleFragment extends Fragment {
                     @Override
                     public void updateDrawState(TextPaint ds) {
                         super.updateDrawState(ds);
+                        // text should be black and not underlined
                         ds.setColor(getResources().getColor(R.color.black));
                         ds.setUnderlineText(false);
                     }
@@ -112,6 +114,10 @@ public class ArticleFragment extends Fragment {
         return spannableStringBuilder;
     }
 
+    /*
+    Launch a word meaning dialog with the provided target language and English words, relative to
+    the position of the word clicked (described by left, top, and width).
+    */
     private void launchWordDialog(String targetLanguage, String english, int left, int top, int width) {
         FragmentManager fm = getActivity().getSupportFragmentManager();
         WordDialogFragment wordDialogFragment = WordDialogFragment.newInstance(targetLanguage, english, left, top, width);

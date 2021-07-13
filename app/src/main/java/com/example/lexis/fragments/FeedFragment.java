@@ -18,6 +18,7 @@ import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.example.lexis.adapters.ArticlesAdapter;
 import com.example.lexis.databinding.FragmentFeedBinding;
 import com.example.lexis.models.Article;
+import com.example.lexis.utilities.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,6 +27,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import okhttp3.Headers;
 
@@ -43,7 +45,7 @@ public class FeedFragment extends Fragment {
     public FeedFragment() {}
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentFeedBinding.inflate(inflater);
         return binding.getRoot();
@@ -56,29 +58,26 @@ public class FeedFragment extends Fragment {
         // only fetch articles if we haven't already fetched them
         if (articles == null) {
             articles = new ArrayList<>();
-
-            // fetch top wikipedia articles
-            final Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.DATE, -1); // yesterday
-            // cal.set(2021, 6, 0); top articles for all days in June
-            fetchTopWikipediaArticles(cal);
+            fetchTopWikipediaArticles(Utils.getYesterday(), false);
         }
 
+        // set up recyclerView
         adapter = new ArticlesAdapter(this, articles);
-
         binding.rvArticles.setAdapter(adapter);
         binding.rvArticles.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
-    private void fetchTopWikipediaArticles(Calendar date) {
+    /*
+    Fetch the top Wikipedia articles for the provided timeframe and add each of them to the
+    articles list. If allDays is true, the top articles for all days of the given month and year
+    will be fetched. If it is false, only the top articles for the given day will be fetched.
+    */
+    private void fetchTopWikipediaArticles(Calendar date, Boolean allDays) {
         String year = String.valueOf(date.get(Calendar.YEAR));
-        String month = String.format("%02d", date.get(Calendar.MONTH) + 1); // add one because months are 0-indexed
-        String day;
-        if (date.get(Calendar.DAY_OF_MONTH) != 0) {
-            day = String.format("%02d", date.get(Calendar.DAY_OF_MONTH)); // add leading 0 if needed
-        } else {
-            day = "all-days";
-        }
+        // add leading 0 to month and day if needed
+        String month = String.format(Locale.getDefault(), "%02d", date.get(Calendar.MONTH) + 1); // months are 0-indexed
+        String day = String.format(Locale.getDefault(), "%02d", date.get(Calendar.DAY_OF_MONTH));
+        if (allDays) day = "all-days"; // get top articles for all days of the month
 
         AsyncHttpClient client = new AsyncHttpClient();
         String formattedUrl = String.format(WIKI_TOP_ARTICLES_URL, year, month, day);
@@ -89,26 +88,34 @@ public class FeedFragment extends Fragment {
                 try {
                     JSONObject items = jsonObject.getJSONArray("items").getJSONObject(0);
                     JSONArray jsonArticles = items.getJSONArray("articles");
-                    for (int i = 2; i < 22; i++) { // temporary, get first 20 articles (skip main page and search)
+
+                    // temporary, get first 20 content articles
+                    // (skip first two, which are main page and search)
+                    for (int i = 2; i < 22; i++) {
                         JSONObject jsonArticle = jsonArticles.getJSONObject(i);
                         String title = jsonArticle.getString("article");
-                        // skip wikipedia special pages
-                        if (title.startsWith("Wikipedia:") || title.startsWith("Special:")) continue;
+                        if (title.startsWith("Wikipedia:") || title.startsWith("Special:")) {
+                            continue; // skip special Wikipedia pages
+                        }
                         fetchWikipediaArticle(title);
                     }
                 } catch (JSONException e) {
-                    Log.d(TAG, "JSON Exception", e);
+                    Log.e(TAG, "JSON Exception", e);
                 }
             }
 
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-
+                Log.e(TAG, "onFailure to fetch article", throwable);
             }
         });
 
     }
 
+    /*
+    Fetch the Wikipedia article with the given title from the API, create a new Article object
+    and add it to the list of articles.
+    */
     private void fetchWikipediaArticle(String title) {
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
@@ -116,8 +123,8 @@ public class FeedFragment extends Fragment {
         params.put("format", "json");
         params.put("titles", title);
         params.put("prop", "extracts");
-        params.put("explaintext", true);
-        params.put("exintro", true);
+        params.put("explaintext", true); // get plain text representation
+        params.put("exintro", true); // only get intro paragraph
 
         client.get(WIKI_ARTICLE_URL, params, new JsonHttpResponseHandler() {
             @Override
@@ -129,6 +136,7 @@ public class FeedFragment extends Fragment {
                             .getJSONObject("pages");
                     JSONObject articleObject = pages.getJSONObject(pages.keys().next());
 
+                    // extract information from JSON object and do text pre-processing
                     String title = articleObject.getString("title");
                     String intro = articleObject.getString("extract");
                     intro = intro.replace("\n", "\n\n");

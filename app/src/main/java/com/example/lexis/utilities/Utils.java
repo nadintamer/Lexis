@@ -6,9 +6,15 @@ import android.text.SpannableString;
 import android.text.style.ClickableSpan;
 import android.widget.TextView;
 
+import java.util.Calendar;
+
 public class Utils {
 
-    // https://stackoverflow.com/questions/11905486/how-get-coordinate-of-a-clickablespan-inside-a-textview
+    /*
+    Return a Rect object representing the bounds of the clickableSpan that was clicked. Used to
+    determine position of word meaning dialog box relative to clicked word.
+    Adapted from: https://stackoverflow.com/questions/11905486/how-get-coordinate-of-a-clickablespan-inside-a-textview
+    */
     public static Rect getClickedWordPosition(TextView parentTextView, ClickableSpan clickedText) {
         Rect parentTextViewRect = new Rect();
         SpannableString completeText = (SpannableString) (parentTextView).getText();
@@ -49,5 +55,15 @@ public class Utils {
         );
 
         return parentTextViewRect;
+    }
+
+    /*
+    Return a Calendar object representing yesterday's date. Used to get most recent top articles
+    from Wikipedia (since today's top articles are usually not posted yet).
+    */
+    public static Calendar getYesterday() {
+        final Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -1);
+        return cal;
     }
 }
