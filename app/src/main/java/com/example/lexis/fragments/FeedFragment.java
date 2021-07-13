@@ -53,14 +53,18 @@ public class FeedFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        articles = new ArrayList<>();
-        adapter = new ArticlesAdapter(this, articles);
+        // only fetch articles if we haven't already fetched them
+        if (articles == null) {
+            articles = new ArrayList<>();
 
-        // fetch top wikipedia articles
-        final Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -1); // yesterday
-        // cal.set(2021, 6, 0); top articles for all days in June
-        fetchTopWikipediaArticles(cal);
+            // fetch top wikipedia articles
+            final Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE, -1); // yesterday
+            // cal.set(2021, 6, 0); top articles for all days in June
+            fetchTopWikipediaArticles(cal);
+        }
+
+        adapter = new ArticlesAdapter(this, articles);
 
         binding.rvArticles.setAdapter(adapter);
         binding.rvArticles.setLayoutManager(new LinearLayoutManager(getActivity()));
