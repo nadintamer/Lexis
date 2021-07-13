@@ -60,7 +60,11 @@ public class ArticleFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         article = Parcels.unwrap(getArguments().getParcelable("article"));
 
-        article.translateWordsOnInterval(3, 60);
+        // only translate words if we haven't previously done so
+        if (article.getWordList() == null) {
+            Log.i(TAG, "Translating words");
+            article.translateWordsOnInterval(3, 60);
+        }
         SpannableStringBuilder styledContent = styleTranslatedWords(article.getWordList());
 
         binding.tvTitle.setText(article.getTitle());
