@@ -1,12 +1,7 @@
 package com.example.lexis.utilities;
 
 import android.content.Context;
-import android.graphics.Rect;
 import android.os.StrictMode;
-import android.text.Layout;
-import android.text.SpannableString;
-import android.text.style.ClickableSpan;
-import android.widget.TextView;
 
 import com.example.lexis.R;
 import com.google.auth.oauth2.GoogleCredentials;
