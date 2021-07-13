@@ -1,5 +1,6 @@
 package com.example.lexis.fragments;
 
+import android.graphics.Rect;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -8,20 +9,19 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.os.StrictMode;
+import android.text.Layout;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
-import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.ClickableSpan;
 import android.util.Log;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.RequestParams;
@@ -52,8 +52,8 @@ public class ArticleFragment extends Fragment {
 
     FragmentArticleBinding binding;
     Translate translate;
-    String[] words;
-    List<Pair<Integer, String>> translatedIndices = new ArrayList<>();
+    List<Integer> translatedIndices = new ArrayList<>();
+    List<String> originalWords = new ArrayList<>();
 
     public ArticleFragment() {
         // Required empty public constructor
@@ -70,12 +70,15 @@ public class ArticleFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         getTranslateService();
+        fetchWikipediaArticle("Facebook");
+    }
 
+    private void fetchWikipediaArticle(String title) {
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
         params.put("action", "query");
         params.put("format", "json");
-        params.put("titles", "Facebook");
+        params.put("titles", title);
         params.put("prop", "extracts");
         params.put("explaintext", true);
         params.put("exintro", true);
@@ -88,20 +91,18 @@ public class ArticleFragment extends Fragment {
                     JSONObject query = jsonObject.getJSONObject("query");
                     JSONObject pages = query.getJSONObject("pages");
                     JSONObject article = pages.getJSONObject(pages.keys().next());
-                    Log.i(TAG, article.toString());
-                    binding.tvTitle.setText(article.getString("title"));
+
+                    // get intro paragraph of article, do some preprocessing
                     String intro = article.getString("extract");
                     intro = intro.replace("\n", "\n\n");
 
                     // TODO: deal with punctuation around words (comma, parenthesis, period)
-                    words = intro.split("\\s+"); // split text on whitespace
+                    String[] words = intro.split("\\s+"); // split text on whitespace
+                    translateWordsOnInterval(words, 3, 60);
+                    SpannableStringBuilder translatedContent = styleTranslatedWords(words);
 
-                    for (int i = 3; i < words.length; i += 20) {
-                        translatedIndices.add(new Pair<>(i, words[i]));
-                        words[i] = translate(words[i], ParseUser.getCurrentUser().getString("targetLanguage"));
-                    }
-
-                    binding.tvBody.setText(embedTranslatedWords());
+                    binding.tvTitle.setText(article.getString("title"));
+                    binding.tvBody.setText(translatedContent);
                     binding.tvBody.setMovementMethod(LinkMovementMethod.getInstance());
                 } catch (JSONException e) {
                     Log.d(TAG, "JSON Exception", e);
@@ -113,6 +114,55 @@ public class ArticleFragment extends Fragment {
                 Log.d(TAG, "onFailure to fetch Wikipedia article");
             }
         });
+    }
+
+    private void translateWordsOnInterval(String[] words, int start, int interval) {
+        String targetLanguage = ParseUser.getCurrentUser().getString("targetLanguage");
+        for (int i = start; i < words.length; i += interval) {
+            translatedIndices.add(i);
+            originalWords.add(words[i]);
+            words[i] = translateSingleWord(words[i], targetLanguage);
+        }
+    }
+
+    private SpannableStringBuilder styleTranslatedWords(String[] words) {
+        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+
+        int curr = 0;
+        for (int i = 0; i < words.length; i++) {
+            int start = spannableStringBuilder.length();
+            spannableStringBuilder.append(words[i] + " ");
+
+            if (curr < translatedIndices.size() && translatedIndices.get(curr) == i) {
+                int finalCurr = curr;
+                int finalI = i;
+
+                ClickableSpan clickableSpan = new ClickableSpan() {
+                    @Override
+                    public void onClick(View textView) {
+                        Rect wordPosition = getClickedWordPosition((TextView) textView, this);
+                        String targetLanguage = words[finalI];
+                        String english = originalWords.get(finalCurr);
+
+                        launchWordDialog(targetLanguage, english, wordPosition.left, wordPosition.top, wordPosition.width());
+                    }
+                    @Override
+                    public void updateDrawState(TextPaint ds) {
+                        super.updateDrawState(ds);
+                        ds.setColor(getResources().getColor(R.color.black));
+                        ds.setUnderlineText(false);
+                    }
+                };
+                BackgroundColorSpan highlightedSpan = new BackgroundColorSpan(getResources().getColor(R.color.mellow_apricot));
+
+                // make text clickable & highlighted
+                spannableStringBuilder.setSpan(clickableSpan, start, spannableStringBuilder.length() - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannableStringBuilder.setSpan(highlightedSpan, start, spannableStringBuilder.length() - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                curr += 1;
+            }
+        }
+
+        return spannableStringBuilder;
     }
 
     // https://medium.com/@yeksancansu/how-to-use-google-translate-api-in-android-studio-projects-7f09cae320c7
@@ -129,44 +179,63 @@ public class ArticleFragment extends Fragment {
         }
     }
 
-    public String translate(String originalWord, String targetLanguage) {
+    public String translateSingleWord(String originalWord, String targetLanguage) {
         Translation translation = translate.translate(originalWord, Translate.TranslateOption.targetLanguage(targetLanguage), Translate.TranslateOption.model("base"));
         return translation.getTranslatedText();
     }
 
-    private SpannableStringBuilder embedTranslatedWords() {
-        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+    private void launchWordDialog(String targetLanguage, String english, int left, int top, int width) {
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        WordDialogFragment wordDialogFragment = WordDialogFragment.newInstance(targetLanguage, english, left, top, width);
+        wordDialogFragment.show(fm, "fragment_dialog");
+    }
 
-        int curr = 0;
-        for (int i = 0; i < words.length; i++) {
-            int start = spannableStringBuilder.length();
-            spannableStringBuilder.append(words[i] + " ");
-            if (curr < translatedIndices.size() && translatedIndices.get(curr).first == i) {
-                int finalCurr = curr;
-                int finalI = i;
-                ClickableSpan clickableSpan = new ClickableSpan() {
-                    @Override
-                    public void onClick(View textView) {
-                        String targetLanguage = words[finalI];
-                        String english = translatedIndices.get(finalCurr).second;
-                        FragmentManager fm = getActivity().getSupportFragmentManager();
-                        WordDialogFragment editNameDialogFragment = WordDialogFragment.newInstance(targetLanguage, english);
-                        editNameDialogFragment.show(fm, "fragment_dialog");
-                    }
-                    @Override
-                    public void updateDrawState(TextPaint ds) {
-                        super.updateDrawState(ds);
-                        ds.setColor(getResources().getColor(R.color.black));
-                        ds.setUnderlineText(false);
-                    }
-                };
+    // https://stackoverflow.com/questions/11905486/how-get-coordinate-of-a-clickablespan-inside-a-textview
+    private Rect getClickedWordPosition(TextView parentTextView, ClickableSpan clickedText) {
+        // Initialize global value
+        Rect parentTextViewRect = new Rect();
 
-                spannableStringBuilder.setSpan(clickableSpan, start, spannableStringBuilder.length() - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                spannableStringBuilder.setSpan(new BackgroundColorSpan(getResources().getColor(R.color.mellow_apricot)), start, spannableStringBuilder.length() - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                curr += 1;
-            }
-        }
+        // Initialize values for the computing of clickedText position
+        SpannableString completeText = (SpannableString)(parentTextView).getText();
+        Layout textViewLayout = parentTextView.getLayout();
 
-        return spannableStringBuilder;
+        double startOffsetOfClickedText = completeText.getSpanStart(clickedText);
+        double endOffsetOfClickedText = completeText.getSpanEnd(clickedText);
+        double startXCoordinatesOfClickedText = textViewLayout.getPrimaryHorizontal((int)startOffsetOfClickedText);
+        double endXCoordinatesOfClickedText = textViewLayout.getPrimaryHorizontal((int)endOffsetOfClickedText);
+
+
+        // Get the rectangle of the clicked text
+        int currentLineStartOffset = textViewLayout.getLineForOffset((int)startOffsetOfClickedText);
+        textViewLayout.getLineBounds(currentLineStartOffset, parentTextViewRect);
+
+
+        // Update the rectangle position to his real position on screen
+        int[] parentTextViewLocation = {0,0};
+        parentTextView.getLocationOnScreen(parentTextViewLocation);
+
+        double parentTextViewTopAndBottomOffset = (
+                parentTextViewLocation[1] -
+                        parentTextView.getScrollY() +
+                        parentTextView.getCompoundPaddingTop()
+        );
+
+        parentTextViewRect.top += parentTextViewTopAndBottomOffset;
+        parentTextViewRect.bottom += parentTextViewTopAndBottomOffset;
+
+
+        parentTextViewRect.left += (
+                parentTextViewLocation[0] +
+                        startXCoordinatesOfClickedText +
+                        parentTextView.getCompoundPaddingLeft() -
+                        parentTextView.getScrollX()
+        );
+        parentTextViewRect.right = (int) (
+                parentTextViewRect.left +
+                        endXCoordinatesOfClickedText -
+                        startXCoordinatesOfClickedText
+        );
+
+        return parentTextViewRect;
     }
 }
