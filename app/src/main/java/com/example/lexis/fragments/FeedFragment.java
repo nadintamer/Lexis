@@ -64,7 +64,7 @@ public class FeedFragment extends Fragment {
         final Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -1);
         fetchTopWikipediaArticles(cal);
-        
+
         binding.rvArticles.setAdapter(adapter);
         binding.rvArticles.setLayoutManager(new LinearLayoutManager(getActivity()));
     }

@@ -57,6 +57,10 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.Articl
 
         public void bind(Article article) {
             binding.tvTitle.setText(article.getTitle());
+            binding.tvSnippet.setText(article.getBody());
+            if (article.getSource().equals("Wikipedia")) {
+                binding.ivSource.setImageResource(R.drawable.wikipedia_logo);
+            }
         }
 
         @Override
