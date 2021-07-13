@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.example.lexis.R;
+import com.example.lexis.adapters.ArticlesAdapter;
 import com.example.lexis.databinding.FragmentFeedBinding;
 import com.example.lexis.models.Article;
 
@@ -23,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,6 +37,7 @@ public class FeedFragment extends Fragment {
 
     FragmentFeedBinding binding;
     List<Article> articles;
+    ArticlesAdapter adapter;
 
     private static final String TAG = "FeedFragment";
     private static final String NYT_TOP_STORIES_URL = "https://api.nytimes.com/svc/topstories/v2/%s.json";
@@ -54,21 +58,15 @@ public class FeedFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         articles = new ArrayList<>();
+        adapter = new ArticlesAdapter(this, articles);
 
         // fetch top wikipedia articles for yesterday
         final Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -1);
         fetchTopWikipediaArticles(cal);
-
-        binding.btnArticleFragment.setOnClickListener(v -> {
-            final FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-            final Fragment articleFragment = ArticleFragment.newInstance(articles.get(1));
-
-            fragmentManager.beginTransaction()
-                    .replace(R.id.fragmentContainer, articleFragment)
-                    .addToBackStack("")
-                    .commit();
-        });
+        
+        binding.rvArticles.setAdapter(adapter);
+        binding.rvArticles.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
     private void fetchTopWikipediaArticles(Calendar date) {
@@ -128,6 +126,7 @@ public class FeedFragment extends Fragment {
 
                     Article article = new Article(title, intro, "Wikipedia");
                     articles.add(article);
+                    adapter.notifyItemInserted(articles.size() - 1);
                 } catch (JSONException e) {
                     Log.d(TAG, "JSON Exception", e);
                 }
