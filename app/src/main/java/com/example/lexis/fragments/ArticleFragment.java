@@ -1,16 +1,9 @@
 package com.example.lexis.fragments;
 
+import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-
-import android.os.StrictMode;
-import android.text.Layout;
-import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -23,30 +16,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.codepath.asynchttpclient.AsyncHttpClient;
-import com.codepath.asynchttpclient.RequestParams;
-import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+
+import javax.annotation.Nullable;
+
 import com.example.lexis.R;
 import com.example.lexis.databinding.FragmentArticleBinding;
 import com.example.lexis.models.Article;
-import com.example.lexis.utilities.TranslateUtils;
 import com.example.lexis.utilities.Utils;
-import com.google.auth.oauth2.GoogleCredentials;
-import com.google.cloud.translate.Translate;
-import com.google.cloud.translate.TranslateOptions;
-import com.google.cloud.translate.Translation;
-import com.parse.ParseUser;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.parceler.Parcels;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import okhttp3.Headers;
+import java.util.Arrays;
 
 public class ArticleFragment extends Fragment {
 

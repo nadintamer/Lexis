@@ -3,7 +3,7 @@ package com.example.lexis.fragments;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -19,7 +19,6 @@ import com.example.lexis.adapters.ArticlesAdapter;
 import com.example.lexis.databinding.FragmentFeedBinding;
 import com.example.lexis.models.Article;
 
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,7 +50,7 @@ public class FeedFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull @NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         articles = new ArrayList<>();
@@ -121,8 +120,9 @@ public class FeedFragment extends Fragment {
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 JSONObject jsonObject = json.jsonObject;
                 try {
-                    JSONObject query = jsonObject.getJSONObject("query");
-                    JSONObject pages = query.getJSONObject("pages");
+                    JSONObject pages = jsonObject
+                            .getJSONObject("query")
+                            .getJSONObject("pages");
                     JSONObject articleObject = pages.getJSONObject(pages.keys().next());
 
                     String title = articleObject.getString("title");
@@ -142,10 +142,5 @@ public class FeedFragment extends Fragment {
                 Log.d(TAG, "onFailure to fetch Wikipedia article");
             }
         });
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull @NotNull Bundle outState) {
-        super.onSaveInstanceState(outState);
     }
 }

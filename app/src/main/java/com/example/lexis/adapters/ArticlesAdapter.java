@@ -13,9 +13,6 @@ import com.example.lexis.R;
 import com.example.lexis.databinding.ItemArticleBinding;
 import com.example.lexis.fragments.ArticleFragment;
 import com.example.lexis.models.Article;
-import com.parse.ParseUser;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -30,13 +27,13 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.Articl
 
     @NonNull
     @Override
-    public ArticleViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
+    public ArticleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ItemArticleBinding binding = ItemArticleBinding.inflate(LayoutInflater.from(fragment.getActivity()), parent, false);
         return new ArticleViewHolder(binding);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull @NotNull ArticleViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ArticleViewHolder holder, int position) {
         Article article = articles.get(position);
         holder.bind(article);
     }
