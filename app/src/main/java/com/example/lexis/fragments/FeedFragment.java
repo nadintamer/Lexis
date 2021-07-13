@@ -20,11 +20,12 @@ import com.example.lexis.databinding.FragmentFeedBinding;
 import com.example.lexis.models.Article;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
 
 import okhttp3.Headers;
@@ -37,7 +38,7 @@ public class FeedFragment extends Fragment {
     private static final String TAG = "FeedFragment";
     private static final String NYT_TOP_STORIES_URL = "https://api.nytimes.com/svc/topstories/v2/%s.json";
     private static final String WIKI_ARTICLE_URL = "https://en.wikipedia.org/w/api.php";
-    private static final String WIKI_TOP_ARTICLES_URL = "https://wikimedia.org/api/rest_v1/metrics/pageviews/top/en.wikipedia.org/all-access/%d/%d/%d";
+    private static final String WIKI_TOP_ARTICLES_URL = "https://wikimedia.org/api/rest_v1/metrics/pageviews/top/en.wikipedia.org/all-access/%s/%s/%s";
 
     public FeedFragment() {}
 
@@ -53,17 +54,53 @@ public class FeedFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         articles = new ArrayList<>();
-        fetchWikipediaArticle("Elon Musk");
-        
+
+        // fetch top wikipedia articles for yesterday
+        final Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -1);
+        fetchTopWikipediaArticles(cal);
+
         binding.btnArticleFragment.setOnClickListener(v -> {
             final FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-            final Fragment articleFragment = ArticleFragment.newInstance(articles.get(0));
+            final Fragment articleFragment = ArticleFragment.newInstance(articles.get(1));
 
             fragmentManager.beginTransaction()
                     .replace(R.id.fragmentContainer, articleFragment)
                     .addToBackStack("")
                     .commit();
         });
+    }
+
+    private void fetchTopWikipediaArticles(Calendar date) {
+        String year = String.valueOf(date.get(Calendar.YEAR));
+        String month = String.format("%02d", date.get(Calendar.MONTH) + 1); // add one because months are 0-indexed
+        String day = String.format("%02d", date.get(Calendar.DAY_OF_MONTH)); // add leading 0 if needed
+
+        AsyncHttpClient client = new AsyncHttpClient();
+        String formattedUrl = String.format(WIKI_TOP_ARTICLES_URL, year, month, day);
+        client.get(formattedUrl, null, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                JSONObject jsonObject = json.jsonObject;
+                try {
+                    JSONObject items = jsonObject.getJSONArray("items").getJSONObject(0);
+                    JSONArray jsonArticles = items.getJSONArray("articles");
+                    for (int i = 2; i < 22; i++) { // temporary, get first 20 articles (skip main page and search)
+                        JSONObject jsonArticle = jsonArticles.getJSONObject(i);
+                        String title = jsonArticle.getString("article");
+                        fetchWikipediaArticle(title);
+                    }
+                } catch (JSONException e) {
+                    Log.d(TAG, "JSON Exception", e);
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+
+            }
+        });
+
     }
 
     private void fetchWikipediaArticle(String title) {
