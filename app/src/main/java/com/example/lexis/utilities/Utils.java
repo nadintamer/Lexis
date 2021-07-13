@@ -20,19 +20,23 @@ public class Utils {
         SpannableString completeText = (SpannableString) (parentTextView).getText();
         Layout textViewLayout = parentTextView.getLayout();
 
+        // get indices where clicked text starts/ends within textView and use them to identify the
+        // x positions where the text starts/ends
         double startOffsetOfClickedText = completeText.getSpanStart(clickedText);
         double endOffsetOfClickedText = completeText.getSpanEnd(clickedText);
         double startXCoordinatesOfClickedText = textViewLayout.getPrimaryHorizontal((int) startOffsetOfClickedText);
         double endXCoordinatesOfClickedText = textViewLayout.getPrimaryHorizontal((int) endOffsetOfClickedText);
 
-        // Get the rectangle of the clicked text
+        // get the line number where the clicked text appears and use it to store the bounds of the
+        // line into the Rect
         int currentLineStartOffset = textViewLayout.getLineForOffset((int) startOffsetOfClickedText);
         textViewLayout.getLineBounds(currentLineStartOffset, parentTextViewRect);
 
-        // Update the rectangle position to his real position on screen
-        int[] parentTextViewLocation = {0,0};
+        // get the coordinates of current line on the screen
+        int[] parentTextViewLocation = {0, 0};
         parentTextView.getLocationOnScreen(parentTextViewLocation);
 
+        // calculate offset for top and bottom taking into account scroll position and padding
         double parentTextViewTopAndBottomOffset = (
                 parentTextViewLocation[1] -
                         parentTextView.getScrollY() +
@@ -42,12 +46,16 @@ public class Utils {
         parentTextViewRect.top += parentTextViewTopAndBottomOffset;
         parentTextViewRect.bottom += parentTextViewTopAndBottomOffset;
 
+        // calculate left edge of rect by adding offset of clicked text to x position of current
+        // line, take into account padding and scroll
         parentTextViewRect.left += (
                 parentTextViewLocation[0] +
                         startXCoordinatesOfClickedText +
                         parentTextView.getCompoundPaddingLeft() -
                         parentTextView.getScrollX()
         );
+
+        // calculate right edge of rect by adding the width of the clicked text
         parentTextViewRect.right = (int) (
                 parentTextViewRect.left +
                         endXCoordinatesOfClickedText -

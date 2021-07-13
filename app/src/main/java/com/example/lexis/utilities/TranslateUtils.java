@@ -15,11 +15,16 @@ import java.io.InputStream;
 public class TranslateUtils {
     private static Translate translate;
 
-    // https://medium.com/@yeksancansu/how-to-use-google-translate-api-in-android-studio-projects-7f09cae320c7
+    /*
+    Get the translation service using credentials JSON file for the API key.
+    Adapted from: https://medium.com/@yeksancansu/how-to-use-google-translate-api-in-android-studio-projects-7f09cae320c7
+    */
     public static void getTranslateService(Context context) {
+        // TODO: might want to change this? not really sure if this is good
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
+        StrictMode.setThreadPolicy(policy); // permit networking calls on main thread
 
+        // use credentials from JSON file to get the translation service
         try (InputStream is = context.getResources().openRawResource(R.raw.credentials)) {
             final GoogleCredentials myCredentials = GoogleCredentials.fromStream(is);
             TranslateOptions translateOptions = TranslateOptions.newBuilder().setCredentials(myCredentials).build();
@@ -29,6 +34,9 @@ public class TranslateUtils {
         }
     }
 
+    /*
+    Translate a single word given by originalWord into the target language.
+    */
     public static String translateSingleWord(String originalWord, String targetLanguage) {
         Translation translation = translate.translate(originalWord, Translate.TranslateOption.targetLanguage(targetLanguage), Translate.TranslateOption.model("base"));
         return translation.getTranslatedText();
