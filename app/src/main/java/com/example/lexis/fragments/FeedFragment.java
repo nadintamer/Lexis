@@ -5,7 +5,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.util.Log;
@@ -16,7 +15,6 @@ import android.view.ViewGroup;
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
-import com.example.lexis.R;
 import com.example.lexis.adapters.ArticlesAdapter;
 import com.example.lexis.databinding.FragmentFeedBinding;
 import com.example.lexis.models.Article;
@@ -25,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -60,9 +57,10 @@ public class FeedFragment extends Fragment {
         articles = new ArrayList<>();
         adapter = new ArticlesAdapter(this, articles);
 
-        // fetch top wikipedia articles for yesterday
+        // fetch top wikipedia articles
         final Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -1);
+        cal.add(Calendar.DATE, -1); // yesterday
+        // cal.set(2021, 6, 0); top articles for all days in June
         fetchTopWikipediaArticles(cal);
 
         binding.rvArticles.setAdapter(adapter);
@@ -72,7 +70,12 @@ public class FeedFragment extends Fragment {
     private void fetchTopWikipediaArticles(Calendar date) {
         String year = String.valueOf(date.get(Calendar.YEAR));
         String month = String.format("%02d", date.get(Calendar.MONTH) + 1); // add one because months are 0-indexed
-        String day = String.format("%02d", date.get(Calendar.DAY_OF_MONTH)); // add leading 0 if needed
+        String day;
+        if (date.get(Calendar.DAY_OF_MONTH) != 0) {
+            day = String.format("%02d", date.get(Calendar.DAY_OF_MONTH)); // add leading 0 if needed
+        } else {
+            day = "all-days";
+        }
 
         AsyncHttpClient client = new AsyncHttpClient();
         String formattedUrl = String.format(WIKI_TOP_ARTICLES_URL, year, month, day);
@@ -86,6 +89,8 @@ public class FeedFragment extends Fragment {
                     for (int i = 2; i < 22; i++) { // temporary, get first 20 articles (skip main page and search)
                         JSONObject jsonArticle = jsonArticles.getJSONObject(i);
                         String title = jsonArticle.getString("article");
+                        // skip wikipedia special pages
+                        if (title.startsWith("Wikipedia:") || title.startsWith("Special:")) continue;
                         fetchWikipediaArticle(title);
                     }
                 } catch (JSONException e) {
@@ -137,5 +142,10 @@ public class FeedFragment extends Fragment {
                 Log.d(TAG, "onFailure to fetch Wikipedia article");
             }
         });
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull @NotNull Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 }
