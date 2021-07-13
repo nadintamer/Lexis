@@ -12,6 +12,7 @@ import com.example.lexis.databinding.ActivityMainBinding;
 import com.example.lexis.fragments.FeedFragment;
 import com.example.lexis.fragments.PracticeFragment;
 import com.example.lexis.fragments.ProfileFragment;
+import com.example.lexis.utilities.TranslateUtils;
 import com.parse.ParseUser;
 
 public class MainActivity extends AppCompatActivity {
@@ -23,6 +24,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        TranslateUtils.getTranslateService(this);
 
         binding.bottomNavigation.setOnNavigationItemSelectedListener(item -> {
             switchToSelectedFragment(item);

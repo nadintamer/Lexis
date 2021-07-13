@@ -30,6 +30,11 @@ android {
     buildFeatures {
         viewBinding true
     }
+
+    packagingOptions {
+        exclude 'project.properties'
+        exclude 'META-INF/INDEX.LIST'
+    }
 }
 
 dependencies {
@@ -44,4 +49,18 @@ dependencies {
 
     // Parse for backend
     implementation 'com.github.parse-community.Parse-SDK-Android:parse:1.18.5'
+
+    // CodePath Async HTTP Client for API requests
+    implementation 'com.codepath.libraries:asynchttpclient:2.1.1'
+
+    // Google Translate API for translations
+    implementation('com.google.cloud:google-cloud-translate:1.12.0') {
+        exclude group: 'org.apache.httpcomponents'
+        exclude group: 'org.json', module: 'json'
+    }
+    annotationProcessor 'com.google.cloud:google-cloud-translate:1.12.0'
+
+    // Parceler for passing objects
+    implementation 'org.parceler:parceler-api:1.1.12'
+    annotationProcessor 'org.parceler:parceler:1.1.12'
 }
