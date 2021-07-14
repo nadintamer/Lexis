@@ -99,14 +99,10 @@ public class ProfileFragment extends Fragment {
     }
 
     private void setupDrawerContent(NavigationView navigationView) {
-        navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        selectDrawerItem(menuItem);
-                        return true;
-                    }
-                });
+        navigationView.setNavigationItemSelectedListener(menuItem -> {
+            selectDrawerItem(menuItem);
+            return true;
+        });
     }
 
     private void selectDrawerItem(MenuItem menuItem) {
@@ -117,7 +113,7 @@ public class ProfileFragment extends Fragment {
                 fragment = ProfileInfoFragment.newInstance(ParseUser.getCurrentUser());
                 break;
             case R.id.nav_settings:
-                fragment = new ProfileSettingsFragment();
+                fragment = ProfileSettingsFragment.newInstance(ParseUser.getCurrentUser());
                 break;
             case R.id.nav_log_out:
                 ParseUser.logOut();
