@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.lexis.R;
 import com.example.lexis.adapters.ArticlesAdapter;
 import com.example.lexis.adapters.VocabularyAdapter;
 import com.example.lexis.databinding.FragmentPracticeBinding;
@@ -53,6 +54,17 @@ public class PracticeFragment extends Fragment {
         adapter = new VocabularyAdapter(this, vocabulary);
         binding.rvVocabulary.setAdapter(adapter);
         binding.rvVocabulary.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        // set up pull to refresh
+        binding.swipeContainer.setOnRefreshListener(() -> {
+            adapter.clear();
+            queryVocabulary();
+            binding.swipeContainer.setRefreshing(false);
+        });
+        binding.swipeContainer.setColorSchemeResources(R.color.tiffany_blue,
+                R.color.light_cyan,
+                R.color.orange_peel,
+                R.color.mellow_apricot);
     }
 
     private void queryVocabulary() {

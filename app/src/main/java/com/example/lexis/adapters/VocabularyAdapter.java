@@ -46,6 +46,11 @@ public class VocabularyAdapter extends RecyclerView.Adapter<VocabularyAdapter.Vo
         notifyDataSetChanged();
     }
 
+    public void clear() {
+        vocabulary.clear();
+        notifyDataSetChanged();
+    }
+
     public class VocabularyViewHolder extends RecyclerView.ViewHolder {
         ItemVocabularyBinding binding;
 
