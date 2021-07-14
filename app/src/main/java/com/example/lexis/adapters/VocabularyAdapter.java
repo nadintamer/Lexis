@@ -57,8 +57,8 @@ public class VocabularyAdapter extends RecyclerView.Adapter<VocabularyAdapter.Vo
         Bind Word data into the ViewHolder.
         */
         public void bind(Word word) {
-            binding.tvTargetLanguage.setText(word.getTargetLanguage());
-            binding.tvEnglish.setText(word.getEnglish());
+            binding.tvTargetLanguage.setText(word.getTargetWord());
+            binding.tvEnglish.setText(word.getEnglishWord());
         }
     }
 }

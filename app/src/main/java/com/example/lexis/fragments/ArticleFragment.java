@@ -128,10 +128,11 @@ public class ArticleFragment extends Fragment {
     Add a word with the provided target language and English meanings to the Parse database to
     display in the vocabulary list later.
     */
-    private void addWordToDatabase(String targetLanguage, String english) {
+    private void addWordToDatabase(String targetWord, String englishWord) {
         Word word = new Word();
-        word.setTargetLanguage(targetLanguage);
-        word.setEnglish(english);
+        word.setTargetWord(targetWord);
+        word.setEnglishWord(englishWord);
+        word.setTargetLanguage(Utils.getCurrentTargetLanguage());
         word.setIsStarred(false);
         word.setUser(ParseUser.getCurrentUser());
         word.saveInBackground(e -> {
@@ -139,7 +140,7 @@ public class ArticleFragment extends Fragment {
                 Log.e(TAG, "Error while saving word", e);
                 return;
             }
-            Log.i(TAG, "Successfully saved word: " + targetLanguage);
+            Log.i(TAG, "Successfully saved word: " + targetWord);
         });
     }
 

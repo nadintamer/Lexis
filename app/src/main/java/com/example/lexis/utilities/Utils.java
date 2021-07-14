@@ -6,6 +6,8 @@ import android.text.SpannableString;
 import android.text.style.ClickableSpan;
 import android.widget.TextView;
 
+import com.parse.ParseUser;
+
 import java.util.Calendar;
 
 public class Utils {
@@ -73,5 +75,12 @@ public class Utils {
         final Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -1);
         return cal;
+    }
+
+    /*
+    Return the current target language of the logged-in user.
+    */
+    public static String getCurrentTargetLanguage() {
+        return ParseUser.getCurrentUser().getString("targetLanguage");
     }
 }

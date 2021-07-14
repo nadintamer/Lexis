@@ -1,6 +1,7 @@
 package com.example.lexis.models;
 
 import com.example.lexis.utilities.TranslateUtils;
+import com.example.lexis.utilities.Utils;
 import com.parse.ParseUser;
 
 import org.parceler.Parcel;
@@ -59,7 +60,7 @@ public class Article {
     public void translateWordsOnInterval(int start, int interval) {
         // TODO: deal with punctuation around words (comma, parenthesis, period)
         words = body.split("\\s+"); // split on whitespace
-        String targetLanguage = ParseUser.getCurrentUser().getString("targetLanguage");
+        String targetLanguage = Utils.getCurrentTargetLanguage();
         for (int i = start; i < words.length; i += interval) {
             translatedIndices.add(i);
             originalWords.add(words[i]);
