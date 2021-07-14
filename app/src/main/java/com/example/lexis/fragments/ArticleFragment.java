@@ -29,6 +29,7 @@ import com.example.lexis.models.Word;
 import com.example.lexis.utilities.Utils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.ParseFile;
+import com.parse.ParseUser;
 
 import org.parceler.Parcels;
 
@@ -132,6 +133,7 @@ public class ArticleFragment extends Fragment {
         word.setTargetLanguage(targetLanguage);
         word.setEnglish(english);
         word.setIsStarred(false);
+        word.setUser(ParseUser.getCurrentUser());
         word.saveInBackground(e -> {
             if (e != null) {
                 Log.e(TAG, "Error while saving word", e);
