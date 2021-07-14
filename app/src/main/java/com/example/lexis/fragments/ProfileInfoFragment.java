@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.example.lexis.databinding.FragmentProfileInfoBinding;
 import com.example.lexis.utilities.Utils;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import org.parceler.Parcels;
@@ -54,7 +55,17 @@ public class ProfileInfoFragment extends Fragment {
 
         setHasOptionsMenu(true);
         binding.tvUsername.setText(user.getUsername());
-        // TODO: replace with Utils.getCurrentTargetLanguage() after previous PR is merged
-        binding.tvTargetLanguage.setText(Utils.getFullLanguage(user.getString("targetLanguage")));
+        // TODO: replace with Utils.getCurrentTargetLanguage() & add language flag once previous
+        //  PR is merged
+        String targetLanguage = Utils.getFullLanguage(user.getString("targetLanguage"));
+        binding.tvTargetLanguage.setText(targetLanguage);
+        binding.tvVocabularyTarget.setText(String.format("%s words seen", targetLanguage));
+        binding.tvNumTarget.setText(String.valueOf(getNumWordsSeen(true)));
+        binding.tvNumTotal.setText(String.valueOf(getNumWordsSeen(false)));
+    }
+
+    // TODO: implement once previous PR is merged
+    private int getNumWordsSeen(Boolean targetOnly) {
+        return 0;
     }
 }
