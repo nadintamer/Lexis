@@ -55,4 +55,9 @@ public class MainActivity extends AppCompatActivity {
         }
         fragmentManager.beginTransaction().replace(R.id.fragmentContainer, fragment).commit();
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return false; // need to return false so that control is passed down to fragments
+    }
 }
