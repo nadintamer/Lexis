@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="7dp"
+    android:layout_marginHorizontal="15dp"
+    android:background="@drawable/word_background_shape">
+
+    <TextView
+        android:id="@+id/tvTargetLanguage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginTop="15dp"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        tools:text="espion" />
+
+    <TextView
+        android:id="@+id/tvEnglish"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@id/tvTargetLanguage"
+        android:layout_below="@id/tvTargetLanguage"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="15dp"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        tools:text="spy" />
+</RelativeLayout>
