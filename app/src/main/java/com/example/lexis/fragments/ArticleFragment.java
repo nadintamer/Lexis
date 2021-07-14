@@ -28,7 +28,10 @@ import com.example.lexis.models.Article;
 import com.example.lexis.models.Word;
 import com.example.lexis.utilities.Utils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.parse.GetCallback;
+import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import org.parceler.Parcels;
@@ -128,10 +131,27 @@ public class ArticleFragment extends Fragment {
     }
 
     /*
-    Add a word with the provided target language and English meanings to the Parse database to
-    display in the vocabulary list later.
+    Add a word with the provided target language and English meanings to the Parse database,
+    only if it doesn't already exist in the user's vocabulary.
     */
     private void addWordToDatabase(String targetWord, String englishWord) {
+        ParseQuery<Word> query = ParseQuery.getQuery(Word.class);
+        query.include(Word.KEY_USER);
+        query.whereEqualTo(Word.KEY_USER, ParseUser.getCurrentUser());
+        query.whereEqualTo(Word.KEY_TARGET_WORD, targetWord);
+        query.getFirstInBackground((object, e) -> {
+            if (object == null) {
+                saveWord(targetWord, englishWord);
+            } else {
+                Log.i(TAG, "Word already exists in database: " + targetWord);
+            }
+        });
+    }
+
+    /*
+    Save the word with the provided target language and English meanings to the Parse database.
+    */
+    private void saveWord(String targetWord, String englishWord) {
         Word word = new Word();
         word.setTargetWord(targetWord);
         word.setEnglishWord(englishWord);
