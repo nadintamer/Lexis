@@ -58,7 +58,7 @@ public class ArticleFragment extends Fragment {
         if (article.getWordList() == null) {
             article.translateWordsOnInterval(3, 60);
         }
-        SpannableStringBuilder styledContent = styleTranslatedWords(article.getWordList());
+        SpannableStringBuilder styledContent = styleTranslatedWords(article);
 
         binding.tvTitle.setText(article.getTitle());
         binding.tvBody.setText(styledContent);
@@ -71,8 +71,9 @@ public class ArticleFragment extends Fragment {
     Return a SpannableStringBuilder consisting of the article's body text, with translated words
     highlighted and clickable to show word meaning.
     */
-    private SpannableStringBuilder styleTranslatedWords(String[] words) {
+    private SpannableStringBuilder styleTranslatedWords(Article article) {
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+        String[] words = article.getWordList();
 
         int curr = 0; // keep track of what index of the translated words we are on
         for (int i = 0; i < words.length; i++) {
