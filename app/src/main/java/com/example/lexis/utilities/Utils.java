@@ -7,6 +7,8 @@ import android.text.style.ClickableSpan;
 import android.widget.TextView;
 
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Utils {
 
@@ -73,5 +75,19 @@ public class Utils {
         final Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -1);
         return cal;
+    }
+
+    /*
+    Return the full name of the language with the given ISO language code.
+    */
+    public static String getFullLanguage(String code) {
+        Map<String, String> languageCodes = new HashMap<String, String>() {{
+            put("fr", "French");
+            put("es", "Spanish");
+            put("de", "German");
+            put("tr", "Turkish");
+        }};
+
+        return languageCodes.get(code);
     }
 }

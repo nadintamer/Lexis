@@ -38,8 +38,7 @@ public class MainActivity extends AppCompatActivity {
         final FragmentManager fragmentManager = getSupportFragmentManager();
         final Fragment feedFragment = new FeedFragment();
         final Fragment practiceFragment = new PracticeFragment();
-        //final Fragment profileFragment = ProfileFragment.newInstance(ParseUser.getCurrentUser());
-        final Fragment profileFragment = new ProfileFragment();
+        final Fragment profileFragment = ProfileFragment.newInstance(ParseUser.getCurrentUser());
 
         Fragment fragment;
         switch (item.getItemId()) {

@@ -14,30 +14,24 @@ import android.view.ViewGroup;
 import com.example.lexis.R;
 import com.example.lexis.activities.LoginActivity;
 import com.example.lexis.databinding.FragmentProfileBinding;
+import com.example.lexis.utilities.Utils;
 import com.parse.ParseUser;
+
+import org.parceler.Parcels;
 
 public class ProfileFragment extends Fragment {
 
+    private static final String ARG_USER = "user";
+
     FragmentProfileBinding binding;
+    private ParseUser user;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    public ProfileFragment() {}
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public ProfileFragment() {
-        // Required empty public constructor
-    }
-
-    public static ProfileFragment newInstance(String param1, String param2) {
+    public static ProfileFragment newInstance(ParseUser user) {
         ProfileFragment fragment = new ProfileFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putParcelable(ARG_USER, Parcels.wrap(user));
         fragment.setArguments(args);
         return fragment;
     }
@@ -46,8 +40,7 @@ public class ProfileFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            user = Parcels.unwrap(getArguments().getParcelable(ARG_USER));
         }
     }
 
@@ -61,6 +54,10 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        binding.tvUsername.setText(user.getUsername());
+        // TODO: replace with Utils.getCurrentTargetLanguage() after previous PR is merged
+        binding.tvTargetLanguage.setText(Utils.getFullLanguage(user.getString("targetLanguage")));
 
         binding.btnLogout.setOnClickListener(v -> {
             ParseUser.logOut();
