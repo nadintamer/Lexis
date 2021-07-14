@@ -25,6 +25,8 @@ import com.parse.ParseUser;
 
 import org.parceler.Parcels;
 
+import java.util.Set;
+
 public class ProfileFragment extends Fragment {
 
     private static final String ARG_USER = "user";
@@ -71,11 +73,11 @@ public class ProfileFragment extends Fragment {
         setHasOptionsMenu(true);
         ViewCompat.setLayoutDirection(binding.toolbar.getRoot(), ViewCompat.LAYOUT_DIRECTION_RTL);
 
-        binding.tvUsername.setText(user.getUsername());
-        // TODO: replace with Utils.getCurrentTargetLanguage() after previous PR is merged
-        binding.tvTargetLanguage.setText(Utils.getFullLanguage(user.getString("targetLanguage")));
-
         setupDrawerContent(binding.navView);
+
+        Fragment infoFragment = ProfileInfoFragment.newInstance(user);
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.profileFragmentContainer, infoFragment).commit();
     }
 
     private void goLoginActivity() {
@@ -112,24 +114,22 @@ public class ProfileFragment extends Fragment {
         Fragment fragment;
         switch (menuItem.getItemId()) {
             case R.id.nav_profile:
-                // fragment = ProfileFragment.newInstance(ParseUser.getCurrentUser());
-                fragment = new PracticeFragment();
+                fragment = ProfileInfoFragment.newInstance(ParseUser.getCurrentUser());
                 break;
             case R.id.nav_settings:
-                fragment = new FeedFragment();
+                fragment = new ProfileSettingsFragment();
                 break;
             case R.id.nav_log_out:
                 ParseUser.logOut();
                 goLoginActivity();
                 return;
             default:
-                fragment = new PracticeFragment();
-                // fragment = ProfileFragment.newInstance(ParseUser.getCurrentUser());
+                fragment = ProfileInfoFragment.newInstance(ParseUser.getCurrentUser());
         }
 
         // Insert the fragment by replacing any existing fragment
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.fragmentContainer, fragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.profileFragmentContainer, fragment).commit();
 
         // Highlight the selected item has been done by NavigationView
         menuItem.setChecked(true);
