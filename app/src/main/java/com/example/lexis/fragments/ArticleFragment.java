@@ -63,8 +63,11 @@ public class ArticleFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         article = Parcels.unwrap(getArguments().getParcelable("article"));
 
-        // only translate words if we haven't previously done so
-        if (article.getWordList() == null) {
+        // only translate words if we haven't previously done so or if the user has changed their
+        // target language since the article's translation
+        String currentTargetLanguage = Utils.getCurrentTargetLanguage();
+        Boolean isCorrectLanguage = article.getLanguage().equals(currentTargetLanguage);
+        if (article.getWordList() == null || !isCorrectLanguage) {
             article.translateWordsOnInterval(3, 60);
         }
         SpannableStringBuilder styledContent = styleTranslatedWords(article);

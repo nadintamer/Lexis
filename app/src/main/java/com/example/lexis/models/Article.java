@@ -14,6 +14,7 @@ public class Article {
     private String title;
     private String body;
     private String source;
+    private String language;
     private String[] words;
     private List<Integer> translatedIndices;
     private List<String> originalWords;
@@ -25,6 +26,7 @@ public class Article {
         this.body = body;
         this.source = source;
 
+        language = "";
         translatedIndices = new ArrayList<>();
         originalWords = new ArrayList<>();
     }
@@ -39,6 +41,10 @@ public class Article {
 
     public String getSource() {
         return source;
+    }
+
+    public String getLanguage() {
+        return language;
     }
 
     public String[] getWordList() {
@@ -61,6 +67,7 @@ public class Article {
         // TODO: deal with punctuation around words (comma, parenthesis, period)
         words = body.split("\\s+"); // split on whitespace
         String targetLanguage = Utils.getCurrentTargetLanguage();
+        language = targetLanguage;
         for (int i = start; i < words.length; i += interval) {
             translatedIndices.add(i);
             originalWords.add(words[i]);
