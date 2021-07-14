@@ -52,9 +52,13 @@ public class Article {
         return originalWords;
     }
 
+    /*
+    Translate every interval word starting at index start into the current user's target language.
+    For example, translateWordsOnInterval(0, 5) will translate every 5th word starting at index 0.
+    */
     public void translateWordsOnInterval(int start, int interval) {
         // TODO: deal with punctuation around words (comma, parenthesis, period)
-        words = body.split("\\s+");
+        words = body.split("\\s+"); // split on whitespace
         String targetLanguage = ParseUser.getCurrentUser().getString("targetLanguage");
         for (int i = start; i < words.length; i += interval) {
             translatedIndices.add(i);

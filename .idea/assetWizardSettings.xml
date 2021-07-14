@@ -28,8 +28,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="arrow_drop_down" />
-                            <entry key="sourceFile" value="$PROJECT_DIR$/../../../profile.svg" />
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="outputName" value="wikipedia_logo" />
+                            <entry key="sourceFile" value="$PROJECT_DIR$/../../../wikipedia.svg" />
                           </map>
                         </option>
                       </PersistentState>
