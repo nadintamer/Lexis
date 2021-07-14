@@ -97,7 +97,6 @@ public class ArticleFragment extends Fragment {
                     @Override
                     public void updateDrawState(TextPaint ds) {
                         super.updateDrawState(ds);
-                        // text should be black and not underlined
                         ds.setColor(getResources().getColor(R.color.black));
                         ds.setUnderlineText(false);
                     }

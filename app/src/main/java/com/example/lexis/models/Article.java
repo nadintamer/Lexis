@@ -3,7 +3,6 @@ package com.example.lexis.models;
 import com.example.lexis.utilities.TranslateUtils;
 import com.parse.ParseUser;
 
-import org.json.JSONObject;
 import org.parceler.Parcel;
 
 import java.util.ArrayList;
