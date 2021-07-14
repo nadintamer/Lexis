@@ -83,4 +83,24 @@ public class Utils {
     public static String getCurrentTargetLanguage() {
         return ParseUser.getCurrentUser().getString("targetLanguage");
     }
+
+    /*
+    Return the flag emoji associated with the given ISO language code.
+    */
+    public static String getFlagEmoji(String language) {
+        switch (language) {
+            case "de":
+                return "🇩🇪";
+            case "fr":
+                return "🇫🇷";
+            case "tr":
+                return "🇹🇷";
+            case "es":
+                return "🇪🇸";
+            case "en":
+                return "🇺🇸";
+            default:
+                return "";
+        }
+    }
 }

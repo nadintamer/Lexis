@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.lexis.databinding.ItemVocabularyBinding;
 import com.example.lexis.models.Word;
+import com.example.lexis.utilities.Utils;
 
 import java.util.List;
 
@@ -59,6 +60,7 @@ public class VocabularyAdapter extends RecyclerView.Adapter<VocabularyAdapter.Vo
         public void bind(Word word) {
             binding.tvTargetLanguage.setText(word.getTargetWord());
             binding.tvEnglish.setText(word.getEnglishWord());
+            binding.tvFlag.setText(Utils.getFlagEmoji(word.getTargetLanguage()));
         }
     }
 }
