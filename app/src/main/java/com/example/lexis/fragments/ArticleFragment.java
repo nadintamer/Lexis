@@ -9,10 +9,12 @@ import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.ClickableSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -23,12 +25,18 @@ import javax.annotation.Nullable;
 import com.example.lexis.R;
 import com.example.lexis.databinding.FragmentArticleBinding;
 import com.example.lexis.models.Article;
+import com.example.lexis.models.Word;
 import com.example.lexis.utilities.Utils;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.parse.ParseFile;
 
 import org.parceler.Parcels;
 
+import java.util.ArrayList;
+
 public class ArticleFragment extends Fragment {
 
+    private static final String TAG = "ArticleFragment";
     FragmentArticleBinding binding;
     Article article;
 
@@ -93,6 +101,7 @@ public class ArticleFragment extends Fragment {
                         String targetLanguage = words[translatedWordIndex];
                         String english = article.getOriginalWords().get(originalWordIndex);
                         launchWordDialog(targetLanguage, english, wordPosition.left, wordPosition.top, wordPosition.width());
+                        addWordToDatabase(targetLanguage, english);
                     }
 
                     @Override
@@ -112,6 +121,24 @@ public class ArticleFragment extends Fragment {
         }
 
         return spannableStringBuilder;
+    }
+
+    /*
+    Add a word with the provided target language and English meanings to the Parse database to
+    display in the vocabulary list later.
+    */
+    private void addWordToDatabase(String targetLanguage, String english) {
+        Word word = new Word();
+        word.setTargetLanguage(targetLanguage);
+        word.setEnglish(english);
+        word.setIsStarred(false);
+        word.saveInBackground(e -> {
+            if (e != null) {
+                Log.e(TAG, "Error while saving word", e);
+                return;
+            }
+            Log.i(TAG, "Successfully saved word: " + targetLanguage);
+        });
     }
 
     /*
