@@ -3,54 +3,31 @@ package com.example.lexis.fragments;
 import android.graphics.Rect;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-
-import android.os.StrictMode;
-import android.text.Layout;
-import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.ClickableSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.codepath.asynchttpclient.AsyncHttpClient;
-import com.codepath.asynchttpclient.RequestParams;
-import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+
+import javax.annotation.Nullable;
+
 import com.example.lexis.R;
 import com.example.lexis.databinding.FragmentArticleBinding;
 import com.example.lexis.models.Article;
-import com.example.lexis.utilities.TranslateUtils;
 import com.example.lexis.utilities.Utils;
-import com.google.auth.oauth2.GoogleCredentials;
-import com.google.cloud.translate.Translate;
-import com.google.cloud.translate.TranslateOptions;
-import com.google.cloud.translate.Translation;
-import com.parse.ParseUser;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.parceler.Parcels;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import okhttp3.Headers;
-
 public class ArticleFragment extends Fragment {
-
-    private static final String TAG = "ArticleFragment";
 
     FragmentArticleBinding binding;
     Article article;
@@ -66,7 +43,7 @@ public class ArticleFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentArticleBinding.inflate(inflater);
         return binding.getRoot();
@@ -77,22 +54,32 @@ public class ArticleFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         article = Parcels.unwrap(getArguments().getParcelable("article"));
 
-        article.translateWordsOnInterval(3, 60);
+        // only translate words if we haven't previously done so
+        if (article.getWordList() == null) {
+            article.translateWordsOnInterval(3, 60);
+        }
         SpannableStringBuilder styledContent = styleTranslatedWords(article.getWordList());
 
         binding.tvTitle.setText(article.getTitle());
         binding.tvBody.setText(styledContent);
+
+        // needed so that translated words are clickable
         binding.tvBody.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
+    /*
+    Return a SpannableStringBuilder consisting of the article's body text, with translated words
+    highlighted and clickable to show word meaning.
+    */
     private SpannableStringBuilder styleTranslatedWords(String[] words) {
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
 
         int curr = 0; // keep track of what index of the translated words we are on
         for (int i = 0; i < words.length; i++) {
             int start = spannableStringBuilder.length();
-            spannableStringBuilder.append(words[i] + " ");
+            spannableStringBuilder.append(words[i]).append(" ");
 
+            // the index we're at represents a translated word
             if (curr < article.getTranslatedIndices().size() && article.getTranslatedIndices().get(curr) == i) {
                 final int translatedWordIndex = i;
                 final int originalWordIndex = curr;
@@ -100,6 +87,7 @@ public class ArticleFragment extends Fragment {
                 ClickableSpan clickableSpan = new ClickableSpan() {
                     @Override
                     public void onClick(View textView) {
+                        // show word meaning dialog when clicked
                         Rect wordPosition = Utils.getClickedWordPosition((TextView) textView, this);
                         String targetLanguage = words[translatedWordIndex];
                         String english = article.getOriginalWords().get(originalWordIndex);
@@ -125,6 +113,10 @@ public class ArticleFragment extends Fragment {
         return spannableStringBuilder;
     }
 
+    /*
+    Launch a word meaning dialog with the provided target language and English words, relative to
+    the position of the word clicked (described by left, top, and width).
+    */
     private void launchWordDialog(String targetLanguage, String english, int left, int top, int width) {
         FragmentManager fm = getActivity().getSupportFragmentManager();
         WordDialogFragment wordDialogFragment = WordDialogFragment.newInstance(targetLanguage, english, left, top, width);
