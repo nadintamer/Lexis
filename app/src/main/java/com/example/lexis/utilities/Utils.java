@@ -4,11 +4,20 @@ import android.graphics.Rect;
 import android.text.Layout;
 import android.text.SpannableString;
 import android.text.style.ClickableSpan;
+import android.util.Log;
 import android.widget.TextView;
+
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.Calendar;
 
 public class Utils {
+
+    private static final String TAG = "Utils";
 
     /*
     Return a Rect object representing the bounds of the clickableSpan that was clicked. Used to
@@ -73,5 +82,40 @@ public class Utils {
         final Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -1);
         return cal;
+    }
+
+    /*
+    Return the current target language of the logged-in user.
+    */
+    public static String getCurrentTargetLanguage() {
+        String objectId = ParseUser.getCurrentUser().getObjectId();
+        try {
+            ParseQuery<ParseUser> query = ParseUser.getQuery();
+            query.whereEqualTo("objectId", objectId);
+            return query.getFirst().getString("targetLanguage");
+        } catch (ParseException e) {
+            Log.e(TAG, "Error fetching target language", e);
+        }
+        return "";
+    }
+
+    /*
+    Return the flag emoji associated with the given ISO language code.
+    */
+    public static String getFlagEmoji(String language) {
+        switch (language) {
+            case "de":
+                return "🇩🇪";
+            case "fr":
+                return "🇫🇷";
+            case "tr":
+                return "🇹🇷";
+            case "es":
+                return "🇪🇸";
+            case "en":
+                return "🇺🇸";
+            default:
+                return "";
+        }
     }
 }

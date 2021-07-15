@@ -9,10 +9,12 @@ import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.ClickableSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -23,12 +25,22 @@ import javax.annotation.Nullable;
 import com.example.lexis.R;
 import com.example.lexis.databinding.FragmentArticleBinding;
 import com.example.lexis.models.Article;
+import com.example.lexis.models.Word;
 import com.example.lexis.utilities.Utils;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import org.parceler.Parcels;
 
+import java.util.ArrayList;
+
 public class ArticleFragment extends Fragment {
 
+    private static final String TAG = "ArticleFragment";
     FragmentArticleBinding binding;
     Article article;
 
@@ -54,11 +66,14 @@ public class ArticleFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         article = Parcels.unwrap(getArguments().getParcelable("article"));
 
-        // only translate words if we haven't previously done so
-        if (article.getWordList() == null) {
+        // only translate words if we haven't previously done so or if the user has changed their
+        // target language since the article's translation
+        String currentTargetLanguage = Utils.getCurrentTargetLanguage();
+        Boolean isCorrectLanguage = article.getLanguage().equals(currentTargetLanguage);
+        if (article.getWordList() == null || !isCorrectLanguage) {
             article.translateWordsOnInterval(3, 60);
         }
-        SpannableStringBuilder styledContent = styleTranslatedWords(article.getWordList());
+        SpannableStringBuilder styledContent = styleTranslatedWords(article);
 
         binding.tvTitle.setText(article.getTitle());
         binding.tvBody.setText(styledContent);
@@ -71,8 +86,9 @@ public class ArticleFragment extends Fragment {
     Return a SpannableStringBuilder consisting of the article's body text, with translated words
     highlighted and clickable to show word meaning.
     */
-    private SpannableStringBuilder styleTranslatedWords(String[] words) {
+    private SpannableStringBuilder styleTranslatedWords(Article article) {
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+        String[] words = article.getWordList();
 
         int curr = 0; // keep track of what index of the translated words we are on
         for (int i = 0; i < words.length; i++) {
@@ -92,6 +108,7 @@ public class ArticleFragment extends Fragment {
                         String targetLanguage = words[translatedWordIndex];
                         String english = article.getOriginalWords().get(originalWordIndex);
                         launchWordDialog(targetLanguage, english, wordPosition.left, wordPosition.top, wordPosition.width());
+                        addWordToDatabase(targetLanguage, english);
                     }
 
                     @Override
@@ -111,6 +128,43 @@ public class ArticleFragment extends Fragment {
         }
 
         return spannableStringBuilder;
+    }
+
+    /*
+    Add a word with the provided target language and English meanings to the Parse database,
+    only if it doesn't already exist in the user's vocabulary.
+    */
+    private void addWordToDatabase(String targetWord, String englishWord) {
+        ParseQuery<Word> query = ParseQuery.getQuery(Word.class);
+        query.include(Word.KEY_USER);
+        query.whereEqualTo(Word.KEY_USER, ParseUser.getCurrentUser());
+        query.whereEqualTo(Word.KEY_TARGET_WORD, targetWord);
+        query.getFirstInBackground((object, e) -> {
+            if (object == null) {
+                saveWord(targetWord, englishWord);
+            } else {
+                Log.i(TAG, "Word already exists in database: " + targetWord);
+            }
+        });
+    }
+
+    /*
+    Save the word with the provided target language and English meanings to the Parse database.
+    */
+    private void saveWord(String targetWord, String englishWord) {
+        Word word = new Word();
+        word.setTargetWord(targetWord);
+        word.setEnglishWord(englishWord);
+        word.setTargetLanguage(Utils.getCurrentTargetLanguage());
+        word.setIsStarred(false);
+        word.setUser(ParseUser.getCurrentUser());
+        word.saveInBackground(e -> {
+            if (e != null) {
+                Log.e(TAG, "Error while saving word", e);
+                return;
+            }
+            Log.i(TAG, "Successfully saved word: " + targetWord);
+        });
     }
 
     /*
