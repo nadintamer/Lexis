@@ -1,5 +1,6 @@
 package com.example.lexis.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.example.lexis.R;
@@ -113,6 +115,10 @@ public class ProfileSettingsFragment extends Fragment {
     Reset the currently displayed fragment and selected menu item to the profile info fragment.
     */
     private void resetToProfileInfoFragment() {
+        // hide keyboard when switching fragments
+        final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+
         // switch back to profile info fragment
         Fragment infoFragment = ProfileInfoFragment.newInstance(user);
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
