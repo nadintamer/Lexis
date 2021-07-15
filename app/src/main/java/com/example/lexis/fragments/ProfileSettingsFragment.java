@@ -137,6 +137,10 @@ public class ProfileSettingsFragment extends Fragment {
         profile.setChecked(true);
     }
 
+    /*
+    Log the user in again with their new password since changing their password ends the current
+    session.
+    */
     private void logInWithNewPassword(String password) {
         ParseUser.logInInBackground(user.getUsername(), password, (user, e) -> {
             if (e != null) {
