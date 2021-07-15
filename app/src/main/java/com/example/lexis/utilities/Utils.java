@@ -144,4 +144,28 @@ public class Utils {
                 return "";
         }
     }
+
+    public static String getUserErrorMessage(ParseException e, String defaultMessage) {
+        String errorMessage;
+        switch (e.getCode()) {
+            case 101:
+                errorMessage = "Invalid username/password!";
+                break;
+            case 200:
+                errorMessage = "Username cannot be empty!";
+                break;
+            case 201:
+                errorMessage = "Password cannot be empty!";
+                break;
+            case 202:
+                errorMessage = "Username is already in use!";
+                break;
+            case 203:
+                errorMessage = "E-mail is already in use!";
+                break;
+            default:
+                errorMessage = defaultMessage;
+        }
+        return errorMessage;
+    }
 }

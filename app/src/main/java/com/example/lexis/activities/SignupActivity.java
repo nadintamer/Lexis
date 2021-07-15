@@ -4,26 +4,20 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Toast;
 
-import com.example.lexis.databinding.ActivityLoginBinding;
 import com.example.lexis.databinding.ActivitySignupBinding;
+import com.example.lexis.utilities.Utils;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.List;
 
 public class SignupActivity extends AppCompatActivity {
 
     ActivitySignupBinding binding;
-    Map<Integer, String> languageCodes = new HashMap<Integer, String>() {{
-        put(0, "fr");
-        put(1, "es");
-        put(2, "de");
-        put(3, "tr");
-    }};
+    private static final List<String> languageCodes = Arrays.asList("fr", "es", "de", "tr");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,11 +29,17 @@ public class SignupActivity extends AppCompatActivity {
             String username = binding.etUsername.getText().toString();
             String email = binding.etEmail.getText().toString();
             String password = binding.etPassword.getText().toString();
-            signUpUser(username, email, password);
+            int selectedItemPosition = binding.spinnerLanguage.getSelectedItemPosition();
+            String targetLanguage = languageCodes.get(selectedItemPosition);
+            signUpUser(username, email, password, targetLanguage);
         });
     }
 
-    private void signUpUser(String username, String email, String password) {
+    /*
+    Sign up a new user with the provided username, e-mail, password, and target language
+    to the Parse database.
+    */
+    private void signUpUser(String username, String email, String password, String targetLanguage) {
         if (email.isEmpty()) {
             Toast.makeText(SignupActivity.this, "E-mail cannot be empty!", Toast.LENGTH_SHORT).show();
             return;
@@ -49,8 +49,7 @@ public class SignupActivity extends AppCompatActivity {
         user.setUsername(username);
         user.setEmail(email);
         user.setPassword(password);
-        int selectedItemPosition = binding.spinnerLanguage.getSelectedItemPosition();
-        user.put("targetLanguage", languageCodes.get(selectedItemPosition));
+        user.put("targetLanguage", targetLanguage);
 
         user.signUpInBackground(e -> {
             if (e != null) {
@@ -61,31 +60,17 @@ public class SignupActivity extends AppCompatActivity {
         });
     }
 
+    /*
+    Display the error message from Parse to the user in a Toast.
+    */
     private void showErrorMessage(ParseException e) {
-        String errorMessage;
-        switch (e.getCode()) {
-            case 101:
-                errorMessage = "Invalid username/password!";
-                break;
-            case 200:
-                errorMessage = "Username cannot be empty!";
-                break;
-            case 201:
-                errorMessage = "Password cannot be empty!";
-                break;
-            case 202:
-                errorMessage = "Username is already in use!";
-                break;
-            case 203:
-                errorMessage = "E-mail is already in use!";
-                break;
-            default:
-                errorMessage = "Error with sign-up!";
-                break;
-        }
+        String errorMessage = Utils.getUserErrorMessage(e, "Error with sign-up!");
         Toast.makeText(SignupActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
     }
 
+    /*
+    Navigate to the main activity and finish current one so user doesn't return to login screen.
+    */
     private void goMainActivity() {
         Intent i = new Intent(this, MainActivity.class);
         startActivity(i);

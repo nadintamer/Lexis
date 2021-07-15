@@ -66,8 +66,8 @@ public class ProfileInfoFragment extends Fragment {
         binding.tvTargetLanguage.setText(String.format("%s %s", flag, targetLanguage));
         binding.tvVocabularyTarget.setText(String.format("%s words studied", targetLanguage));
 
-        setNumWordsSeen(true); // target language
-        setNumWordsSeen(false); // total
+        setNumWordsSeen(true); // words studied in target language
+        setNumWordsSeen(false); // words studied total
     }
 
     /*

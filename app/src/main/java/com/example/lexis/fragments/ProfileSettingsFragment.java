@@ -7,7 +7,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.lexis.R;
-import com.example.lexis.activities.SignupActivity;
 import com.example.lexis.databinding.FragmentProfileSettingsBinding;
 import com.example.lexis.utilities.Utils;
 import com.google.android.material.navigation.NavigationView;
@@ -30,7 +28,6 @@ import java.util.List;
 
 public class ProfileSettingsFragment extends Fragment {
 
-    private static final String TAG = "ProfileSettingsFragment";
     private static final String ARG_USER = "user";
     private static final List<String> languageCodes = Arrays.asList("fr", "es", "de", "tr");
 
@@ -65,12 +62,15 @@ public class ProfileSettingsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         binding.etEmail.setText(user.getEmail());
         binding.spinnerLanguage.setSelection(languageCodes.indexOf(Utils.getCurrentTargetLanguage()));
         binding.btnSave.setOnClickListener(v -> updateUserInformation());
     }
 
+    /*
+    Update the current user's e-mail, password, and/or target language; show error message if action
+    cannot be completed.
+    */
     private void updateUserInformation() {
         String email = binding.etEmail.getText().toString();
         String password = binding.etPassword.getText().toString();
@@ -96,43 +96,31 @@ public class ProfileSettingsFragment extends Fragment {
                 showErrorMessage(e);
                 return;
             }
-
             Toast.makeText(getActivity(), "Profile updated successfully!", Toast.LENGTH_SHORT).show();
-
-            // switch back to profile info fragment
-            Fragment infoFragment = ProfileInfoFragment.newInstance(user);
-            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.profileFragmentContainer, infoFragment).commit();
-
-            // set profile item as selected in drawer navigation
-            Menu menuNav = ((NavigationView) getActivity().findViewById(R.id.navView)).getMenu();
-            MenuItem profile = menuNav.getItem(0);
-            profile.setChecked(true);
+            resetToProfileInfoFragment();
         });
     }
 
+    /*
+    Display the error message from Parse to the user in a Toast.
+    */
     private void showErrorMessage(ParseException e) {
-        String errorMessage;
-        switch (e.getCode()) {
-            case 101:
-                errorMessage = "Invalid username/password!";
-                break;
-            case 200:
-                errorMessage = "Username cannot be empty!";
-                break;
-            case 201:
-                errorMessage = "Password cannot be empty!";
-                break;
-            case 202:
-                errorMessage = "Username is already in use!";
-                break;
-            case 203:
-                errorMessage = "E-mail is already in use!";
-                break;
-            default:
-                errorMessage = "Error with updating information!";
-                break;
-        }
+        String errorMessage = Utils.getUserErrorMessage(e, "Error with updating information!");
         Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
+    }
+
+    /*
+    Reset the currently displayed fragment and selected menu item to the profile info fragment.
+    */
+    private void resetToProfileInfoFragment() {
+        // switch back to profile info fragment
+        Fragment infoFragment = ProfileInfoFragment.newInstance(user);
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.profileFragmentContainer, infoFragment).commit();
+
+        // set profile item as selected in drawer navigation
+        Menu menuNav = ((NavigationView) getActivity().findViewById(R.id.navView)).getMenu();
+        MenuItem profile = menuNav.getItem(0);
+        profile.setChecked(true);
     }
 }
