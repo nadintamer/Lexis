@@ -19,21 +19,17 @@ import android.widget.Toast;
 
 import com.example.lexis.R;
 import com.example.lexis.databinding.FragmentProfileSettingsBinding;
+import com.example.lexis.utilities.Const;
 import com.example.lexis.utilities.Utils;
 import com.google.android.material.navigation.NavigationView;
-import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
 import org.parceler.Parcels;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class ProfileSettingsFragment extends Fragment {
 
     private static final String ARG_USER = "user";
-    private static final List<String> languageCodes = Arrays.asList("fr", "es", "de", "tr");
 
     FragmentProfileSettingsBinding binding;
     ParseUser user;
@@ -67,7 +63,7 @@ public class ProfileSettingsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         binding.etEmail.setText(user.getEmail());
-        binding.spinnerLanguage.setSelection(languageCodes.indexOf(Utils.getCurrentTargetLanguage()));
+        binding.spinnerLanguage.setSelection(Const.languageCodes.indexOf(Utils.getCurrentTargetLanguage()));
         binding.btnSave.setOnClickListener(v -> updateUserInformation());
     }
 
@@ -89,7 +85,7 @@ public class ProfileSettingsFragment extends Fragment {
         }
 
         int selectedItemPosition = binding.spinnerLanguage.getSelectedItemPosition();
-        user.put("targetLanguage", languageCodes.get(selectedItemPosition));
+        user.put("targetLanguage", Const.languageCodes.get(selectedItemPosition));
         user.setEmail(email);
         if (!password.isEmpty()) {
             user.setPassword(password); // only set new password if field is filled out

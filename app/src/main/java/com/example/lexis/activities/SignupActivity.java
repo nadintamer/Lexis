@@ -7,17 +7,15 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.lexis.databinding.ActivitySignupBinding;
+import com.example.lexis.utilities.Const;
 import com.example.lexis.utilities.Utils;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
-import java.util.Arrays;
-import java.util.List;
 
 public class SignupActivity extends AppCompatActivity {
 
     ActivitySignupBinding binding;
-    private static final List<String> languageCodes = Arrays.asList("fr", "es", "de", "tr");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +28,7 @@ public class SignupActivity extends AppCompatActivity {
             String email = binding.etEmail.getText().toString();
             String password = binding.etPassword.getText().toString();
             int selectedItemPosition = binding.spinnerLanguage.getSelectedItemPosition();
-            String targetLanguage = languageCodes.get(selectedItemPosition);
+            String targetLanguage = Const.languageCodes.get(selectedItemPosition);
             signUpUser(username, email, password, targetLanguage);
         });
     }
