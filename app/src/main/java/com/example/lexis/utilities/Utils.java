@@ -7,13 +7,16 @@ import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.parse.GetCallback;
 import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 public class Utils {
 
@@ -85,6 +88,15 @@ public class Utils {
     }
 
     /*
+    Return a String that represents the given Date object in the format "MMMM d, yyyy" (for example,
+    "July 14, 2021").
+    */
+    public static String formatDate(Date date) {
+        SimpleDateFormat written = new SimpleDateFormat("MMMM d, yyyy", Locale.US);
+        return written.format(date);
+    }
+
+    /*
     Return the current target language of the logged-in user.
     */
     public static String getCurrentTargetLanguage() {
@@ -100,10 +112,24 @@ public class Utils {
     }
 
     /*
+    Return the full name of the language with the given ISO language code.
+    */
+    public static String getFullLanguage(String code) {
+        Map<String, String> languageCodes = new HashMap<String, String>() {{
+            put("fr", "French");
+            put("es", "Spanish");
+            put("de", "German");
+            put("tr", "Turkish");
+        }};
+
+        return languageCodes.get(code);
+    }
+
+    /*
     Return the flag emoji associated with the given ISO language code.
     */
-    public static String getFlagEmoji(String language) {
-        switch (language) {
+    public static String getFlagEmoji(String code) {
+        switch (code) {
             case "de":
                 return "🇩🇪";
             case "fr":
@@ -117,5 +143,29 @@ public class Utils {
             default:
                 return "";
         }
+    }
+
+    public static String getUserErrorMessage(ParseException e, String defaultMessage) {
+        String errorMessage;
+        switch (e.getCode()) {
+            case 101:
+                errorMessage = "Invalid username/password!";
+                break;
+            case 200:
+                errorMessage = "Username cannot be empty!";
+                break;
+            case 201:
+                errorMessage = "Password cannot be empty!";
+                break;
+            case 202:
+                errorMessage = "Username is already in use!";
+                break;
+            case 203:
+                errorMessage = "E-mail is already in use!";
+                break;
+            default:
+                errorMessage = defaultMessage;
+        }
+        return errorMessage;
     }
 }

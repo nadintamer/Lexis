@@ -8,7 +8,12 @@
     <string name="name_label">name</string>
     <string name="language_spinner_label">I\'m learning...</string>
     <string name="email_label">e-mail</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="log_out_label">Log out</string>
+    <string name="settings_label">Settings</string>
+    <string name="profile_label">Profile</string>
+    <string name="save_label">Save</string>
+    <string name="total_words_studied_label">Total words studied</string>
+    <string name="currently_learning_label">Currently learning</string>
+    <string name="confirm_password_label">confirm password</string>
+    <string name="change_password_label">change password</string>
 </resources>

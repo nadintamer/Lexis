@@ -94,6 +94,7 @@ public class ArticleFragment extends Fragment {
         for (int i = 0; i < words.length; i++) {
             int start = spannableStringBuilder.length();
             spannableStringBuilder.append(words[i]).append(" ");
+            // TODO: some way to only do the translated words? other ones all have the same format
 
             // the index we're at represents a translated word
             if (curr < article.getTranslatedIndices().size() && article.getTranslatedIndices().get(curr) == i) {
@@ -139,6 +140,7 @@ public class ArticleFragment extends Fragment {
         query.include(Word.KEY_USER);
         query.whereEqualTo(Word.KEY_USER, ParseUser.getCurrentUser());
         query.whereEqualTo(Word.KEY_TARGET_WORD, targetWord);
+        // TODO: check if language matches too
         query.getFirstInBackground((object, e) -> {
             if (object == null) {
                 saveWord(targetWord, englishWord);
