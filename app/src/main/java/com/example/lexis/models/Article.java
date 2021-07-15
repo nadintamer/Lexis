@@ -21,7 +21,7 @@ public class Article {
     private String body;
     private String source;
     private String language;
-    private String[] words;
+    private String[] words; // TODO: think about performance -- storing only translated words?
     private List<Integer> translatedIndices;
     private List<String> originalWords;
 
@@ -70,6 +70,7 @@ public class Article {
     For example, translateWordsOnInterval(0, 5) will translate every 5th word starting at index 0.
     */
     public void translateWordsOnInterval(int start, int interval) {
+        // TODO: something to consider -- populate words as user scrolls, rather than all at once
         // TODO: deal with punctuation around words (comma, parenthesis, period)
         words = body.split("\\s+"); // split on whitespace
         String targetLanguage = Utils.getCurrentTargetLanguage();
