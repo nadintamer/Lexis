@@ -18,16 +18,25 @@
         tools:text="nadin" />
 
     <TextView
+        android:id="@+id/tvMemberSince"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/tvUsername"
+        android:layout_below="@+id/tvUsername"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        tools:text="Joined July 13, 2021" />
+
+    <TextView
         android:id="@+id/tvLearning"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@id/tvUsername"
+        android:layout_alignStart="@id/tvMemberSince"
+        android:layout_below="@id/tvMemberSince"
         android:layout_marginTop="20dp"
-        android:layout_marginStart="30dp"
         android:textColor="@color/black"
         android:textSize="20sp"
-        android:text="Currently learning" />
+        android:text="@string/currently_learning_label" />
 
     <TextView
         android:id="@+id/tvTargetLanguage"
@@ -45,10 +54,9 @@
         android:id="@+id/tvVocabularyTarget"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
+        android:layout_alignStart="@id/tvLearning"
         android:layout_below="@id/tvLearning"
         android:layout_marginTop="20dp"
-        android:layout_marginStart="30dp"
         android:textColor="@color/black"
         android:textSize="20sp"
         tools:text="French words studied" />
@@ -57,9 +65,8 @@
         android:id="@+id/tvNumTarget"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
+        android:layout_alignEnd="@id/tvTargetLanguage"
         android:layout_alignTop="@id/tvVocabularyTarget"
-        android:layout_marginEnd="30dp"
         android:textColor="@color/black"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -69,10 +76,9 @@
         android:id="@+id/tvVocabularyTotal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
+        android:layout_alignStart="@id/tvVocabularyTarget"
         android:layout_below="@id/tvVocabularyTarget"
         android:layout_marginTop="20dp"
-        android:layout_marginStart="30dp"
         android:textColor="@color/black"
         android:textSize="20sp"
         android:text="@string/total_words_studied_label" />
@@ -81,9 +87,8 @@
         android:id="@+id/tvNumTotal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
+        android:layout_alignEnd="@id/tvNumTarget"
         android:layout_alignTop="@id/tvVocabularyTotal"
-        android:layout_marginEnd="30dp"
         android:textColor="@color/black"
         android:textSize="20sp"
         android:textStyle="bold"

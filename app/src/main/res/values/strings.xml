@@ -13,4 +13,5 @@
     <string name="profile_label">Profile</string>
     <string name="save_label">Save</string>
     <string name="total_words_studied_label">Total words studied</string>
+    <string name="currently_learning_label">Currently learning</string>
 </resources>

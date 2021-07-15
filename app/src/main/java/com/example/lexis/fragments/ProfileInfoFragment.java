@@ -59,8 +59,10 @@ public class ProfileInfoFragment extends Fragment {
 
         String targetLanguage = Utils.getFullLanguage(Utils.getCurrentTargetLanguage());
         String flag = Utils.getFlagEmoji(Utils.getCurrentTargetLanguage());
+        String userJoined = Utils.formatDate(user.getCreatedAt());
 
         binding.tvUsername.setText(user.getUsername());
+        binding.tvMemberSince.setText(String.format("Joined %s", userJoined));
         binding.tvTargetLanguage.setText(String.format("%s %s", flag, targetLanguage));
         binding.tvVocabularyTarget.setText(String.format("%s words studied", targetLanguage));
 

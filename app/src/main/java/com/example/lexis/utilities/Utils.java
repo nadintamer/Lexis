@@ -11,8 +11,11 @@ import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class Utils {
@@ -82,6 +85,15 @@ public class Utils {
         final Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -1);
         return cal;
+    }
+
+    /*
+    Return a String that represents the given Date object in the format "MMMM d, yyyy" (for example,
+    "July 14, 2021").
+    */
+    public static String formatDate(Date date) {
+        SimpleDateFormat written = new SimpleDateFormat("MMMM d, yyyy", Locale.US);
+        return written.format(date);
     }
 
     /*
