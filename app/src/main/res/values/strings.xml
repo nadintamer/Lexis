@@ -14,4 +14,6 @@
     <string name="save_label">Save</string>
     <string name="total_words_studied_label">Total words studied</string>
     <string name="currently_learning_label">Currently learning</string>
+    <string name="confirm_password_label">confirm password</string>
+    <string name="change_password_label">change password</string>
 </resources>
