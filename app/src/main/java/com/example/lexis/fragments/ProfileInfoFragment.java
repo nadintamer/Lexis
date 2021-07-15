@@ -6,11 +6,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.lexis.databinding.FragmentProfileInfoBinding;
+import com.example.lexis.models.Word;
 import com.example.lexis.utilities.Utils;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -18,6 +20,8 @@ import com.parse.ParseUser;
 import org.parceler.Parcels;
 
 public class ProfileInfoFragment extends Fragment {
+
+    private static final String TAG = "ProfileInfoFragment";
 
     FragmentProfileInfoBinding binding;
     ParseUser user;
@@ -53,19 +57,41 @@ public class ProfileInfoFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        setHasOptionsMenu(true);
+        String targetLanguage = Utils.getFullLanguage(Utils.getCurrentTargetLanguage());
+        String flag = Utils.getFlagEmoji(Utils.getCurrentTargetLanguage());
+
         binding.tvUsername.setText(user.getUsername());
-        // TODO: replace with Utils.getCurrentTargetLanguage() & add language flag once previous
-        //  PR is merged
-        String targetLanguage = Utils.getFullLanguage(user.getString("targetLanguage"));
-        binding.tvTargetLanguage.setText(targetLanguage);
-        binding.tvVocabularyTarget.setText(String.format("%s words seen", targetLanguage));
-        binding.tvNumTarget.setText(String.valueOf(getNumWordsSeen(true)));
-        binding.tvNumTotal.setText(String.valueOf(getNumWordsSeen(false)));
+        binding.tvTargetLanguage.setText(String.format("%s %s", flag, targetLanguage));
+        binding.tvVocabularyTarget.setText(String.format("%s words studied", targetLanguage));
+
+        setNumWordsSeen(true); // target language
+        setNumWordsSeen(false); // total
     }
 
-    // TODO: implement once previous PR is merged
-    private int getNumWordsSeen(Boolean targetOnly) {
-        return 0;
+    /*
+    Set the contents of the text views with information about the number of words the user studied.
+    If targetOnly is true, the number of words studied in the target language will be counted. If
+    it is false, all the words the user has studied (in any language) will be counted.
+    */
+    private void setNumWordsSeen(Boolean targetOnly) {
+        ParseQuery<Word> query = ParseQuery.getQuery(Word.class);
+        query.include(Word.KEY_USER);
+        query.whereEqualTo(Word.KEY_USER, ParseUser.getCurrentUser());
+        if (targetOnly) {
+            query.whereEqualTo(Word.KEY_TARGET_LANGUAGE, Utils.getCurrentTargetLanguage());
+        }
+        query.findInBackground((words, e) -> {
+            if (e != null) {
+                Log.e(TAG, "Issue with getting vocabulary size", e);
+                return;
+            }
+
+            String numWords = String.valueOf(words.size());
+            if (targetOnly) {
+                binding.tvNumTarget.setText(numWords);
+            } else {
+                binding.tvNumTotal.setText(numWords);
+            }
+        });
     }
 }

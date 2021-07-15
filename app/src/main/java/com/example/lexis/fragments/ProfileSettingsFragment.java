@@ -11,19 +11,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.example.lexis.R;
 import com.example.lexis.databinding.FragmentProfileSettingsBinding;
+import com.example.lexis.utilities.Utils;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import org.parceler.Parcels;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ProfileSettingsFragment extends Fragment {
 
@@ -62,8 +59,7 @@ public class ProfileSettingsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // TODO: replace with Utils.getCurrentTargetLanguage()
-        binding.spinnerLanguage.setSelection(languageCodes.indexOf(user.getString("targetLanguage")));
+        binding.spinnerLanguage.setSelection(languageCodes.indexOf(Utils.getCurrentTargetLanguage()));
         binding.btnSave.setOnClickListener(v -> {
             int selectedItemPosition = binding.spinnerLanguage.getSelectedItemPosition();
             user.put("targetLanguage", languageCodes.get(selectedItemPosition));

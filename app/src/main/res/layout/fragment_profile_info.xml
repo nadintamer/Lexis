@@ -51,7 +51,7 @@
         android:layout_marginStart="30dp"
         android:textColor="@color/black"
         android:textSize="20sp"
-        tools:text="French words seen" />
+        tools:text="French words studied" />
 
     <TextView
         android:id="@+id/tvNumTarget"
@@ -75,7 +75,7 @@
         android:layout_marginStart="30dp"
         android:textColor="@color/black"
         android:textSize="20sp"
-        android:text="Total words seen" />
+        android:text="@string/total_words_studied_label" />
 
     <TextView
         android:id="@+id/tvNumTotal"
