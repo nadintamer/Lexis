@@ -88,9 +88,10 @@ public class Utils {
     Return the current target language of the logged-in user.
     */
     public static String getCurrentTargetLanguage() {
-        ParseQuery<ParseUser> query = ParseUser.getQuery();
-        query.whereEqualTo("objectId", ParseUser.getCurrentUser().getObjectId());
+        String objectId = ParseUser.getCurrentUser().getObjectId();
         try {
+            ParseQuery<ParseUser> query = ParseUser.getQuery();
+            query.whereEqualTo("objectId", objectId);
             return query.getFirst().getString("targetLanguage");
         } catch (ParseException e) {
             Log.e(TAG, "Error fetching target language", e);

@@ -1,7 +1,10 @@
 package com.example.lexis.models;
 
+import android.util.Log;
+
 import com.example.lexis.utilities.TranslateUtils;
 import com.example.lexis.utilities.Utils;
+import com.google.cloud.translate.TranslateException;
 import com.parse.ParseUser;
 
 import org.parceler.Parcel;
@@ -11,6 +14,9 @@ import java.util.List;
 
 @Parcel
 public class Article {
+
+    private static final String TAG = "Article";
+
     private String title;
     private String body;
     private String source;
@@ -69,9 +75,14 @@ public class Article {
         String targetLanguage = Utils.getCurrentTargetLanguage();
         language = targetLanguage;
         for (int i = start; i < words.length; i += interval) {
-            translatedIndices.add(i);
-            originalWords.add(words[i]);
-            words[i] = TranslateUtils.translateSingleWord(words[i], targetLanguage);
+            try {
+                String translated = TranslateUtils.translateSingleWord(words[i], targetLanguage);
+                translatedIndices.add(i);
+                originalWords.add(words[i]);
+                words[i] = translated;
+            } catch (TranslateException e) {
+                Log.e(TAG, "Error translating word: " + words[i], e);
+            }
         }
     }
 }
