@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,6 +21,7 @@ import com.example.lexis.R;
 import com.example.lexis.databinding.FragmentProfileSettingsBinding;
 import com.example.lexis.utilities.Utils;
 import com.google.android.material.navigation.NavigationView;
+import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
@@ -98,8 +100,12 @@ public class ProfileSettingsFragment extends Fragment {
                 showErrorMessage(e);
                 return;
             }
-            Toast.makeText(getActivity(), "Profile updated successfully!", Toast.LENGTH_SHORT).show();
-            resetToProfileInfoFragment();
+            if (!password.isEmpty()) {
+                logInWithNewPassword(password);
+            } else {
+                Toast.makeText(getActivity(), "Profile updated successfully!", Toast.LENGTH_SHORT).show();
+                resetToProfileInfoFragment();
+            }
         });
     }
 
@@ -107,6 +113,7 @@ public class ProfileSettingsFragment extends Fragment {
     Display the error message from Parse to the user in a Toast.
     */
     private void showErrorMessage(ParseException e) {
+        Log.e("Settings", "Exception", e);
         String errorMessage = Utils.getUserErrorMessage(e, "Error with updating information!");
         Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
     }
@@ -128,5 +135,16 @@ public class ProfileSettingsFragment extends Fragment {
         Menu menuNav = ((NavigationView) getActivity().findViewById(R.id.navView)).getMenu();
         MenuItem profile = menuNav.getItem(0);
         profile.setChecked(true);
+    }
+
+    private void logInWithNewPassword(String password) {
+        ParseUser.logInInBackground(user.getUsername(), password, (user, e) -> {
+            if (e != null) {
+                Toast.makeText(getActivity(), "Error updating password!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Toast.makeText(getActivity(), "Profile updated successfully!", Toast.LENGTH_SHORT).show();
+            resetToProfileInfoFragment();
+        });
     }
 }
