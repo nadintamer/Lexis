@@ -87,7 +87,6 @@ public class ArticleFragment extends Fragment {
         int curr = 0; // keep track of what index of the translated words we are on
         for (int i = 0; i < words.length; i++) {
             int start = spannableStringBuilder.length();
-            spannableStringBuilder.append(words[i]).append(" ");
             // TODO: some way to only do the translated words? other ones all have the same format
 
             // the index we're at represents a translated word
@@ -95,11 +94,12 @@ public class ArticleFragment extends Fragment {
                 final int translatedWordIndex = i;
                 final int originalWordIndex = curr;
 
-                // strip punctuation and store indices where letters in target word start and end
+                // strip punctuation and store indices where letters in target word start/end
                 // so we don't highlight leading or trailing punctuation
+                String targetLanguage = words[translatedWordIndex]; // already stripped of punctuation
+                String englishWithPunctuation = article.getOriginalWords().get(originalWordIndex);
                 int[] targetStartEnd = new int[2];
-                String targetLanguage = Utils.stripPunctuation(words[translatedWordIndex], targetStartEnd);
-                String english = Utils.stripPunctuation(article.getOriginalWords().get(originalWordIndex), null);
+                String english = Utils.stripPunctuation(englishWithPunctuation, targetStartEnd);
 
                 ClickableSpan clickableSpan = new ClickableSpan() {
                     @Override
@@ -117,12 +117,18 @@ public class ArticleFragment extends Fragment {
                         ds.setUnderlineText(false);
                     }
                 };
-                BackgroundColorSpan highlightedSpan = new BackgroundColorSpan(getResources().getColor(R.color.mellow_apricot));
+
+                // add leading & trailing punctuation back in for display
+                String translationWithPunctuation = englishWithPunctuation.substring(0, targetStartEnd[0]) + words[i] + englishWithPunctuation.substring(targetStartEnd[1]);
+                spannableStringBuilder.append(translationWithPunctuation).append(" ");
 
                 // make text clickable & highlighted
-                spannableStringBuilder.setSpan(clickableSpan, start + targetStartEnd[0], start + targetStartEnd[1], Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                spannableStringBuilder.setSpan(highlightedSpan, start + targetStartEnd[0], start + targetStartEnd[1], Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                BackgroundColorSpan highlightedSpan = new BackgroundColorSpan(getResources().getColor(R.color.mellow_apricot));
+                spannableStringBuilder.setSpan(clickableSpan, start + targetStartEnd[0], start + targetStartEnd[0] + words[i].length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannableStringBuilder.setSpan(highlightedSpan, start + targetStartEnd[0], start + targetStartEnd[0] + words[i].length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 curr++;
+            } else { // regular english word
+                spannableStringBuilder.append(words[i]).append(" ");
             }
         }
 

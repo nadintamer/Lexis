@@ -67,4 +67,7 @@ dependencies {
 
     // SwipeRefreshLayout for home feed
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+
+    // Apache string utils for escaping HTML
+    implementation 'org.apache.commons:commons-text:1.9'
 }
