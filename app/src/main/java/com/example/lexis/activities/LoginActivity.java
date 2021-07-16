@@ -4,10 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Toast;
 
-import com.example.lexis.R;
 import com.example.lexis.databinding.ActivityLoginBinding;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -34,6 +32,10 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /*
+    Attempt to log user in with the provided username and password; navigate to main activity
+    if successful.
+    */
     private void loginUser(String username, String password) {
         ParseUser.logInInBackground(username, password, (user, e) -> {
             if (e != null) {
@@ -44,6 +46,9 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /*
+    Displays the appropriate log-in error message to the user through a Toast.
+    */
     private void showErrorMessage(ParseException e) {
         String errorMessage;
         switch (e.getCode()) {

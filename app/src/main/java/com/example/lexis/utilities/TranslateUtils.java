@@ -10,8 +10,6 @@ import com.google.cloud.translate.TranslateException;
 import com.google.cloud.translate.TranslateOptions;
 import com.google.cloud.translate.Translation;
 
-import org.json.JSONException;
-
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -41,7 +39,6 @@ public class TranslateUtils {
     Translate a single word given by originalWord into the target language.
     */
     public static String translateSingleWord(String originalWord, String targetLanguage) throws TranslateException {
-        // TODO: check the bug with translating corporate
         Translation translation = translate.translate(originalWord, Translate.TranslateOption.targetLanguage(targetLanguage), Translate.TranslateOption.model("base"));
         return translation.getTranslatedText(); // TODO: potentially look into providing more context?
     }

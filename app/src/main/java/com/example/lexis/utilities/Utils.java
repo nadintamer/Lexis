@@ -147,6 +147,10 @@ public class Utils {
         }
     }
 
+    /*
+    Return the appropriate error message for the code in the given exception; return the default
+    message if none of the listed errors apply.
+    */
     public static String getUserErrorMessage(ParseException e, String defaultMessage) {
         String errorMessage;
         switch (e.getCode()) {

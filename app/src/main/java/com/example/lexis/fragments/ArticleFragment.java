@@ -91,12 +91,11 @@ public class ArticleFragment extends Fragment {
 
             // the index we're at represents a translated word
             if (curr < article.getTranslatedIndices().size() && article.getTranslatedIndices().get(curr) == i) {
-                final int translatedWordIndex = i;
                 final int originalWordIndex = curr;
 
                 // strip punctuation and store indices where letters in target word start/end
                 // so we don't highlight leading or trailing punctuation
-                String targetLanguage = words[translatedWordIndex]; // already stripped of punctuation
+                String targetLanguage = words[i]; // already stripped of punctuation
                 String englishWithPunctuation = article.getOriginalWords().get(originalWordIndex);
                 int[] targetStartEnd = new int[2];
                 String english = Utils.stripPunctuation(englishWithPunctuation, targetStartEnd);
@@ -119,13 +118,19 @@ public class ArticleFragment extends Fragment {
                 };
 
                 // add leading & trailing punctuation back in for display
-                String translationWithPunctuation = englishWithPunctuation.substring(0, targetStartEnd[0]) + words[i] + englishWithPunctuation.substring(targetStartEnd[1]);
+                String translationWithPunctuation = (
+                        englishWithPunctuation.substring(0, targetStartEnd[0]) +
+                                words[i] +
+                                englishWithPunctuation.substring(targetStartEnd[1]));
                 spannableStringBuilder.append(translationWithPunctuation).append(" ");
+
+                int actualWordStart = start + targetStartEnd[0]; // skip leading punctuation
+                int actualWordEnd = actualWordStart + words[i].length();
 
                 // make text clickable & highlighted
                 BackgroundColorSpan highlightedSpan = new BackgroundColorSpan(getResources().getColor(R.color.mellow_apricot));
-                spannableStringBuilder.setSpan(clickableSpan, start + targetStartEnd[0], start + targetStartEnd[0] + words[i].length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                spannableStringBuilder.setSpan(highlightedSpan, start + targetStartEnd[0], start + targetStartEnd[0] + words[i].length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannableStringBuilder.setSpan(clickableSpan, actualWordStart, actualWordEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannableStringBuilder.setSpan(highlightedSpan, actualWordStart, actualWordEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 curr++;
             } else { // regular english word
                 spannableStringBuilder.append(words[i]).append(" ");

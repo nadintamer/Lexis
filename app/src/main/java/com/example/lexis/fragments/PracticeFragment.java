@@ -13,12 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.lexis.R;
-import com.example.lexis.adapters.ArticlesAdapter;
 import com.example.lexis.adapters.VocabularyAdapter;
 import com.example.lexis.databinding.FragmentPracticeBinding;
 import com.example.lexis.models.Word;
-import com.example.lexis.utilities.Utils;
-import com.parse.Parse;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
@@ -37,7 +34,7 @@ public class PracticeFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentPracticeBinding.inflate(inflater);
         return binding.getRoot();
