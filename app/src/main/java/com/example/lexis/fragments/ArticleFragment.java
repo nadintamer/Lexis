@@ -14,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -27,16 +26,11 @@ import com.example.lexis.databinding.FragmentArticleBinding;
 import com.example.lexis.models.Article;
 import com.example.lexis.models.Word;
 import com.example.lexis.utilities.Utils;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.parse.GetCallback;
-import com.parse.ParseException;
-import com.parse.ParseFile;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import org.parceler.Parcels;
 
-import java.util.ArrayList;
 
 public class ArticleFragment extends Fragment {
 
@@ -69,7 +63,7 @@ public class ArticleFragment extends Fragment {
         // only translate words if we haven't previously done so or if the user has changed their
         // target language since the article's translation
         String currentTargetLanguage = Utils.getCurrentTargetLanguage();
-        Boolean isCorrectLanguage = article.getLanguage().equals(currentTargetLanguage);
+        boolean isCorrectLanguage = article.getLanguage().equals(currentTargetLanguage);
         if (article.getWordList() == null || !isCorrectLanguage) {
             article.translateWordsOnInterval(3, 60);
         }
@@ -101,13 +95,17 @@ public class ArticleFragment extends Fragment {
                 final int translatedWordIndex = i;
                 final int originalWordIndex = curr;
 
+                // strip punctuation and store indices where letters in target word start and end
+                // so we don't highlight leading or trailing punctuation
+                int[] targetStartEnd = new int[2];
+                String targetLanguage = Utils.stripPunctuation(words[translatedWordIndex], targetStartEnd);
+                String english = Utils.stripPunctuation(article.getOriginalWords().get(originalWordIndex), null);
+
                 ClickableSpan clickableSpan = new ClickableSpan() {
                     @Override
                     public void onClick(View textView) {
                         // show word meaning dialog when clicked
                         Rect wordPosition = Utils.getClickedWordPosition((TextView) textView, this);
-                        String targetLanguage = words[translatedWordIndex];
-                        String english = article.getOriginalWords().get(originalWordIndex);
                         launchWordDialog(targetLanguage, english, wordPosition.left, wordPosition.top, wordPosition.width());
                         addWordToDatabase(targetLanguage, english);
                     }
@@ -122,8 +120,8 @@ public class ArticleFragment extends Fragment {
                 BackgroundColorSpan highlightedSpan = new BackgroundColorSpan(getResources().getColor(R.color.mellow_apricot));
 
                 // make text clickable & highlighted
-                spannableStringBuilder.setSpan(clickableSpan, start, spannableStringBuilder.length() - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                spannableStringBuilder.setSpan(highlightedSpan, start, spannableStringBuilder.length() - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannableStringBuilder.setSpan(clickableSpan, start + targetStartEnd[0], start + targetStartEnd[1], Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannableStringBuilder.setSpan(highlightedSpan, start + targetStartEnd[0], start + targetStartEnd[1], Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 curr++;
             }
         }

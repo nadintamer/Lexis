@@ -17,6 +17,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Utils {
 
@@ -167,5 +169,28 @@ public class Utils {
                 errorMessage = defaultMessage;
         }
         return errorMessage;
+    }
+
+    /*
+    Strip leading and trailing punctuation from the given string. If an int array is provided,
+    store the indices where the stripped word starts and ends within the original string.
+    */
+    public static String stripPunctuation(String s, int[] ind) {
+        String noPunctuationWord = s;
+        int wordBegin = 0;
+        int wordEnd = s.length() - 1;
+
+        Pattern p = Pattern.compile("\\w+");
+        Matcher m = p.matcher(s);
+        if (m.find()) {
+            wordBegin = m.start();
+            wordEnd = m.end();
+            noPunctuationWord = s.substring(wordBegin, wordEnd);
+        }
+        if (ind != null) { // client has access to start and end indices
+            ind[0] = wordBegin;
+            ind[1] = wordEnd;
+        }
+        return noPunctuationWord;
     }
 }
