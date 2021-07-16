@@ -7,7 +7,6 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
-import android.text.style.BackgroundColorSpan;
 import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,6 +25,7 @@ import com.example.lexis.R;
 import com.example.lexis.databinding.FragmentArticleBinding;
 import com.example.lexis.models.Article;
 import com.example.lexis.models.Word;
+import com.example.lexis.utilities.RoundedHighlightSpan;
 import com.example.lexis.utilities.Utils;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -63,7 +63,7 @@ public class ArticleFragment extends Fragment {
         // only translate words if we haven't previously done so or if the user has changed their
         // target language since the article's translation
         String currentTargetLanguage = Utils.getCurrentTargetLanguage();
-        Boolean isCorrectLanguage = article.getLanguage().equals(currentTargetLanguage);
+        boolean isCorrectLanguage = article.getLanguage().equals(currentTargetLanguage);
         if (article.getWordList() == null || !isCorrectLanguage) {
             article.translateWordsOnInterval(3, 60);
         }
@@ -121,11 +121,10 @@ public class ArticleFragment extends Fragment {
                         ds.setUnderlineText(false);
                     }
                 };
-                BackgroundColorSpan highlightedSpan = new BackgroundColorSpan(getResources().getColor(R.color.mellow_apricot));
 
                 // make text clickable & highlighted
                 spannableStringBuilder.setSpan(clickableSpan, start, spannableStringBuilder.length() - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                spannableStringBuilder.setSpan(highlightedSpan, start, spannableStringBuilder.length() - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannableStringBuilder.setSpan(new RoundedHighlightSpan(), start, spannableStringBuilder.length() - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 curr++;
             }
         }
