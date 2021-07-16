@@ -75,11 +75,15 @@ public class Article {
         language = targetLanguage;
         for (int i = start; i < words.length; i += interval) {
             String currentWord = words[i];
+
+            // TODO: currently effectively stripping punctuation twice -- find a better way to do it?
+            int[] punctStartEnd = new int[2];
+            String stripped = Utils.stripPunctuation(currentWord, punctStartEnd);
             try {
-                String translated = TranslateUtils.translateSingleWord(currentWord, targetLanguage);
+                String translated = TranslateUtils.translateSingleWord(stripped, targetLanguage);
                 translatedIndices.add(i);
                 originalWords.add(words[i]);
-                words[i] = translated;
+                words[i] = currentWord.substring(0, punctStartEnd[0]) + translated + currentWord.substring(punctStartEnd[1]);
             } catch (TranslateException e) {
                 Log.e(TAG, "Error translating word: " + words[i], e);
             }
