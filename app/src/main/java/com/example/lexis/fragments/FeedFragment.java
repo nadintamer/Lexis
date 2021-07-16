@@ -20,6 +20,7 @@ import com.example.lexis.R;
 import com.example.lexis.adapters.ArticlesAdapter;
 import com.example.lexis.databinding.FragmentFeedBinding;
 import com.example.lexis.models.Article;
+import com.example.lexis.utilities.Const;
 import com.example.lexis.utilities.Utils;
 
 import org.json.JSONArray;
@@ -78,6 +79,8 @@ public class FeedFragment extends Fragment {
                 R.color.light_cyan,
                 R.color.orange_peel,
                 R.color.mellow_apricot);
+
+        Utils.setLanguageLogo(binding.toolbar.ivLogo);
     }
 
     /*

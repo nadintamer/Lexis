@@ -14,9 +14,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -27,16 +27,10 @@ import com.example.lexis.databinding.FragmentArticleBinding;
 import com.example.lexis.models.Article;
 import com.example.lexis.models.Word;
 import com.example.lexis.utilities.Utils;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.parse.GetCallback;
-import com.parse.ParseException;
-import com.parse.ParseFile;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import org.parceler.Parcels;
-
-import java.util.ArrayList;
 
 public class ArticleFragment extends Fragment {
 
@@ -80,6 +74,14 @@ public class ArticleFragment extends Fragment {
 
         // needed so that translated words are clickable
         binding.tvBody.setMovementMethod(LinkMovementMethod.getInstance());
+
+        // set up toolbar with custom back button
+        AppCompatActivity activity = ((AppCompatActivity) getActivity());
+        activity.setSupportActionBar(binding.toolbar.getRoot());
+        activity.getSupportActionBar().setTitle("");
+        binding.toolbar.getRoot().setNavigationIcon(R.drawable.back_arrow);
+        binding.toolbar.getRoot().getNavigationIcon().setTint(getResources().getColor(R.color.black));
+        binding.toolbar.getRoot().setNavigationOnClickListener(v -> activity.onBackPressed());
     }
 
     /*
