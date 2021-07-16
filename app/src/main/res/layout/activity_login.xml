@@ -8,6 +8,13 @@
     android:gravity="center"
     tools:context=".activities.LoginActivity">
 
+    <ImageView
+        android:id="@+id/ivLogo"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="-100dp"
+        android:layout_marginBottom="30dp" />
+
     <TextView
         android:id="@+id/tvAppName"
         android:layout_width="wrap_content"
