@@ -17,8 +17,7 @@
         android:layout_below="@+id/toolbar"
         android:layout_centerInParent="true"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:translationZ="10dp" />
+        android:layout_height="match_parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnForgot"
@@ -28,6 +27,7 @@
         android:layout_marginStart="50dp"
         android:layout_above="@+id/tvForgotHint"
         android:layout_marginBottom="10dp"
+        android:clickable="true"
         android:src="@drawable/question_icon"
         app:backgroundTint="@color/white"
         app:fabCustomSize="65dp"
@@ -54,6 +54,7 @@
         android:layout_above="@+id/tvKnowHint"
         android:layout_marginBottom="10dp"
         android:layout_marginEnd="50dp"
+        android:clickable="true"
         android:src="@drawable/lightbulb_icon"
         app:backgroundTint="@color/white"
         app:fabCustomSize="65dp"

@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.Toast;
 
 import com.example.lexis.R;
@@ -25,7 +26,9 @@ import com.parse.ParseUser;
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager;
 import com.yuyakaido.android.cardstackview.CardStackListener;
 import com.yuyakaido.android.cardstackview.Direction;
+import com.yuyakaido.android.cardstackview.Duration;
 import com.yuyakaido.android.cardstackview.StackFrom;
+import com.yuyakaido.android.cardstackview.SwipeAnimationSetting;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +71,30 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
 
         binding.stackFlashcards.setLayoutManager(cardLayoutManager);
         binding.stackFlashcards.setAdapter(adapter);
+
+        // set up automatic swiping for buttons
+        binding.btnForgot.setRippleColor(getResources().getColor(R.color.deep_champagne));
+        binding.btnKnow.setRippleColor(getResources().getColor(R.color.light_cyan));
+
+        binding.btnForgot.setOnClickListener(v -> {
+            SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
+                    .setDirection(Direction.Left)
+                    .setDuration(Duration.Normal.duration)
+                    .setInterpolator(new AccelerateInterpolator())
+                    .build();
+            cardLayoutManager.setSwipeAnimationSetting(setting);
+            binding.stackFlashcards.swipe();
+        });
+
+        binding.btnKnow.setOnClickListener(v -> {
+            SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
+                    .setDirection(Direction.Right)
+                    .setDuration(Duration.Normal.duration)
+                    .setInterpolator(new AccelerateInterpolator())
+                    .build();
+            cardLayoutManager.setSwipeAnimationSetting(setting);
+            binding.stackFlashcards.swipe();
+        });
 
         // set up toolbar with custom back button
         AppCompatActivity activity = ((AppCompatActivity) getActivity());
