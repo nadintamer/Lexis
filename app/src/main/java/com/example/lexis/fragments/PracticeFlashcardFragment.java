@@ -146,6 +146,7 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
 
     @Override
     public void onCardSwiped(Direction direction) {
+        binding.stackFlashcards.setTranslationZ(0);
         binding.btnForgot.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
         binding.btnKnow.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
 
@@ -161,6 +162,8 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
 
     @Override
     public void onCardDragging(Direction direction, float ratio) {
+        binding.stackFlashcards.setTranslationZ(100);
+
         if (direction == Direction.Left) {
             binding.btnKnow.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
             binding.btnForgot.setBackgroundTintList(ColorStateList.valueOf(
@@ -178,6 +181,7 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
 
     @Override
     public void onCardCanceled() {
+        binding.stackFlashcards.setTranslationZ(0);
         binding.btnForgot.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
         binding.btnKnow.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
     }
