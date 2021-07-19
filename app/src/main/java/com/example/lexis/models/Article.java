@@ -5,8 +5,8 @@ import android.util.Log;
 import com.example.lexis.utilities.TranslateUtils;
 import com.example.lexis.utilities.Utils;
 import com.google.cloud.translate.TranslateException;
-import com.parse.ParseUser;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.parceler.Parcel;
 
 import java.util.ArrayList;
@@ -71,13 +71,14 @@ public class Article {
     */
     public void translateWordsOnInterval(int start, int interval) {
         // TODO: something to consider -- populate words as user scrolls, rather than all at once
-        // TODO: deal with punctuation around words (comma, parenthesis, period)
         words = body.split("\\s+"); // split on whitespace
         String targetLanguage = Utils.getCurrentTargetLanguage();
         language = targetLanguage;
         for (int i = start; i < words.length; i += interval) {
+            String currentWord = words[i];
+            String stripped = Utils.stripPunctuation(currentWord, null);
             try {
-                String translated = TranslateUtils.translateSingleWord(words[i], targetLanguage);
+                String translated = StringEscapeUtils.unescapeHtml4(TranslateUtils.translateSingleWord(stripped, targetLanguage));
                 translatedIndices.add(i);
                 originalWords.add(words[i]);
                 words[i] = translated;

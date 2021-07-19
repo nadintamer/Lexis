@@ -1,14 +1,12 @@
 package com.example.lexis.fragments;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
-import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -20,7 +18,6 @@ import android.view.ViewGroup;
 import com.example.lexis.R;
 import com.example.lexis.activities.LoginActivity;
 import com.example.lexis.databinding.FragmentProfileBinding;
-import com.example.lexis.utilities.Const;
 import com.example.lexis.utilities.Utils;
 import com.google.android.material.navigation.NavigationView;
 import com.parse.ParseUser;

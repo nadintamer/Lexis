@@ -25,6 +25,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
+import org.apache.commons.validator.routines.EmailValidator;
 import org.parceler.Parcels;
 
 public class ProfileSettingsFragment extends Fragment {
@@ -78,6 +79,9 @@ public class ProfileSettingsFragment extends Fragment {
 
         if (email.isEmpty()) {
             Toast.makeText(getActivity(), "E-mail cannot be empty!", Toast.LENGTH_SHORT).show();
+            return;
+        } else if (!EmailValidator.getInstance().isValid(email)) {
+            Toast.makeText(getActivity(), "E-mail is not valid!", Toast.LENGTH_SHORT).show();
             return;
         } else if (!password.equals(passwordConfirm)) {
             Toast.makeText(getActivity(), "Passwords don't match!", Toast.LENGTH_SHORT).show();

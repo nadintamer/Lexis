@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
         TranslateUtils.getTranslateService(this);
 
+        // set up tab navigation
         binding.bottomNavigation.setOnNavigationItemSelectedListener(item -> {
             switchToSelectedFragment(item);
             return true;
@@ -34,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
         binding.bottomNavigation.setSelectedItemId(R.id.action_home); // default tab is home
     }
 
+    /*
+    Switch to the appropriate fragment selected through the bottom tab navigation.
+    */
     private void switchToSelectedFragment(MenuItem item) {
         final FragmentManager fragmentManager = getSupportFragmentManager();
         final Fragment feedFragment = new FeedFragment();

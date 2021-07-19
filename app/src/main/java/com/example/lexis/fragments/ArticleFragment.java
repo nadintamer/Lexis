@@ -95,21 +95,24 @@ public class ArticleFragment extends Fragment {
         int curr = 0; // keep track of what index of the translated words we are on
         for (int i = 0; i < words.length; i++) {
             int start = spannableStringBuilder.length();
-            spannableStringBuilder.append(words[i]).append(" ");
             // TODO: some way to only do the translated words? other ones all have the same format
 
             // the index we're at represents a translated word
             if (curr < article.getTranslatedIndices().size() && article.getTranslatedIndices().get(curr) == i) {
-                final int translatedWordIndex = i;
                 final int originalWordIndex = curr;
+
+                // strip punctuation and store indices where letters in target word start/end
+                // so we don't highlight leading or trailing punctuation
+                String targetLanguage = words[i]; // already stripped of punctuation
+                String englishWithPunctuation = article.getOriginalWords().get(originalWordIndex);
+                int[] targetStartEnd = new int[2];
+                String english = Utils.stripPunctuation(englishWithPunctuation, targetStartEnd);
 
                 ClickableSpan clickableSpan = new ClickableSpan() {
                     @Override
                     public void onClick(View textView) {
                         // show word meaning dialog when clicked
                         Rect wordPosition = Utils.getClickedWordPosition((TextView) textView, this);
-                        String targetLanguage = words[translatedWordIndex];
-                        String english = article.getOriginalWords().get(originalWordIndex);
                         launchWordDialog(targetLanguage, english, wordPosition.left, wordPosition.top, wordPosition.width());
                         addWordToDatabase(targetLanguage, english);
                     }
@@ -122,10 +125,22 @@ public class ArticleFragment extends Fragment {
                     }
                 };
 
+                // add leading & trailing punctuation back in for display
+                String translationWithPunctuation = (
+                        englishWithPunctuation.substring(0, targetStartEnd[0]) +
+                                words[i] +
+                                englishWithPunctuation.substring(targetStartEnd[1]));
+                spannableStringBuilder.append(translationWithPunctuation).append(" ");
+
+                int actualWordStart = start + targetStartEnd[0]; // skip leading punctuation
+                int actualWordEnd = actualWordStart + words[i].length();
+
                 // make text clickable & highlighted
-                spannableStringBuilder.setSpan(clickableSpan, start, spannableStringBuilder.length() - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                spannableStringBuilder.setSpan(new RoundedHighlightSpan(), start, spannableStringBuilder.length() - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannableStringBuilder.setSpan(clickableSpan, actualWordStart, actualWordEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannableStringBuilder.setSpan(new RoundedHighlightSpan(), actualWordStart, actualWordEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 curr++;
+            } else { // regular english word
+                spannableStringBuilder.append(words[i]).append(" ");
             }
         }
 

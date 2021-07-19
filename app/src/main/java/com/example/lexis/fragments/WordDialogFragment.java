@@ -1,7 +1,6 @@
 package com.example.lexis.fragments;
 
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -61,7 +60,7 @@ public class WordDialogFragment extends DialogFragment {
         }
 
         Window window = getDialog().getWindow();
-        window.setGravity(Gravity.TOP | Gravity.LEFT); // set origin to top-left
+        window.setGravity(Gravity.TOP | Gravity.START); // set origin to top-left
 
         // set X and Y to be slightly above clicked word
         WindowManager.LayoutParams params = window.getAttributes();
@@ -84,7 +83,7 @@ public class WordDialogFragment extends DialogFragment {
 
         Window window = getDialog().getWindow();
         WindowManager.LayoutParams windowParams = window.getAttributes();
-        windowParams.dimAmount = 0;
+        windowParams.dimAmount = 0; // don't dim background view
         windowParams.flags |= WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         window.setAttributes(windowParams);
     }

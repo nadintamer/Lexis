@@ -38,6 +38,10 @@ public class LoginActivity extends AppCompatActivity {
         frameAnimation.start();
     }
 
+    /*
+    Attempt to log user in with the provided username and password; navigate to main activity
+    if successful.
+    */
     private void loginUser(String username, String password) {
         ParseUser.logInInBackground(username, password, (user, e) -> {
             if (e != null) {
@@ -48,6 +52,9 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /*
+    Displays the appropriate log-in error message to the user through a Toast.
+    */
     private void showErrorMessage(ParseException e) {
         String errorMessage;
         switch (e.getCode()) {
