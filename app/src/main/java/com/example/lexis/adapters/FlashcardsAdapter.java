@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.lexis.databinding.ItemFlashcardBinding;
 import com.example.lexis.models.Word;
+import com.example.lexis.utilities.Utils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -69,7 +70,10 @@ public class FlashcardsAdapter extends RecyclerView.Adapter<FlashcardsAdapter.Fl
         */
         public void bind(Word word) {
             binding.layoutFront.tvWord.setText(word.getEnglishWord());
+            binding.layoutFront.tvFlag.setText(Utils.getFlagEmoji("en"));
+
             binding.layoutRear.tvWord.setText(word.getTargetWord());
+            binding.layoutRear.tvFlag.setText(Utils.getFlagEmoji(word.getTargetLanguage()));
         }
     }
 }
