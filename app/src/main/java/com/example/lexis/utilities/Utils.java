@@ -5,6 +5,7 @@ import android.text.Layout;
 import android.text.SpannableString;
 import android.text.style.ClickableSpan;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.parse.ParseException;
@@ -167,5 +168,13 @@ public class Utils {
                 errorMessage = defaultMessage;
         }
         return errorMessage;
+    }
+
+    /*
+    Set the app logo for the current target language.
+    */
+    public static void setLanguageLogo(ImageView imageView) {
+        int currentLanguageLogo = Const.languageLogos.get(Utils.getCurrentTargetLanguage());
+        imageView.setImageResource(currentLanguageLogo);
     }
 }

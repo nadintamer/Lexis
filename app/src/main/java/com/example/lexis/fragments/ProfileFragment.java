@@ -1,6 +1,7 @@
 package com.example.lexis.fragments;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,8 @@ import android.view.ViewGroup;
 import com.example.lexis.R;
 import com.example.lexis.activities.LoginActivity;
 import com.example.lexis.databinding.FragmentProfileBinding;
+import com.example.lexis.utilities.Const;
+import com.example.lexis.utilities.Utils;
 import com.google.android.material.navigation.NavigationView;
 import com.parse.ParseUser;
 
@@ -60,17 +63,16 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // set up hamburger menu on the right side of the screen
+        // set up toolbar with logo and hamburger menu for drawer navigation
         AppCompatActivity activity = ((AppCompatActivity) getActivity());
         if (activity != null) {
             activity.setSupportActionBar(binding.toolbar.getRoot());
-            binding.toolbar.getRoot().setNavigationIcon(R.drawable.hamburger_menu_icon);
             activity.getSupportActionBar().setTitle("");
         }
 
-        setHasOptionsMenu(true);
+        Utils.setLanguageLogo(binding.toolbar.ivLogo);
+        binding.toolbar.ibHamburger.setOnClickListener(v -> openDrawerMenu());
         setupDrawerContent(binding.navView);
-        ViewCompat.setLayoutDirection(binding.toolbar.getRoot(), ViewCompat.LAYOUT_DIRECTION_RTL);
 
         // set profile info fragment as default
         Fragment infoFragment = ProfileInfoFragment.newInstance(user);
@@ -89,16 +91,10 @@ public class ProfileFragment extends Fragment {
     }
 
     /*
-    Handle menu item clicks - open drawer navigation view when hamburger icon is clicked.
+    Open drawer navigation view when hamburger icon is clicked.
     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            binding.drawerLayout.openDrawer(GravityCompat.END);
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    private void openDrawerMenu() {
+        binding.drawerLayout.openDrawer(GravityCompat.END);
     }
 
     /*

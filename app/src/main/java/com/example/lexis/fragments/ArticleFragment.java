@@ -7,16 +7,15 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
-import android.text.style.BackgroundColorSpan;
 import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -26,17 +25,12 @@ import com.example.lexis.R;
 import com.example.lexis.databinding.FragmentArticleBinding;
 import com.example.lexis.models.Article;
 import com.example.lexis.models.Word;
+import com.example.lexis.utilities.RoundedHighlightSpan;
 import com.example.lexis.utilities.Utils;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.parse.GetCallback;
-import com.parse.ParseException;
-import com.parse.ParseFile;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import org.parceler.Parcels;
-
-import java.util.ArrayList;
 
 public class ArticleFragment extends Fragment {
 
@@ -69,7 +63,7 @@ public class ArticleFragment extends Fragment {
         // only translate words if we haven't previously done so or if the user has changed their
         // target language since the article's translation
         String currentTargetLanguage = Utils.getCurrentTargetLanguage();
-        Boolean isCorrectLanguage = article.getLanguage().equals(currentTargetLanguage);
+        boolean isCorrectLanguage = article.getLanguage().equals(currentTargetLanguage);
         if (article.getWordList() == null || !isCorrectLanguage) {
             article.translateWordsOnInterval(3, 60);
         }
@@ -80,6 +74,14 @@ public class ArticleFragment extends Fragment {
 
         // needed so that translated words are clickable
         binding.tvBody.setMovementMethod(LinkMovementMethod.getInstance());
+
+        // set up toolbar with custom back button
+        AppCompatActivity activity = ((AppCompatActivity) getActivity());
+        activity.setSupportActionBar(binding.toolbar.getRoot());
+        activity.getSupportActionBar().setTitle("");
+        binding.toolbar.getRoot().setNavigationIcon(R.drawable.back_arrow);
+        binding.toolbar.getRoot().getNavigationIcon().setTint(getResources().getColor(R.color.black));
+        binding.toolbar.getRoot().setNavigationOnClickListener(v -> activity.onBackPressed());
     }
 
     /*
@@ -119,11 +121,10 @@ public class ArticleFragment extends Fragment {
                         ds.setUnderlineText(false);
                     }
                 };
-                BackgroundColorSpan highlightedSpan = new BackgroundColorSpan(getResources().getColor(R.color.mellow_apricot));
 
                 // make text clickable & highlighted
                 spannableStringBuilder.setSpan(clickableSpan, start, spannableStringBuilder.length() - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                spannableStringBuilder.setSpan(highlightedSpan, start, spannableStringBuilder.length() - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannableStringBuilder.setSpan(new RoundedHighlightSpan(), start, spannableStringBuilder.length() - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 curr++;
             }
         }

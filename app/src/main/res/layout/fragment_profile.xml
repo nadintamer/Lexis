@@ -12,7 +12,7 @@
     android:layout_height="match_parent"
     tools:context=".fragments.ProfileFragment">
         <include
-            layout="@layout/profile_toolbar"
+            layout="@layout/toolbar_profile"
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
