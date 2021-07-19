@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -32,12 +33,24 @@ public class PracticeIntroFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull @NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         binding.btnFlashcards.setOnClickListener(v -> {
             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.fragmentContainer, new PracticeFlashcardFragment()).commit();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainer,  new PracticeFlashcardFragment())
+                    .commit();
         });
+
+        // set up toolbar with custom back button
+        AppCompatActivity activity = ((AppCompatActivity) getActivity());
+        if (activity != null) {
+            activity.setSupportActionBar(binding.toolbar.getRoot());
+            activity.getSupportActionBar().setTitle("");
+            binding.toolbar.getRoot().setNavigationIcon(R.drawable.back_arrow);
+            binding.toolbar.getRoot().getNavigationIcon().setTint(getResources().getColor(R.color.black));
+            binding.toolbar.getRoot().setNavigationOnClickListener(v -> activity.onBackPressed());
+        }
     }
 }

@@ -5,9 +5,16 @@
     android:layout_height="match_parent"
     tools:context=".fragments.PracticeIntroFragment">
 
+    <include
+        layout="@layout/toolbar_article"
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <Button
         android:id="@+id/btnFlashcards"
-        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Flashcards" />

@@ -1,5 +1,7 @@
 package com.example.lexis.fragments;
 
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -74,8 +76,10 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
             activity.getSupportActionBar().setTitle("");
             binding.toolbar.getRoot().setNavigationIcon(R.drawable.back_arrow);
             binding.toolbar.getRoot().getNavigationIcon().setTint(getResources().getColor(R.color.black));
-            binding.toolbar.getRoot().setNavigationOnClickListener(v -> activity.onBackPressed());
+            binding.toolbar.getRoot().setNavigationOnClickListener(v -> returnToPracticeTab());
         }
+
+        binding.btnFinish.setOnClickListener(v -> returnToPracticeTab());
     }
 
     private void fetchVocabulary() {
@@ -93,25 +97,63 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
         });
     }
 
+    private void returnToPracticeTab() {
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        if (activity != null) {
+            activity.getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragmentContainer, new PracticeFragment())
+                    .commit();
+        }
+    }
+
+    private void finishSession() {
+        binding.btnKnow.setVisibility(View.GONE);
+        binding.btnForgot.setVisibility(View.GONE);
+        binding.tvKnowHint.setVisibility(View.GONE);
+        binding.tvForgotHint.setVisibility(View.GONE);
+        binding.stackFlashcards.setVisibility(View.GONE);
+
+        binding.tvFinished.setVisibility(View.VISIBLE);
+        binding.btnFinish.setVisibility(View.VISIBLE);
+    }
+
     @Override
     public void onCardSwiped(Direction direction) {
+        binding.btnForgot.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
+        binding.btnKnow.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
+
         if (direction == Direction.Left) {
             adapter.add(words.get(cardLayoutManager.getTopPosition() - 1));
-            Toast.makeText(getActivity(), "I don't know this card! ❌", Toast.LENGTH_SHORT).show();
-        } else if (direction == Direction.Right) {
-            Toast.makeText(getActivity(), "I know this card! ✅", Toast.LENGTH_SHORT).show();
+        }
+        adapter.remove(cardLayoutManager.getTopPosition() - 1);
+
+        if (adapter.getItemCount() == 0) {
+            finishSession();
         }
     }
 
     @Override
-    public void onCardDragging(Direction direction, float ratio) {}
+    public void onCardDragging(Direction direction, float ratio) {
+        if (direction == Direction.Left) {
+            binding.btnKnow.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
+            binding.btnForgot.setBackgroundTintList(ColorStateList.valueOf(
+                    getResources().getColor(R.color.deep_champagne)));
+        } else if (direction == Direction.Right) {
+            binding.btnForgot.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
+            binding.btnKnow.setBackgroundTintList(ColorStateList.valueOf(
+                    getResources().getColor(R.color.light_cyan)));
+        }
+    }
 
 
     @Override
     public void onCardRewound() {}
 
     @Override
-    public void onCardCanceled() {}
+    public void onCardCanceled() {
+        binding.btnForgot.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
+        binding.btnKnow.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
+    }
 
     @Override
     public void onCardAppeared(View view, int position) {}

@@ -70,7 +70,10 @@ public class PracticeFragment extends Fragment {
         // set up practice button
         binding.btnPractice.setOnClickListener(v -> {
             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.fragmentContainer, new PracticeIntroFragment()).commit();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainer, new PracticeIntroFragment())
+                    .addToBackStack(null) // add to back stack so we can return to this fragment
+                    .commit();
         });
     }
 
