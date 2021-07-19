@@ -3,9 +3,11 @@ package com.example.lexis.activities;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.example.lexis.R;
 import com.example.lexis.databinding.ActivitySignupBinding;
 import com.example.lexis.utilities.Const;
 import com.example.lexis.utilities.Utils;
@@ -31,6 +33,10 @@ public class SignupActivity extends AppCompatActivity {
             String targetLanguage = Const.languageCodes.get(selectedItemPosition);
             signUpUser(username, email, password, targetLanguage);
         });
+
+        binding.ivLogo.setBackgroundResource(R.drawable.logo_animation);
+        AnimationDrawable frameAnimation = (AnimationDrawable) binding.ivLogo.getBackground();
+        frameAnimation.start();
     }
 
     /*

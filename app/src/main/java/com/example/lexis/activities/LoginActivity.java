@@ -3,9 +3,11 @@ package com.example.lexis.activities;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.example.lexis.R;
 import com.example.lexis.databinding.ActivityLoginBinding;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -30,6 +32,10 @@ public class LoginActivity extends AppCompatActivity {
             String password = binding.etPassword.getText().toString();
             loginUser(username, password);
         });
+
+        binding.ivLogo.setBackgroundResource(R.drawable.logo_animation);
+        AnimationDrawable frameAnimation = (AnimationDrawable) binding.ivLogo.getBackground();
+        frameAnimation.start();
     }
 
     /*

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list
+    android:id="@+id/selected"
+    android:oneshot="false"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/logo_france" android:duration="2000" />
+    <item android:drawable="@drawable/logo_spain" android:duration="2000" />
+    <item android:drawable="@drawable/logo_germany" android:duration="2000" />
+    <item android:drawable="@drawable/logo_turkey" android:duration="2000" />
+</animation-list>

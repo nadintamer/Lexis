@@ -7,7 +7,6 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
-import android.text.style.BackgroundColorSpan;
 import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -25,12 +25,12 @@ import com.example.lexis.R;
 import com.example.lexis.databinding.FragmentArticleBinding;
 import com.example.lexis.models.Article;
 import com.example.lexis.models.Word;
+import com.example.lexis.utilities.RoundedHighlightSpan;
 import com.example.lexis.utilities.Utils;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import org.parceler.Parcels;
-
 
 public class ArticleFragment extends Fragment {
 
@@ -74,6 +74,14 @@ public class ArticleFragment extends Fragment {
 
         // needed so that translated words are clickable
         binding.tvBody.setMovementMethod(LinkMovementMethod.getInstance());
+
+        // set up toolbar with custom back button
+        AppCompatActivity activity = ((AppCompatActivity) getActivity());
+        activity.setSupportActionBar(binding.toolbar.getRoot());
+        activity.getSupportActionBar().setTitle("");
+        binding.toolbar.getRoot().setNavigationIcon(R.drawable.back_arrow);
+        binding.toolbar.getRoot().getNavigationIcon().setTint(getResources().getColor(R.color.black));
+        binding.toolbar.getRoot().setNavigationOnClickListener(v -> activity.onBackPressed());
     }
 
     /*
@@ -128,9 +136,8 @@ public class ArticleFragment extends Fragment {
                 int actualWordEnd = actualWordStart + words[i].length();
 
                 // make text clickable & highlighted
-                BackgroundColorSpan highlightedSpan = new BackgroundColorSpan(getResources().getColor(R.color.mellow_apricot));
                 spannableStringBuilder.setSpan(clickableSpan, actualWordStart, actualWordEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                spannableStringBuilder.setSpan(highlightedSpan, actualWordStart, actualWordEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannableStringBuilder.setSpan(new RoundedHighlightSpan(), actualWordStart, actualWordEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 curr++;
             } else { // regular english word
                 spannableStringBuilder.append(words[i]).append(" ");
