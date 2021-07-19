@@ -12,28 +12,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <eu.davidea.flipview.FlipView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvFlashcards"
         android:layout_centerInParent="true"
-        android:clickable="true"
-        app:animateDesignLayoutOnly="true">
-        <androidx.cardview.widget.CardView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="10dp">
-            <include
-                layout="@layout/flashcard_front"
-                android:id="@+id/layoutFront" />
-        </androidx.cardview.widget.CardView>
-        <androidx.cardview.widget.CardView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="10dp">
-            <include
-                layout="@layout/flashcard_rear"
-                android:id="@+id/layoutRear" />
-        </androidx.cardview.widget.CardView>
-    </eu.davidea.flipview.FlipView>
-
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:clipToPadding = "false" />
 </RelativeLayout>
