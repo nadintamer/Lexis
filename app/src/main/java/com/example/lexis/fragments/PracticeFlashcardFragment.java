@@ -4,34 +4,38 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.LinearSnapHelper;
-import androidx.recyclerview.widget.SnapHelper;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
-import com.example.lexis.adapters.ArticlesAdapter;
+import com.example.lexis.R;
 import com.example.lexis.adapters.FlashcardsAdapter;
 import com.example.lexis.databinding.FragmentPracticeFlashcardBinding;
 import com.example.lexis.models.Word;
 import com.example.lexis.utilities.Utils;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.yuyakaido.android.cardstackview.CardStackLayoutManager;
+import com.yuyakaido.android.cardstackview.CardStackListener;
+import com.yuyakaido.android.cardstackview.Direction;
+import com.yuyakaido.android.cardstackview.StackFrom;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PracticeFlashcardFragment extends Fragment {
+public class PracticeFlashcardFragment extends Fragment implements CardStackListener {
 
     private static final String TAG = "FlashcardFragment";
 
     FragmentPracticeFlashcardBinding binding;
     List<Word> words;
     FlashcardsAdapter adapter;
+    CardStackLayoutManager cardLayoutManager;
 
     public PracticeFlashcardFragment() {
         // Required empty public constructor
@@ -54,14 +58,24 @@ public class PracticeFlashcardFragment extends Fragment {
             fetchVocabulary();
         }
 
-        // set up recyclerView
+        // set up card stack view
         adapter = new FlashcardsAdapter(this, words);
-        binding.rvFlashcards.setAdapter(adapter);
-        binding.rvFlashcards.setLayoutManager(
-                new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        cardLayoutManager = new CardStackLayoutManager(getActivity(), this);
+        cardLayoutManager.setStackFrom(StackFrom.TopAndRight);
+        cardLayoutManager.setTranslationInterval(12.0f);
 
-        SnapHelper snapHelper = new LinearSnapHelper();
-        snapHelper.attachToRecyclerView(binding.rvFlashcards);
+        binding.stackFlashcards.setLayoutManager(cardLayoutManager);
+        binding.stackFlashcards.setAdapter(adapter);
+
+        // set up toolbar with custom back button
+        AppCompatActivity activity = ((AppCompatActivity) getActivity());
+        if (activity != null) {
+            activity.setSupportActionBar(binding.toolbar.getRoot());
+            activity.getSupportActionBar().setTitle("");
+            binding.toolbar.getRoot().setNavigationIcon(R.drawable.back_arrow);
+            binding.toolbar.getRoot().getNavigationIcon().setTint(getResources().getColor(R.color.black));
+            binding.toolbar.getRoot().setNavigationOnClickListener(v -> activity.onBackPressed());
+        }
     }
 
     private void fetchVocabulary() {
@@ -78,4 +92,30 @@ public class PracticeFlashcardFragment extends Fragment {
             adapter.addAll(words);
         });
     }
+
+    @Override
+    public void onCardSwiped(Direction direction) {
+        if (direction == Direction.Left) {
+            adapter.add(words.get(cardLayoutManager.getTopPosition() - 1));
+            Toast.makeText(getActivity(), "I don't know this card! ❌", Toast.LENGTH_SHORT).show();
+        } else if (direction == Direction.Right) {
+            Toast.makeText(getActivity(), "I know this card! ✅", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onCardDragging(Direction direction, float ratio) {}
+
+
+    @Override
+    public void onCardRewound() {}
+
+    @Override
+    public void onCardCanceled() {}
+
+    @Override
+    public void onCardAppeared(View view, int position) {}
+
+    @Override
+    public void onCardDisappeared(View view, int position) {}
 }

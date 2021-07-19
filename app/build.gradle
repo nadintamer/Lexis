@@ -74,5 +74,6 @@ dependencies {
 
     // Flip view & card view for flashcards
     implementation 'eu.davidea:flipview:1.2.0'
-    implementation "androidx.cardview:cardview:1.0.0"
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'com.yuyakaido.android:card-stack-view:2.3.4'
 }

@@ -5,7 +5,7 @@
     android:layout_height="275dp"
     android:layout_gravity="center"
     android:gravity="top|start"
-    android:background="@drawable/word_background_shape"
+    android:background="@drawable/feed_background_shape"
     android:orientation="vertical">
 
     <TextView

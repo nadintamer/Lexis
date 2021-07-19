@@ -46,6 +46,16 @@ public class FlashcardsAdapter extends RecyclerView.Adapter<FlashcardsAdapter.Fl
         notifyDataSetChanged();
     }
 
+    public void add(Word word) {
+        words.add(word);
+        notifyItemInserted(words.size() - 1);
+    }
+
+    public void remove(int index) {
+        words.remove(index);
+        notifyItemRemoved(index);
+    }
+
     public class FlashcardViewHolder extends RecyclerView.ViewHolder {
         ItemFlashcardBinding binding;
 

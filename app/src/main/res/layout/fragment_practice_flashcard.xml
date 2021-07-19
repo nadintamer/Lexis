@@ -7,17 +7,16 @@
     tools:context=".fragments.PracticeFlashcardFragment">
 
     <include
-        layout="@layout/toolbar_feed"
+        layout="@layout/toolbar_article"
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvFlashcards"
+    <com.yuyakaido.android.cardstackview.CardStackView
+        android:id="@+id/stackFlashcards"
+        android:layout_below="@+id/toolbar"
         android:layout_centerInParent="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
-        android:clipToPadding = "false" />
+        android:layout_height="match_parent"
+        android:backgroundTint="@color/pine_green"/>
 </RelativeLayout>
