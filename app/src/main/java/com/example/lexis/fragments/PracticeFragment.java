@@ -4,8 +4,8 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.util.Log;
@@ -17,9 +17,7 @@ import com.example.lexis.R;
 import com.example.lexis.adapters.VocabularyAdapter;
 import com.example.lexis.databinding.FragmentPracticeBinding;
 import com.example.lexis.models.Word;
-import com.example.lexis.utilities.Const;
 import com.example.lexis.utilities.Utils;
-import com.parse.Parse;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
@@ -68,6 +66,12 @@ public class PracticeFragment extends Fragment {
                 R.color.mellow_apricot);
 
         Utils.setLanguageLogo(binding.toolbar.ivLogo);
+
+        // set up practice button
+        binding.btnPractice.setOnClickListener(v -> {
+            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.fragmentContainer, new PracticeIntroFragment()).commit();
+        });
     }
 
     private void queryVocabulary() {
