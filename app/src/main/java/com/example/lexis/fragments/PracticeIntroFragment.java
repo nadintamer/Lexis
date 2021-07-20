@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import com.example.lexis.R;
 import com.example.lexis.databinding.FragmentPracticeIntroBinding;
+import com.example.lexis.utilities.Utils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -37,9 +38,11 @@ public class PracticeIntroFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         binding.btnFlashcards.setOnClickListener(v -> {
+            // TODO: insert arguments here
+            Fragment flashcardFragment = PracticeFlashcardFragment.newInstance(Utils.getCurrentTargetLanguage(), true);
             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
             fragmentManager.beginTransaction()
-                    .replace(R.id.fragmentContainer,  new PracticeFlashcardFragment())
+                    .replace(R.id.fragmentContainer,  flashcardFragment)
                     .commit();
         });
 

@@ -18,10 +18,12 @@ import java.util.List;
 public class FlashcardsAdapter extends RecyclerView.Adapter<FlashcardsAdapter.FlashcardViewHolder> {
     List<Word> words;
     Fragment fragment;
+    boolean answerInEnglish;
 
-    public FlashcardsAdapter(Fragment fragment, List<Word> words) {
+    public FlashcardsAdapter(Fragment fragment, List<Word> words, boolean answerInEnglish) {
         this.fragment = fragment;
         this.words = words;
+        this.answerInEnglish = answerInEnglish;
     }
 
     @NonNull
@@ -72,11 +74,24 @@ public class FlashcardsAdapter extends RecyclerView.Adapter<FlashcardsAdapter.Fl
             // flip card to ensure front side is always shown first
             binding.flipView.flipSilently(false);
 
-            binding.layoutFront.tvWord.setText(word.getEnglishWord());
-            binding.layoutFront.tvFlag.setText(Utils.getFlagEmoji("en"));
+            String english = word.getEnglishWord();
+            String target = word.getTargetWord();
+            String englishFlag = Utils.getFlagEmoji("en");
+            String targetFlag = Utils.getFlagEmoji(word.getTargetLanguage());
 
-            binding.layoutRear.tvWord.setText(word.getTargetWord());
-            binding.layoutRear.tvFlag.setText(Utils.getFlagEmoji(word.getTargetLanguage()));
+            if (answerInEnglish) {
+                binding.layoutFront.tvWord.setText(target);
+                binding.layoutFront.tvFlag.setText(targetFlag);
+
+                binding.layoutRear.tvWord.setText(english);
+                binding.layoutRear.tvFlag.setText(englishFlag);
+            } else {
+                binding.layoutFront.tvWord.setText(english);
+                binding.layoutFront.tvFlag.setText(englishFlag);
+
+                binding.layoutRear.tvWord.setText(target);
+                binding.layoutRear.tvFlag.setText(targetFlag);
+            }
         }
     }
 }
