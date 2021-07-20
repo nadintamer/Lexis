@@ -146,6 +146,24 @@ public class Utils {
     }
 
     /*
+    Return the appropriate spinner text with flag and full language name the given ISO language code.
+    */
+    public static String getSpinnerText(String code) {
+        return getFlagEmoji(code) + " " + getFullLanguage(code);
+    }
+
+    /*
+    Convert a list of ISO language codes into a list appropriate for displaying in a spinner.
+    */
+    public static List<String> getSpinnerList(List<String> codes) {
+        List<String> output = new ArrayList<>();
+        for (String code : codes) {
+            output.add(getSpinnerText(code));
+        }
+        return output;
+    }
+
+    /*
     Return the flag emoji associated with the given ISO language code.
     */
     public static String getFlagEmoji(String code) {

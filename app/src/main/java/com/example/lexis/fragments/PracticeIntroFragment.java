@@ -11,12 +11,14 @@ import androidx.fragment.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 
 import com.example.lexis.R;
 import com.example.lexis.databinding.FragmentPracticeIntroBinding;
 import com.example.lexis.utilities.Utils;
 
-import org.jetbrains.annotations.NotNull;
+import java.util.List;
 
 public class PracticeIntroFragment extends Fragment {
 
@@ -37,9 +39,34 @@ public class PracticeIntroFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        String targetLanguage = Utils.getSpinnerText(Utils.getCurrentTargetLanguage());
+        List<String> allLanguages = Utils.getCurrentStudiedLanguages();
+        List<String> formattedLanguages = Utils.getSpinnerList(Utils.getCurrentStudiedLanguages());
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(
+                getActivity(), android.R.layout.simple_spinner_dropdown_item, formattedLanguages);
+        binding.spinnerLanguage.setAdapter(spinnerArrayAdapter);
+        binding.spinnerLanguage.setSelection(formattedLanguages.indexOf(targetLanguage));
+
+        // answer in target language by default
+        binding.radioTarget.setText(targetLanguage);
+        binding.radioTarget.setChecked(true);
+
+        binding.spinnerLanguage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                binding.radioTarget.setText(formattedLanguages.get(position));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
         binding.btnFlashcards.setOnClickListener(v -> {
-            // TODO: insert arguments here
-            Fragment flashcardFragment = PracticeFlashcardFragment.newInstance(Utils.getCurrentTargetLanguage(), true);
+            int selectedPosition = binding.spinnerLanguage.getSelectedItemPosition();
+            String selectedLanguage = allLanguages.get(selectedPosition);
+            boolean answerInEnglish = binding.radioEnglish.isChecked();
+
+            Fragment flashcardFragment = PracticeFlashcardFragment.newInstance(selectedLanguage, answerInEnglish);
             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
             fragmentManager.beginTransaction()
                     .replace(R.id.fragmentContainer,  flashcardFragment)

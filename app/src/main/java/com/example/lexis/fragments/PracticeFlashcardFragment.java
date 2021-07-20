@@ -116,7 +116,7 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
             binding.stackFlashcards.swipe();
         });
 
-        // set up toolbar with custom back button
+        // set up toolbar with custom exit button
         AppCompatActivity activity = ((AppCompatActivity) getActivity());
         if (activity != null) {
             activity.setSupportActionBar(binding.toolbar.getRoot());
@@ -125,7 +125,7 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
                 actionBar.setTitle("");
             }
 
-            binding.toolbar.getRoot().setNavigationIcon(R.drawable.back_arrow);
+            binding.toolbar.getRoot().setNavigationIcon(R.drawable.clear_icon);
             Drawable navigationIcon = binding.toolbar.getRoot().getNavigationIcon();
             if (navigationIcon != null) {
                 navigationIcon.setTint(getResources().getColor(R.color.black));
