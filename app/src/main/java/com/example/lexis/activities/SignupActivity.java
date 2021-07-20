@@ -14,6 +14,9 @@ import com.example.lexis.utilities.Utils;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class SignupActivity extends AppCompatActivity {
 
@@ -54,6 +57,9 @@ public class SignupActivity extends AppCompatActivity {
         user.setEmail(email);
         user.setPassword(password);
         user.put("targetLanguage", targetLanguage);
+        List<String> allLanguages = new ArrayList<>();
+        allLanguages.add(targetLanguage);
+        user.put("studyingLanguages", allLanguages);
 
         user.signUpInBackground(e -> {
             if (e != null) {

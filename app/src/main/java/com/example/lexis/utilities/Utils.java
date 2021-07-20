@@ -13,9 +13,11 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -112,6 +114,21 @@ public class Utils {
             Log.e(TAG, "Error fetching target language", e);
         }
         return "";
+    }
+
+    /*
+    Return the studied languages of the logged-in user.
+    */
+    public static List<String> getCurrentStudiedLanguages() {
+        String objectId = ParseUser.getCurrentUser().getObjectId();
+        try {
+            ParseQuery<ParseUser> query = ParseUser.getQuery();
+            query.whereEqualTo("objectId", objectId);
+            return query.getFirst().getList("studyingLanguages");
+        } catch (ParseException e) {
+            Log.e(TAG, "Error fetching studied languages", e);
+        }
+        return new ArrayList<>();
     }
 
     /*

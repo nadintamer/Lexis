@@ -28,6 +28,8 @@ import com.parse.ParseUser;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.parceler.Parcels;
 
+import java.util.List;
+
 public class ProfileSettingsFragment extends Fragment {
 
     private static final String ARG_USER = "user";
@@ -89,7 +91,11 @@ public class ProfileSettingsFragment extends Fragment {
         }
 
         int selectedItemPosition = binding.spinnerLanguage.getSelectedItemPosition();
-        user.put("targetLanguage", Const.languageCodes.get(selectedItemPosition));
+        String targetLanguage = Const.languageCodes.get(selectedItemPosition);
+        List<String> allLanguages = user.getList("studyingLanguages");
+        allLanguages.add(targetLanguage);
+        user.put("targetLanguage", targetLanguage);
+        user.put("studyingLanguages", allLanguages);
         user.setEmail(email);
         if (!password.isEmpty()) {
             user.setPassword(password); // only set new password if field is filled out
