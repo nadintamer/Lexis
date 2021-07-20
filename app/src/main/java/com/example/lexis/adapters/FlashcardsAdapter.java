@@ -29,7 +29,8 @@ public class FlashcardsAdapter extends RecyclerView.Adapter<FlashcardsAdapter.Fl
     @NonNull
     @Override
     public FlashcardViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
-        ItemFlashcardBinding binding = ItemFlashcardBinding.inflate(LayoutInflater.from(fragment.getActivity()), parent, false);
+        ItemFlashcardBinding binding = ItemFlashcardBinding.inflate(
+                LayoutInflater.from(fragment.getActivity()), parent, false);
         return new FlashcardsAdapter.FlashcardViewHolder(binding);
     }
 
@@ -79,6 +80,7 @@ public class FlashcardsAdapter extends RecyclerView.Adapter<FlashcardsAdapter.Fl
             String englishFlag = Utils.getFlagEmoji("en");
             String targetFlag = Utils.getFlagEmoji(word.getTargetLanguage());
 
+            // TODO: I'm not sure if there's a cleaner way to do this?
             if (answerInEnglish) {
                 binding.layoutFront.tvWord.setText(target);
                 binding.layoutFront.tvFlag.setText(targetFlag);

@@ -81,13 +81,38 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // fetch words in vocabulary
         if (words == null) {
             words = new ArrayList<>();
             fetchVocabulary(targetLanguage);
         }
 
-        // set up card stack view
+        setUpCardStackView();
+        setUpButtons();
+        setUpToolbar();
+    }
+
+    /*
+    Fetch the vocabulary for the provided language and add to flashcards adapter.
+    */
+    private void fetchVocabulary(String targetLanguage) {
+        ParseQuery<Word> query = ParseQuery.getQuery(Word.class);
+        query.include(Word.KEY_USER);
+        query.whereEqualTo(Word.KEY_USER, ParseUser.getCurrentUser());
+        query.whereEqualTo(Word.KEY_TARGET_LANGUAGE, targetLanguage);
+        query.addDescendingOrder("createdAt");
+        query.findInBackground((words, e) -> {
+            if (e != null) {
+                Log.e(TAG, "Issue with getting vocabulary", e);
+                return;
+            }
+            adapter.addAll(words);
+        });
+    }
+
+    /*
+    Set up the card stack view to display the flashcards.
+    */
+    private void setUpCardStackView() {
         adapter = new FlashcardsAdapter(this, words, answerInEnglish);
         cardLayoutManager = new CardStackLayoutManager(getActivity(), this);
         cardLayoutManager.setStackFrom(StackFrom.TopAndRight);
@@ -95,8 +120,12 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
 
         binding.stackFlashcards.setLayoutManager(cardLayoutManager);
         binding.stackFlashcards.setAdapter(adapter);
+    }
 
-        // set up automatic swiping for buttons
+    /*
+    Set up buttons for automatic swiping.
+    */
+    private void setUpButtons() {
         binding.btnForgot.setRippleColor(getResources().getColor(R.color.deep_champagne));
         binding.btnKnow.setRippleColor(getResources().getColor(R.color.light_cyan));
 
@@ -120,7 +149,13 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
             binding.stackFlashcards.swipe();
         });
 
-        // set up toolbar with custom exit button
+        binding.btnFinish.setOnClickListener(v -> returnToPracticeTab());
+    }
+
+    /*
+    Set up toolbar with a custom exit button.
+    */
+    private void setUpToolbar() {
         AppCompatActivity activity = ((AppCompatActivity) getActivity());
         if (activity != null) {
             activity.setSupportActionBar(binding.toolbar.getRoot());
@@ -136,27 +171,11 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
             }
             binding.toolbar.getRoot().setNavigationOnClickListener(v -> returnToPracticeTab());
         }
-
-        binding.btnFinish.setOnClickListener(v -> returnToPracticeTab());
-
-        wasFlipped = false;
     }
 
-    private void fetchVocabulary(String targetLanguage) {
-        ParseQuery<Word> query = ParseQuery.getQuery(Word.class);
-        query.include(Word.KEY_USER);
-        query.whereEqualTo(Word.KEY_USER, ParseUser.getCurrentUser());
-        query.whereEqualTo(Word.KEY_TARGET_LANGUAGE, targetLanguage);
-        query.addDescendingOrder("createdAt");
-        query.findInBackground((words, e) -> {
-            if (e != null) {
-                Log.e(TAG, "Issue with getting vocabulary", e);
-                return;
-            }
-            adapter.addAll(words);
-        });
-    }
-
+    /*
+    Exit the practice session and return to the vocabulary view.
+    */
     private void returnToPracticeTab() {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         if (activity != null) {
@@ -166,6 +185,9 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
         }
     }
 
+    /*
+    Display a congratulatory message and exit button (called when all cards have been viewed).
+    */
     private void finishSession() {
         binding.btnKnow.setVisibility(View.GONE);
         binding.btnForgot.setVisibility(View.GONE);
@@ -177,6 +199,9 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
         binding.btnFinish.setVisibility(View.VISIBLE);
     }
 
+    /*
+    Callbacks for card stack view.
+    */
     @Override
     public void onCardSwiped(Direction direction) {
         binding.stackFlashcards.setTranslationZ(0);
@@ -215,10 +240,6 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
         }
     }
 
-
-    @Override
-    public void onCardRewound() {}
-
     @Override
     public void onCardCanceled() {
         if (!wasFlipped) {
@@ -238,4 +259,7 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
 
     @Override
     public void onCardDisappeared(View view, int position) {}
+
+    @Override
+    public void onCardRewound() {}
 }

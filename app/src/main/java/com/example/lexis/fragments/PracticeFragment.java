@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -31,9 +32,7 @@ public class PracticeFragment extends Fragment {
     List<Word> vocabulary;
     VocabularyAdapter adapter;
 
-    public PracticeFragment() {
-        // Required empty public constructor
-    }
+    public PracticeFragment() {}
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -69,14 +68,20 @@ public class PracticeFragment extends Fragment {
 
         // set up practice button
         binding.btnPractice.setOnClickListener(v -> {
-            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.fragmentContainer, new PracticeIntroFragment())
-                    .addToBackStack(null) // add to back stack so we can return to this fragment
-                    .commit();
+            AppCompatActivity activity = (AppCompatActivity) getActivity();
+            if (activity != null) {
+                FragmentManager fragmentManager = activity.getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainer, new PracticeIntroFragment())
+                        .addToBackStack(null) // add to back stack so we can return to this fragment
+                        .commit();
+            }
         });
     }
 
+    /*
+    Fetch the user's vocabulary.
+    */
     private void queryVocabulary() {
         ParseQuery<Word> query = ParseQuery.getQuery(Word.class);
         query.include(Word.KEY_USER);

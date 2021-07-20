@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -253,7 +252,9 @@ public class Utils {
     Set the app logo for the current target language.
     */
     public static void setLanguageLogo(ImageView imageView) {
-        int currentLanguageLogo = Const.languageLogos.get(Utils.getCurrentTargetLanguage());
-        imageView.setImageResource(currentLanguageLogo);
+        Integer currentLanguageLogo = Const.languageLogos.get(Utils.getCurrentTargetLanguage());
+        if (currentLanguageLogo != null) {
+            imageView.setImageResource(currentLanguageLogo);
+        }
     }
 }

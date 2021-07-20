@@ -1,9 +1,11 @@
 package com.example.lexis.fragments;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -24,9 +26,7 @@ public class PracticeIntroFragment extends Fragment {
 
     FragmentPracticeIntroBinding binding;
 
-    public PracticeIntroFragment() {
-        // Required empty public constructor
-    }
+    public PracticeIntroFragment() {}
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -39,11 +39,20 @@ public class PracticeIntroFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        setUpToolbar();
+        setUpPracticeOptions();
+        binding.btnFlashcards.setOnClickListener(v -> launchFlashcardSession());
+    }
+
+    /*
+    Set up spinner and radio button components for selecting practice options.
+    */
+    private void setUpPracticeOptions() {
         String targetLanguage = Utils.getSpinnerText(Utils.getCurrentTargetLanguage());
-        List<String> allLanguages = Utils.getCurrentStudiedLanguages();
         List<String> formattedLanguages = Utils.getSpinnerList(Utils.getCurrentStudiedLanguages());
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(
                 getActivity(), android.R.layout.simple_spinner_dropdown_item, formattedLanguages);
+
         binding.spinnerLanguage.setAdapter(spinnerArrayAdapter);
         binding.spinnerLanguage.setSelection(formattedLanguages.indexOf(targetLanguage));
 
@@ -60,27 +69,45 @@ public class PracticeIntroFragment extends Fragment {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
         });
+    }
 
-        binding.btnFlashcards.setOnClickListener(v -> {
-            int selectedPosition = binding.spinnerLanguage.getSelectedItemPosition();
-            String selectedLanguage = allLanguages.get(selectedPosition);
-            boolean answerInEnglish = binding.radioEnglish.isChecked();
-
-            Fragment flashcardFragment = PracticeFlashcardFragment.newInstance(selectedLanguage, answerInEnglish);
-            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.fragmentContainer,  flashcardFragment)
-                    .commit();
-        });
-
-        // set up toolbar with custom back button
+    /*
+    Set up toolbar with a custom back button.
+    */
+    private void setUpToolbar() {
         AppCompatActivity activity = ((AppCompatActivity) getActivity());
         if (activity != null) {
             activity.setSupportActionBar(binding.toolbar.getRoot());
-            activity.getSupportActionBar().setTitle("");
+            ActionBar actionBar = activity.getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.setTitle("");
+            }
+
             binding.toolbar.getRoot().setNavigationIcon(R.drawable.back_arrow);
-            binding.toolbar.getRoot().getNavigationIcon().setTint(getResources().getColor(R.color.black));
+            Drawable navigationIcon = binding.toolbar.getRoot().getNavigationIcon();
+            if (navigationIcon != null) {
+                navigationIcon.setTint(getResources().getColor(R.color.black));
+            }
             binding.toolbar.getRoot().setNavigationOnClickListener(v -> activity.onBackPressed());
+        }
+    }
+
+    /*
+    Launch a new flashcard study session with the options selected in the interface.
+    */
+    private void launchFlashcardSession() {
+        int selectedPosition = binding.spinnerLanguage.getSelectedItemPosition();
+        List<String> allLanguages = Utils.getCurrentStudiedLanguages();
+        String selectedLanguage = allLanguages.get(selectedPosition);
+        boolean answerInEnglish = binding.radioEnglish.isChecked();
+
+        Fragment flashcardFragment = PracticeFlashcardFragment.newInstance(selectedLanguage, answerInEnglish);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        if (activity != null) {
+            FragmentManager fragmentManager = activity.getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainer, flashcardFragment)
+                    .commit();
         }
     }
 }
