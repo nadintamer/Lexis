@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
+import android.widget.Toast;
 
 import com.example.lexis.R;
 import com.example.lexis.adapters.FlashcardsAdapter;
@@ -33,6 +34,8 @@ import com.yuyakaido.android.cardstackview.SwipeAnimationSetting;
 import java.util.ArrayList;
 import java.util.List;
 
+import eu.davidea.flipview.FlipView;
+
 public class PracticeFlashcardFragment extends Fragment implements CardStackListener {
 
     private static final String TAG = "FlashcardFragment";
@@ -45,6 +48,7 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
     CardStackLayoutManager cardLayoutManager;
     String targetLanguage;
     boolean answerInEnglish;
+    boolean wasFlipped;
 
     public PracticeFlashcardFragment() {}
 
@@ -134,6 +138,8 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
         }
 
         binding.btnFinish.setOnClickListener(v -> returnToPracticeTab());
+
+        wasFlipped = false;
     }
 
     private void fetchVocabulary(String targetLanguage) {
@@ -189,6 +195,13 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
 
     @Override
     public void onCardDragging(Direction direction, float ratio) {
+        if (!wasFlipped) {
+            // user shouldn't be able to swipe card until they've flipped it to look at the answer
+            cardLayoutManager.setSwipeThreshold(1.0f);
+        } else {
+            cardLayoutManager.setSwipeThreshold(0.3f);
+        }
+
         binding.stackFlashcards.setTranslationZ(100);
 
         if (direction == Direction.Left) {
@@ -208,13 +221,20 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
 
     @Override
     public void onCardCanceled() {
+        if (!wasFlipped) {
+            Toast.makeText(getActivity(), "You haven't flipped this card yet! 🤔", Toast.LENGTH_SHORT).show();
+        }
         binding.stackFlashcards.setTranslationZ(0);
         binding.btnForgot.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
         binding.btnKnow.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
     }
 
     @Override
-    public void onCardAppeared(View view, int position) {}
+    public void onCardAppeared(View view, int position) {
+        wasFlipped = false;
+        FlipView flipview = view.findViewById(R.id.flipView);
+        flipview.setOnFlippingListener((flipView, checked) -> wasFlipped = true);
+    }
 
     @Override
     public void onCardDisappeared(View view, int position) {}
