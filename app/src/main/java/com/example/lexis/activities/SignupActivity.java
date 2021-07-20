@@ -58,7 +58,6 @@ public class SignupActivity extends AppCompatActivity {
         user.setPassword(password);
         user.put("targetLanguage", targetLanguage);
         List<String> allLanguages = new ArrayList<>();
-        allLanguages.add(targetLanguage);
         user.put("studyingLanguages", allLanguages);
 
         user.signUpInBackground(e -> {
