@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -129,6 +130,20 @@ public class Utils {
             Log.e(TAG, "Error fetching studied languages", e);
         }
         return new ArrayList<>();
+    }
+
+    /*
+    Update the studied languages of the logged-in user.
+    */
+    public static void setCurrentStudiedLanguages(List<String> languages) {
+        ParseUser user = ParseUser.getCurrentUser();
+        user.put("studyingLanguages", languages);
+        user.saveInBackground(e -> {
+            if (e != null) {
+                Log.e(TAG, "Error setting studied languages", e);
+            }
+            Log.i(TAG, "Successfully updated studied languages");
+        });
     }
 
     /*

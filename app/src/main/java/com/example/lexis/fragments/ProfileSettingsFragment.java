@@ -92,10 +92,7 @@ public class ProfileSettingsFragment extends Fragment {
 
         int selectedItemPosition = binding.spinnerLanguage.getSelectedItemPosition();
         String targetLanguage = Const.languageCodes.get(selectedItemPosition);
-        List<String> allLanguages = user.getList("studyingLanguages");
-        allLanguages.add(targetLanguage);
         user.put("targetLanguage", targetLanguage);
-        user.put("studyingLanguages", allLanguages);
         user.setEmail(email);
         if (!password.isEmpty()) {
             user.setPassword(password); // only set new password if field is filled out
