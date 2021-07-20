@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:gravity="bottom|center">
     <eu.davidea.flipview.FlipView
+        android:id="@+id/flipView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="12dp"

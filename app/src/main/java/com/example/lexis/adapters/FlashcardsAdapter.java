@@ -69,6 +69,9 @@ public class FlashcardsAdapter extends RecyclerView.Adapter<FlashcardsAdapter.Fl
         Bind Word data into the ViewHolder.
         */
         public void bind(Word word) {
+            // flip card to ensure front side is always shown first
+            binding.flipView.flipSilently(false);
+
             binding.layoutFront.tvWord.setText(word.getEnglishWord());
             binding.layoutFront.tvFlag.setText(Utils.getFlagEmoji("en"));
 
