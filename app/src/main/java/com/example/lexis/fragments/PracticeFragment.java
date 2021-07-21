@@ -96,7 +96,8 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
         query.include(Word.KEY_USER);
         query.whereEqualTo(Word.KEY_USER, ParseUser.getCurrentUser());
         query.whereContainedIn(Word.KEY_TARGET_LANGUAGE, languages);
-        query.addDescendingOrder("createdAt");
+        // TODO: sort case insensitively
+        query.addAscendingOrder(Word.KEY_TARGET_WORD); // sort alphabetically
         query.findInBackground((words, e) -> {
             if (e != null) {
                 Log.e(TAG, "Issue with getting vocabulary", e);
