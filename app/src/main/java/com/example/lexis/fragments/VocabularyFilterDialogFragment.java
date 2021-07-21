@@ -38,6 +38,9 @@ public class VocabularyFilterDialogFragment extends DialogFragment {
         return frag;
     }
 
+    /*
+    Interface for listener used to pass data back to parent fragment.
+    */
     public interface VocabularyFilterDialogListener {
         void onFinishDialog(ArrayList<String> selectedLanguages);
     }
@@ -52,7 +55,14 @@ public class VocabularyFilterDialogFragment extends DialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setUpCheckboxes();
+        setUpButtons();
+    }
 
+    /*
+    Create language option checkboxes.
+    */
+    private void setUpCheckboxes() {
         checkboxes = new ArrayList<>();
         if (getArguments() != null) {
             selectedLanguages = getArguments().getStringArrayList("selected");
@@ -70,34 +80,38 @@ public class VocabularyFilterDialogFragment extends DialogFragment {
             }
 
             binding.cbAll.setChecked(selectedLanguages.containsAll(languageOptions));
-        }
-
-        binding.btnCancel.setOnClickListener(v -> dismiss());
-        binding.cbAll.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            for (CheckBox cb : checkboxes) {
-                cb.setChecked(isChecked);
-            }
-        });
-        binding.btnUpdate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectedLanguages.clear();
+            binding.cbAll.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 for (CheckBox cb : checkboxes) {
-                    if (cb.isChecked()) {
-                        selectedLanguages.add(cb.getTag().toString());
-                    }
+                    cb.setChecked(isChecked);
                 }
-
-                sendBackResult();
-            }
-        });
+            });
+        }
     }
 
-    private void sendBackResult() {
-        // Notice the use of `getTargetFragment` which will be set when the dialog is displayed
+    /*
+    Set up onClickListeners from cancel and update buttons.
+    */
+    private void setUpButtons() {
+        binding.btnCancel.setOnClickListener(v -> dismiss());
+        binding.btnUpdate.setOnClickListener(v -> sendBackSelectedLanguages());
+    }
+
+    /*
+    Send data about the selected languages back to the parent fragment.
+    */
+    private void sendBackSelectedLanguages() {
+        selectedLanguages.clear();
+        for (CheckBox cb : checkboxes) {
+            if (cb.isChecked()) {
+                selectedLanguages.add(cb.getTag().toString());
+            }
+        }
+
         VocabularyFilterDialogListener listener = (VocabularyFilterDialogListener) getTargetFragment();
-        listener.onFinishDialog(selectedLanguages);
-        dismiss();
+        if (listener != null) {
+            listener.onFinishDialog(selectedLanguages);
+            dismiss();
+        }
     }
 
     @Override
@@ -105,6 +119,7 @@ public class VocabularyFilterDialogFragment extends DialogFragment {
         super.onStart();
         Dialog dialog = getDialog();
         if (dialog != null) {
+            // set a transparent background for the dialog so that rounded corners are visible
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
     }
