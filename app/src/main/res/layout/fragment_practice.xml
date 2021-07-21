@@ -25,6 +25,18 @@
             android:layout_alignParentTop="true" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+    <TextView
+        android:id="@+id/tvEmptyPrompt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginHorizontal="50dp"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:textAlignment="center"
+        android:visibility="invisible"
+        android:text="@string/empty_vocabulary_prompt" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnPractice"
         android:layout_width="wrap_content"

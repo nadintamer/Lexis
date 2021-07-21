@@ -1,6 +1,8 @@
 package com.example.lexis.fragments;
 
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +19,7 @@ import com.example.lexis.R;
 import com.example.lexis.adapters.VocabularyAdapter;
 import com.example.lexis.databinding.FragmentPracticeBinding;
 import com.example.lexis.models.Word;
+import com.example.lexis.utilities.RoundedHighlightSpan;
 import com.example.lexis.utilities.Utils;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -84,6 +87,8 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
                 }
             }
         });
+
+        styleEmptyVocabularyPrompt();
     }
 
     private void queryVocabulary(ArrayList<String> languages) {
@@ -98,7 +103,35 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
                 return;
             }
             adapter.addAll(words);
+            checkVocabularyEmpty(words);
         });
+    }
+
+    private void styleEmptyVocabularyPrompt() {
+        String prompt = getString(R.string.empty_vocabulary_prompt);
+        int start = prompt.indexOf("highlighted");
+        int end = start + "highlighted".length();
+
+        SpannableString styledPrompt = new SpannableString(prompt);
+        styledPrompt.setSpan(new RoundedHighlightSpan(), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        binding.tvEmptyPrompt.setText(styledPrompt);
+    }
+
+    /*
+    Check if the user's vocabulary is empty, and display a prompting message if it is.
+    */
+    private void checkVocabularyEmpty(List<Word> words) {
+        if (words.isEmpty()) {
+            binding.tvEmptyPrompt.setVisibility(View.VISIBLE);
+            binding.rvVocabulary.setVisibility(View.INVISIBLE);
+            binding.btnPractice.setVisibility(View.INVISIBLE);
+            binding.toolbar.ibFilter.setVisibility(View.INVISIBLE);
+        } else {
+            binding.tvEmptyPrompt.setVisibility(View.INVISIBLE);
+            binding.rvVocabulary.setVisibility(View.VISIBLE);
+            binding.btnPractice.setVisibility(View.VISIBLE);
+            binding.toolbar.ibFilter.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

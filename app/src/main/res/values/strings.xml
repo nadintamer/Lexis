@@ -16,4 +16,5 @@
     <string name="currently_learning_label">Currently learning</string>
     <string name="confirm_password_label">confirm password</string>
     <string name="change_password_label">change password</string>
+    <string name="empty_vocabulary_prompt">You haven\'t studied any words yet!\n \nTap on a highlighted word within an article to see its meaning and add it to your vocabulary.</string>
 </resources>
