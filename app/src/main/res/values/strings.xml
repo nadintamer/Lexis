@@ -6,7 +6,7 @@
     <string name="sign_up_text_label">Don\'t have an account yet? Sign up!</string>
     <string name="sign_up_button_label">Sign up</string>
     <string name="name_label">name</string>
-    <string name="language_spinner_label">I\'m learning...</string>
+    <string name="language_spinner_label">I\'m learning…</string>
     <string name="email_label">e-mail</string>
     <string name="log_out_label">Log out</string>
     <string name="settings_label">Settings</string>
@@ -17,4 +17,9 @@
     <string name="confirm_password_label">confirm password</string>
     <string name="change_password_label">change password</string>
     <string name="empty_vocabulary_prompt">You haven\'t studied any words yet!\n \nTap on a highlighted word within an article to see its meaning and add it to your vocabulary.</string>
+    <string name="answer_in_english_label">🇺🇸 English</string>
+    <string name="practice_prompt">How would you like to practice today?</string>
+    <string name="start_practice_button_label">Let\'s go!</string>
+    <string name="practice_spinner_label">I want to practice…</string>
+    <string name="answer_hint">Answer in…</string>
 </resources>

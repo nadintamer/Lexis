@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="bottom|center">
+    <eu.davidea.flipview.FlipView
+        android:id="@+id/flipView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginBottom="180dp"
+        android:backgroundTint="@color/white"
+        android:clickable="true"
+        app:animateDesignLayoutOnly="true">
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardUseCompatPadding="true"
+            app:cardCornerRadius="30dp"
+            app:cardElevation="10dp">
+            <include
+                layout="@layout/flashcard_front"
+                android:id="@+id/layoutFront" />
+        </androidx.cardview.widget.CardView>
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardUseCompatPadding="true"
+            app:cardCornerRadius="30dp"
+            app:cardElevation="10dp">
+            <include
+                layout="@layout/flashcard_rear"
+                android:id="@+id/layoutRear" />
+        </androidx.cardview.widget.CardView>
+    </eu.davidea.flipview.FlipView>
+</RelativeLayout>

@@ -105,7 +105,10 @@ public class Utils {
     Return the current target language of the logged-in user.
     */
     public static String getCurrentTargetLanguage() {
-        String objectId = ParseUser.getCurrentUser().getObjectId();
+        ParseUser user = ParseUser.getCurrentUser();
+        if (user == null) return "";
+
+        String objectId = user.getObjectId();
         try {
             ParseQuery<ParseUser> query = ParseUser.getQuery();
             query.whereEqualTo("objectId", objectId);
@@ -120,7 +123,10 @@ public class Utils {
     Return the studied languages of the logged-in user.
     */
     public static List<String> getCurrentStudiedLanguages() {
-        String objectId = ParseUser.getCurrentUser().getObjectId();
+        ParseUser user = ParseUser.getCurrentUser();
+        if (user == null) return new ArrayList<>();
+
+        String objectId = user.getObjectId();
         try {
             ParseQuery<ParseUser> query = ParseUser.getQuery();
             query.whereEqualTo("objectId", objectId);
@@ -136,6 +142,11 @@ public class Utils {
     */
     public static void setCurrentStudiedLanguages(List<String> languages) {
         ParseUser user = ParseUser.getCurrentUser();
+        if (user == null) {
+            Log.e(TAG, "Error setting studied languages");
+            return;
+        }
+
         user.put("studyingLanguages", languages);
         user.saveInBackground(e -> {
             if (e != null) {
@@ -252,7 +263,9 @@ public class Utils {
     Set the app logo for the current target language.
     */
     public static void setLanguageLogo(ImageView imageView) {
-        int currentLanguageLogo = Const.languageLogos.get(Utils.getCurrentTargetLanguage());
-        imageView.setImageResource(currentLanguageLogo);
+        Integer currentLanguageLogo = Const.languageLogos.get(Utils.getCurrentTargetLanguage());
+        if (currentLanguageLogo != null) {
+            imageView.setImageResource(currentLanguageLogo);
+        }
     }
 }

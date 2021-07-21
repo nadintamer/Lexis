@@ -35,9 +35,7 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
     VocabularyAdapter adapter;
     ArrayList<String> selectedLanguages;
 
-    public PracticeFragment() {
-        // Required empty public constructor
-    }
+    public PracticeFragment() {}
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -88,9 +86,24 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
             }
         });
 
+        // set up practice button
+        binding.btnPractice.setOnClickListener(v -> {
+            AppCompatActivity activity = (AppCompatActivity) getActivity();
+            if (activity != null) {
+                FragmentManager fragmentManager = activity.getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainer, new PracticeIntroFragment())
+                        .addToBackStack(null) // add to back stack so we can return to this fragment
+                        .commit();
+            }
+        });
+
         styleEmptyVocabularyPrompt();
     }
 
+    /*
+    Fetch the user's vocabulary for the given languages.
+    */
     private void queryVocabulary(ArrayList<String> languages) {
         ParseQuery<Word> query = ParseQuery.getQuery(Word.class);
         query.include(Word.KEY_USER);
@@ -108,6 +121,9 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
         });
     }
 
+    /*
+    Style the prompt shown when vocabulary is empty.
+    */
     private void styleEmptyVocabularyPrompt() {
         String prompt = getString(R.string.empty_vocabulary_prompt);
         int start = prompt.indexOf("highlighted");
