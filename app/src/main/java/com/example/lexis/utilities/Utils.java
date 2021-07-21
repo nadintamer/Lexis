@@ -13,9 +13,11 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -103,7 +105,10 @@ public class Utils {
     Return the current target language of the logged-in user.
     */
     public static String getCurrentTargetLanguage() {
-        String objectId = ParseUser.getCurrentUser().getObjectId();
+        ParseUser user = ParseUser.getCurrentUser();
+        if (user == null) return "";
+
+        String objectId = user.getObjectId();
         try {
             ParseQuery<ParseUser> query = ParseUser.getQuery();
             query.whereEqualTo("objectId", objectId);
@@ -112,6 +117,43 @@ public class Utils {
             Log.e(TAG, "Error fetching target language", e);
         }
         return "";
+    }
+
+    /*
+    Return the studied languages of the logged-in user.
+    */
+    public static List<String> getCurrentStudiedLanguages() {
+        ParseUser user = ParseUser.getCurrentUser();
+        if (user == null) return new ArrayList<>();
+
+        String objectId = user.getObjectId();
+        try {
+            ParseQuery<ParseUser> query = ParseUser.getQuery();
+            query.whereEqualTo("objectId", objectId);
+            return query.getFirst().getList("studyingLanguages");
+        } catch (ParseException e) {
+            Log.e(TAG, "Error fetching studied languages", e);
+        }
+        return new ArrayList<>();
+    }
+
+    /*
+    Update the studied languages of the logged-in user.
+    */
+    public static void setCurrentStudiedLanguages(List<String> languages) {
+        ParseUser user = ParseUser.getCurrentUser();
+        if (user == null) {
+            Log.e(TAG, "Error setting studied languages");
+            return;
+        }
+
+        user.put("studyingLanguages", languages);
+        user.saveInBackground(e -> {
+            if (e != null) {
+                Log.e(TAG, "Error setting studied languages", e);
+            }
+            Log.i(TAG, "Successfully updated studied languages");
+        });
     }
 
     /*
@@ -126,6 +168,24 @@ public class Utils {
         }};
 
         return languageCodes.get(code);
+    }
+
+    /*
+    Return the appropriate spinner text with flag and full language name the given ISO language code.
+    */
+    public static String getSpinnerText(String code) {
+        return getFlagEmoji(code) + " " + getFullLanguage(code);
+    }
+
+    /*
+    Convert a list of ISO language codes into a list appropriate for displaying in a spinner.
+    */
+    public static List<String> getSpinnerList(List<String> codes) {
+        List<String> output = new ArrayList<>();
+        for (String code : codes) {
+            output.add(getSpinnerText(code));
+        }
+        return output;
     }
 
     /*
@@ -203,7 +263,9 @@ public class Utils {
     Set the app logo for the current target language.
     */
     public static void setLanguageLogo(ImageView imageView) {
-        int currentLanguageLogo = Const.languageLogos.get(Utils.getCurrentTargetLanguage());
-        imageView.setImageResource(currentLanguageLogo);
+        Integer currentLanguageLogo = Const.languageLogos.get(Utils.getCurrentTargetLanguage());
+        if (currentLanguageLogo != null) {
+            imageView.setImageResource(currentLanguageLogo);
+        }
     }
 }

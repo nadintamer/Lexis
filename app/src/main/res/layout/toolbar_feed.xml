@@ -16,13 +16,4 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:src="@drawable/logo_france" />
-    <TextView
-        android:id="@+id/tvTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:textSize="24dp"
-        android:textStyle="bold"
-        android:textColor="@color/black"
-        tools:text="Vocabulary" />
 </androidx.appcompat.widget.Toolbar>

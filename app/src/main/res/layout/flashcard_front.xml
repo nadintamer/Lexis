@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/word_meaning"
+    android:layout_width="325dp"
+    android:layout_height="275dp"
+    android:layout_gravity="center"
+    android:gravity="top|start"
+    android:background="@drawable/feed_background_shape"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tvWord"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textColor="@color/black"
+        android:textSize="30sp"
+        android:text="spy" />
+
+    <TextView
+        android:id="@+id/tvFlag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:textSize="24sp"
+        tools:text="🇩🇪" />
+</RelativeLayout>

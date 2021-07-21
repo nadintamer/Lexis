@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragments.PracticeFlashcardFragment">
+
+    <include
+        layout="@layout/toolbar_article"
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.yuyakaido.android.cardstackview.CardStackView
+        android:id="@+id/stackFlashcards"
+        android:layout_below="@+id/toolbar"
+        android:layout_centerInParent="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btnForgot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="50dp"
+        android:layout_above="@+id/tvForgotHint"
+        android:layout_marginBottom="10dp"
+        android:clickable="true"
+        android:src="@drawable/question_icon"
+        app:backgroundTint="@color/white"
+        app:fabCustomSize="65dp"
+        app:maxImageSize="40dp"
+        app:tint="@color/orange_peel"
+        app:borderWidth="0dp"
+        app:elevation="5dp"/>
+
+    <TextView
+        android:id="@+id/tvForgotHint"
+        android:layout_width="65dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:layout_alignStart="@id/btnForgot"
+        android:textAlignment="center"
+        android:text="Forgot" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btnKnow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/tvKnowHint"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="50dp"
+        android:clickable="true"
+        android:src="@drawable/lightbulb_icon"
+        app:backgroundTint="@color/white"
+        app:fabCustomSize="65dp"
+        app:maxImageSize="40dp"
+        app:tint="@color/tiffany_blue"
+        app:borderWidth="0dp"
+        app:elevation="5dp"/>
+
+    <TextView
+        android:id="@+id/tvKnowHint"
+        android:layout_width="65dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:layout_alignStart="@id/btnKnow"
+        android:textAlignment="center"
+        android:text="Knew" />
+
+    <TextView
+        android:id="@+id/tvFinished"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginHorizontal="50dp"
+        android:textColor="@color/black"
+        android:textStyle="normal"
+        android:textSize="24sp"
+        android:textAlignment="center"
+        android:visibility="gone"
+        android:text="Congratulations on wrapping up your learning session! 💪" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnFinish"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/tvFinished"
+        android:layout_marginTop="20dp"
+        app:cornerRadius="10dp"
+        android:visibility="gone"
+        android:text="Back to practice" />
+
+</RelativeLayout>

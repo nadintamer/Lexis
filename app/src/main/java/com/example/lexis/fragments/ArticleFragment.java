@@ -32,6 +32,8 @@ import com.parse.ParseUser;
 
 import org.parceler.Parcels;
 
+import java.util.List;
+
 public class ArticleFragment extends Fragment {
 
     private static final String TAG = "ArticleFragment";
@@ -152,14 +154,22 @@ public class ArticleFragment extends Fragment {
     only if it doesn't already exist in the user's vocabulary.
     */
     private void addWordToDatabase(String targetWord, String englishWord) {
+        String targetLanguage = Utils.getCurrentTargetLanguage();
         ParseQuery<Word> query = ParseQuery.getQuery(Word.class);
         query.include(Word.KEY_USER);
         query.whereEqualTo(Word.KEY_USER, ParseUser.getCurrentUser());
         query.whereEqualTo(Word.KEY_TARGET_WORD, targetWord);
-        // TODO: check if language matches too
+        query.whereEqualTo(Word.KEY_TARGET_LANGUAGE, targetLanguage);
         query.getFirstInBackground((object, e) -> {
             if (object == null) {
                 saveWord(targetWord, englishWord);
+
+                // add target language to studied languages if not there already
+                List<String> studiedLanguages = Utils.getCurrentStudiedLanguages();
+                if (!studiedLanguages.contains(targetLanguage)) {
+                    studiedLanguages.add(targetLanguage);
+                    Utils.setCurrentStudiedLanguages(studiedLanguages);
+                }
             } else {
                 Log.i(TAG, "Word already exists in database: " + targetWord);
             }

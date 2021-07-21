@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragments.PracticeIntroFragment">
+
+    <include
+        layout="@layout/toolbar_article"
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/tvPrompt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginHorizontal="50dp"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        android:textAlignment="center"
+        android:text="@string/practice_prompt" />
+
+    <TextView
+        android:id="@+id/tvSpinnerHint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvPrompt"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="start"
+        android:layout_marginHorizontal="50dp"
+        android:text="@string/practice_spinner_label" />
+
+    <Spinner
+        android:id="@+id/spinnerLanguage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvSpinnerHint"
+        android:minHeight="50dp"
+        android:paddingHorizontal="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginHorizontal="50dp"
+        android:background="@drawable/spinner_background_shape" />
+
+    <TextView
+        android:id="@+id/tvAnswerHint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spinnerLanguage"
+        android:layout_marginTop="30dp"
+        android:layout_gravity="start"
+        android:layout_marginHorizontal="50dp"
+        android:text="@string/answer_hint" />
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="50dp"
+        android:layout_below="@+id/tvAnswerHint"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal">
+            <RadioButton
+                android:id="@+id/radioTarget"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                tools:text="🇫🇷 French" />
+            <RadioButton
+                android:id="@+id/radioEnglish"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:text="@string/answer_in_english_label" />
+    </RadioGroup>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnFlashcards"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/radioGroup"
+        android:layout_marginTop="10dp"
+        android:text="@string/start_practice_button_label"
+        app:cornerRadius="10dp" />
+</RelativeLayout>

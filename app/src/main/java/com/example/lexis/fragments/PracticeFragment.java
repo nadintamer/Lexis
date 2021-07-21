@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.util.Log;
@@ -17,9 +18,7 @@ import com.example.lexis.R;
 import com.example.lexis.adapters.VocabularyAdapter;
 import com.example.lexis.databinding.FragmentPracticeBinding;
 import com.example.lexis.models.Word;
-import com.example.lexis.utilities.Const;
 import com.example.lexis.utilities.Utils;
-import com.parse.Parse;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
@@ -33,9 +32,7 @@ public class PracticeFragment extends Fragment {
     List<Word> vocabulary;
     VocabularyAdapter adapter;
 
-    public PracticeFragment() {
-        // Required empty public constructor
-    }
+    public PracticeFragment() {}
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -68,8 +65,23 @@ public class PracticeFragment extends Fragment {
                 R.color.mellow_apricot);
 
         Utils.setLanguageLogo(binding.toolbar.ivLogo);
+
+        // set up practice button
+        binding.btnPractice.setOnClickListener(v -> {
+            AppCompatActivity activity = (AppCompatActivity) getActivity();
+            if (activity != null) {
+                FragmentManager fragmentManager = activity.getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainer, new PracticeIntroFragment())
+                        .addToBackStack(null) // add to back stack so we can return to this fragment
+                        .commit();
+            }
+        });
     }
 
+    /*
+    Fetch the user's vocabulary.
+    */
     private void queryVocabulary() {
         ParseQuery<Word> query = ParseQuery.getQuery(Word.class);
         query.include(Word.KEY_USER);
