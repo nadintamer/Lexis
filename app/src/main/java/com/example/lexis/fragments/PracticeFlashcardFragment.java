@@ -129,34 +129,8 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
         binding.btnForgot.setRippleColor(getResources().getColor(R.color.deep_champagne));
         binding.btnKnow.setRippleColor(getResources().getColor(R.color.light_cyan));
 
-        binding.btnForgot.setOnClickListener(v -> {
-            if (!wasFlipped) {
-                Toast.makeText(getActivity(), "You haven't flipped this card yet! 🤔", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
-                    .setDirection(Direction.Left)
-                    .setDuration(Duration.Normal.duration)
-                    .setInterpolator(new AccelerateInterpolator())
-                    .build();
-            cardLayoutManager.setSwipeAnimationSetting(setting);
-            binding.stackFlashcards.swipe();
-        });
-
-        binding.btnKnow.setOnClickListener(v -> {
-            if (!wasFlipped) {
-                Toast.makeText(getActivity(), "You haven't flipped this card yet! 🤔", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
-                    .setDirection(Direction.Right)
-                    .setDuration(Duration.Normal.duration)
-                    .setInterpolator(new AccelerateInterpolator())
-                    .build();
-            cardLayoutManager.setSwipeAnimationSetting(setting);
-            binding.stackFlashcards.swipe();
-        });
-
+        binding.btnForgot.setOnClickListener(v -> swipeInDirection(Direction.Left));
+        binding.btnKnow.setOnClickListener(v -> swipeInDirection(Direction.Right));
         binding.btnFinish.setOnClickListener(v -> returnToPracticeTab());
     }
 
@@ -208,6 +182,32 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
     }
 
     /*
+    Check whether the current card has been flipped and display a Toast if not.
+    */
+    private boolean checkIfCardFlipped() {
+        if (!wasFlipped) {
+            Toast.makeText(getActivity(), "You haven't flipped this card yet! 🤔", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
+    /*
+    Swipe the current card in the given direction; fails if card has not been flipped yet.
+    */
+    private void swipeInDirection(Direction direction) {
+        if (!checkIfCardFlipped()) return;
+
+        SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
+                .setDirection(direction)
+                .setDuration(Duration.Normal.duration)
+                .setInterpolator(new AccelerateInterpolator())
+                .build();
+        cardLayoutManager.setSwipeAnimationSetting(setting);
+        binding.stackFlashcards.swipe();
+    }
+
+    /*
     Callbacks for card stack view.
     */
     @Override
@@ -228,8 +228,10 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
 
     @Override
     public void onCardDragging(Direction direction, float ratio) {
+        // user shouldn't be able to swipe card until they've flipped it to look at the answer
         if (!wasFlipped) {
-            // user shouldn't be able to swipe card until they've flipped it to look at the answer
+            // TODO: this doesn't work when swiping fast, seems to be a known issue:
+            // https://github.com/yuyakaido/CardStackView/issues/306
             cardLayoutManager.setSwipeThreshold(1.0f);
         } else {
             cardLayoutManager.setSwipeThreshold(0.3f);
@@ -250,9 +252,7 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
 
     @Override
     public void onCardCanceled() {
-        if (!wasFlipped) {
-            Toast.makeText(getActivity(), "You haven't flipped this card yet! 🤔", Toast.LENGTH_SHORT).show();
-        }
+        checkIfCardFlipped();
         binding.stackFlashcards.setTranslationZ(0);
         binding.btnForgot.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
         binding.btnKnow.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
