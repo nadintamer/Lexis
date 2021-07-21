@@ -12,28 +12,50 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-   <SearchView
-       android:id="@+id/searchBar"
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       android:layout_margin="10dp"
-       android:layout_below="@id/toolbar"
-       android:background="@drawable/word_background_shape"
-       android:queryBackground="@android:color/transparent"
-       android:queryHint="Search" />
-
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipeContainer"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinatorLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/searchBar">
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvVocabulary"
+        android:layout_below="@id/toolbar"
+        tools:context=".activities.MainActivity">
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@null" >
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:id="@+id/collapsing_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:contentScrim="@android:color/transparent"
+                app:expandedTitleMarginEnd="64dp"
+                app:expandedTitleMarginStart="48dp"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+               <SearchView
+                   android:id="@+id/searchBar"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:layout_margin="10dp"
+                   android:background="@drawable/word_background_shape"
+                   android:queryBackground="@android:color/transparent"
+                   android:queryHint="Search" />
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true" />
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+            android:layout_below="@id/coordinatorLayout"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" >
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvVocabulary"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <TextView
         android:id="@+id/tvEmptyPrompt"
