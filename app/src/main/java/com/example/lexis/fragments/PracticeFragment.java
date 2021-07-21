@@ -1,37 +1,36 @@
 package com.example.lexis.fragments;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.example.lexis.R;
 import com.example.lexis.adapters.VocabularyAdapter;
 import com.example.lexis.databinding.FragmentPracticeBinding;
 import com.example.lexis.models.Word;
-import com.example.lexis.utilities.Const;
 import com.example.lexis.utilities.Utils;
-import com.parse.Parse;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PracticeFragment extends Fragment {
+public class PracticeFragment extends Fragment implements VocabularyFilterDialogFragment.VocabularyFilterDialogListener {
 
     private static final String TAG = "PracticeFragment";
     FragmentPracticeBinding binding;
     List<Word> vocabulary;
     VocabularyAdapter adapter;
+    ArrayList<String> selectedLanguages;
 
     public PracticeFragment() {
         // Required empty public constructor
@@ -48,8 +47,11 @@ public class PracticeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        Log.i(TAG, "onViewCreated");
+
+        selectedLanguages = new ArrayList<>(Utils.getCurrentStudiedLanguages());
         vocabulary = new ArrayList<>();
-        queryVocabulary();
+        queryVocabulary(selectedLanguages);
 
         // set up recyclerView
         adapter = new VocabularyAdapter(this, vocabulary);
@@ -59,7 +61,7 @@ public class PracticeFragment extends Fragment {
         // set up pull to refresh
         binding.swipeContainer.setOnRefreshListener(() -> {
             adapter.clear();
-            queryVocabulary();
+            queryVocabulary(selectedLanguages);
             binding.swipeContainer.setRefreshing(false);
         });
         binding.swipeContainer.setColorSchemeResources(R.color.tiffany_blue,
@@ -67,13 +69,28 @@ public class PracticeFragment extends Fragment {
                 R.color.orange_peel,
                 R.color.mellow_apricot);
 
+        // set up toolbar
         Utils.setLanguageLogo(binding.toolbar.ivLogo);
+        binding.toolbar.ibFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AppCompatActivity activity = (AppCompatActivity) getActivity();
+                if (activity != null) {
+                    FragmentManager fm = activity.getSupportFragmentManager();
+                    ArrayList<String> languageOptions = new ArrayList<>(Utils.getCurrentStudiedLanguages());
+                    VocabularyFilterDialogFragment dialog = VocabularyFilterDialogFragment.newInstance(languageOptions, selectedLanguages);
+                    dialog.setTargetFragment(PracticeFragment.this, 124);
+                    dialog.show(fm, "fragment_vocabulary_filter");
+                }
+            }
+        });
     }
 
-    private void queryVocabulary() {
+    private void queryVocabulary(ArrayList<String> languages) {
         ParseQuery<Word> query = ParseQuery.getQuery(Word.class);
         query.include(Word.KEY_USER);
         query.whereEqualTo(Word.KEY_USER, ParseUser.getCurrentUser());
+        query.whereContainedIn(Word.KEY_TARGET_LANGUAGE, languages);
         query.addDescendingOrder("createdAt");
         query.findInBackground((words, e) -> {
             if (e != null) {
@@ -82,5 +99,12 @@ public class PracticeFragment extends Fragment {
             }
             adapter.addAll(words);
         });
+    }
+
+    @Override
+    public void onFinishDialog(ArrayList<String> selectedLanguages) {
+        this.selectedLanguages = selectedLanguages;
+        adapter.clear();
+        queryVocabulary(selectedLanguages);
     }
 }
