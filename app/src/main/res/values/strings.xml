@@ -22,4 +22,5 @@
     <string name="start_practice_button_label">Let\'s go!</string>
     <string name="practice_spinner_label">I want to practice…</string>
     <string name="answer_hint">Answer in…</string>
+    <string name="no_search_results">Sorry, no search results found!</string>
 </resources>

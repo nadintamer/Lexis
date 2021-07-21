@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -99,6 +100,30 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
         });
 
         styleEmptyVocabularyPrompt();
+        setUpSearchBar();
+    }
+
+    /*
+    Set up the vocabulary search bar.
+    */
+    private void setUpSearchBar() {
+        binding.searchBar.setOnClickListener(v -> binding.searchBar.onActionViewExpanded());
+        binding.searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                // fetch users
+                searchVocabulary(query);
+                // reset searchView
+                binding.searchBar.clearFocus();
+                binding.searchBar.setQuery("", false);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
     }
 
     /*
@@ -122,6 +147,37 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
     }
 
     /*
+    Search the user's vocabulary for the given query.
+    */
+    private void searchVocabulary(String searchQuery) {
+        // TODO: search case insensitively
+        ParseQuery<Word> targetWord = ParseQuery.getQuery(Word.class);
+        targetWord.whereStartsWith(Word.KEY_TARGET_WORD, searchQuery);
+
+        ParseQuery<Word> englishWord = ParseQuery.getQuery(Word.class);
+        englishWord.whereStartsWith(Word.KEY_ENGLISH_WORD, searchQuery);
+
+        List<ParseQuery<Word>> queries = new ArrayList<ParseQuery<Word>>();
+        queries.add(targetWord);
+        queries.add(englishWord);
+
+        ParseQuery<Word> query = ParseQuery.or(queries);
+        query.include(Word.KEY_USER);
+        query.whereEqualTo(Word.KEY_USER, ParseUser.getCurrentUser());
+        query.whereContainedIn(Word.KEY_TARGET_LANGUAGE, selectedLanguages);
+        query.addAscendingOrder(Word.KEY_TARGET_WORD); // sort alphabetically
+        query.findInBackground((words, e) -> {
+            if (e != null) {
+                Log.e(TAG, "Issue with getting vocabulary", e);
+                return;
+            }
+            adapter.clear();
+            adapter.addAll(words);
+            checkSearchEmpty(words);
+        });
+    }
+
+    /*
     Style the prompt shown when vocabulary is empty.
     */
     private void styleEmptyVocabularyPrompt() {
@@ -137,7 +193,22 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
     /*
     Check if the user's vocabulary is empty, and display a prompting message if it is.
     */
+    private void checkSearchEmpty(List<Word> words) {
+        binding.tvEmptyPrompt.setText(R.string.no_search_results);
+        if (words.isEmpty()) {
+            binding.tvEmptyPrompt.setVisibility(View.VISIBLE);
+            binding.rvVocabulary.setVisibility(View.INVISIBLE);
+        } else {
+            binding.tvEmptyPrompt.setVisibility(View.INVISIBLE);
+            binding.rvVocabulary.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /*
+    Check if the user's vocabulary is empty, and display a prompting message if it is.
+    */
     private void checkVocabularyEmpty(List<Word> words) {
+        styleEmptyVocabularyPrompt();
         if (words.isEmpty()) {
             binding.tvEmptyPrompt.setVisibility(View.VISIBLE);
             binding.rvVocabulary.setVisibility(View.INVISIBLE);
