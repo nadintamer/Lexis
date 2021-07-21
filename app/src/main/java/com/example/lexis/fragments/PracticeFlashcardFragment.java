@@ -130,6 +130,10 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
         binding.btnKnow.setRippleColor(getResources().getColor(R.color.light_cyan));
 
         binding.btnForgot.setOnClickListener(v -> {
+            if (!wasFlipped) {
+                Toast.makeText(getActivity(), "You haven't flipped this card yet! 🤔", Toast.LENGTH_SHORT).show();
+                return;
+            }
             SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
                     .setDirection(Direction.Left)
                     .setDuration(Duration.Normal.duration)
@@ -140,6 +144,10 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
         });
 
         binding.btnKnow.setOnClickListener(v -> {
+            if (!wasFlipped) {
+                Toast.makeText(getActivity(), "You haven't flipped this card yet! 🤔", Toast.LENGTH_SHORT).show();
+                return;
+            }
             SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
                     .setDirection(Direction.Right)
                     .setDuration(Duration.Normal.duration)
