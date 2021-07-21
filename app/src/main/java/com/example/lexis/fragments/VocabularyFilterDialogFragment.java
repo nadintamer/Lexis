@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
@@ -15,7 +16,6 @@ import androidx.fragment.app.DialogFragment;
 import com.example.lexis.databinding.FragmentVocabularyFilterBinding;
 import com.example.lexis.utilities.Utils;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,6 +79,7 @@ public class VocabularyFilterDialogFragment extends DialogFragment {
                 checkboxes.add(cb);
             }
 
+            // TODO: decide how checking/unchecking boxes affects "All" checkbox
             binding.cbAll.setChecked(selectedLanguages.containsAll(languageOptions));
             binding.cbAll.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 for (CheckBox cb : checkboxes) {
@@ -105,6 +106,11 @@ public class VocabularyFilterDialogFragment extends DialogFragment {
             if (cb.isChecked()) {
                 selectedLanguages.add(cb.getTag().toString());
             }
+        }
+
+        if (selectedLanguages.isEmpty()) {
+            Toast.makeText(getActivity(), "You haven't selected any languages!", Toast.LENGTH_SHORT).show();
+            return;
         }
 
         VocabularyFilterDialogListener listener = (VocabularyFilterDialogListener) getTargetFragment();
