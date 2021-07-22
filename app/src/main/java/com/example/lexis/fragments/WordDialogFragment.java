@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
@@ -33,16 +34,17 @@ public class WordDialogFragment extends DialogFragment {
         this.width = width;
     }
 
-    public static WordDialogFragment newInstance(Word word, int left, int top, int width) {
+    public static WordDialogFragment newInstance(String target, String english, int left, int top, int width) {
         WordDialogFragment frag = new WordDialogFragment(left, top, width);
         Bundle args = new Bundle();
-        args.putParcelable("word", Parcels.wrap(word));
+        args.putString("targetLanguage", target);
+        args.putString("english", english);
         frag.setArguments(args);
         return frag;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentWordBinding.inflate(inflater);
         setDialogPosition();
@@ -72,25 +74,14 @@ public class WordDialogFragment extends DialogFragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (getArguments() != null) {
-            Word word = Parcels.unwrap(getArguments().getParcelable("word"));
-            binding.tvTargetLanguage.setText(word.getTargetWord());
-            binding.tvEnglish.setText(word.getEnglishWord());
-
-            binding.ibStar.setSelected(word.getIsStarred());
-            binding.ibStar.setOnClickListener(v -> toggleStarred(word));
+            String target = getArguments().getString("targetLanguage", "");
+            String english = getArguments().getString("english", "");
+            binding.tvTargetLanguage.setText(target);
+            binding.tvEnglish.setText(english);
         }
-    }
-
-    /*
-    Toggle whether the word is starred and save to Parse.
-    */
-    private void toggleStarred(Word word) {
-        binding.ibStar.setSelected(!binding.ibStar.isSelected());
-        word.toggleIsStarred();
-        word.saveInBackground();
     }
 
     @Override public void onStart() {
