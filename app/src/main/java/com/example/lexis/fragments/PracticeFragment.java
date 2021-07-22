@@ -72,6 +72,8 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
         // set up pull to refresh
         binding.swipeContainer.setOnRefreshListener(() -> {
             adapter.clear();
+            selectedLanguages = new ArrayList<>(Utils.getCurrentStudiedLanguages());
+            starredOnly = false;
             queryVocabulary(selectedLanguages, starredOnly);
             binding.swipeContainer.setRefreshing(false);
         });
