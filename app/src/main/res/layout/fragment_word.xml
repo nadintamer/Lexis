@@ -10,16 +10,34 @@
     android:background="@drawable/word_background_shape"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tvTargetLanguage"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginHorizontal="20dp"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        android:textSize="20sp"
-        tools:text="Verbreitung" />
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/tvTargetLanguage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginHorizontal="20dp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            tools:text="Verbreitung" />
+
+        <ImageButton
+            android:id="@+id/ibStar"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:scaleType="fitXY"
+            android:padding="0dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:backgroundTint="@android:color/transparent"
+            android:layout_marginHorizontal="7dp"
+            android:layout_marginTop="10dp"
+            app:srcCompat="@drawable/star_icon" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tvEnglish"

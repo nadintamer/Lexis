@@ -113,10 +113,8 @@ public class ArticleFragment extends Fragment {
                 ClickableSpan clickableSpan = new ClickableSpan() {
                     @Override
                     public void onClick(View textView) {
-                        // show word meaning dialog when clicked
                         Rect wordPosition = Utils.getClickedWordPosition((TextView) textView, this);
-                        launchWordDialog(targetLanguage, english, wordPosition.left, wordPosition.top, wordPosition.width());
-                        addWordToDatabase(targetLanguage, english);
+                        addWordToDatabase(targetLanguage, english, wordPosition);
                     }
 
                     @Override
@@ -153,16 +151,16 @@ public class ArticleFragment extends Fragment {
     Add a word with the provided target language and English meanings to the Parse database,
     only if it doesn't already exist in the user's vocabulary.
     */
-    private void addWordToDatabase(String targetWord, String englishWord) {
+    private void addWordToDatabase(String targetWord, String englishWord, Rect wordPosition) {
         String targetLanguage = Utils.getCurrentTargetLanguage();
         ParseQuery<Word> query = ParseQuery.getQuery(Word.class);
         query.include(Word.KEY_USER);
         query.whereEqualTo(Word.KEY_USER, ParseUser.getCurrentUser());
         query.whereEqualTo(Word.KEY_TARGET_WORD, targetWord);
         query.whereEqualTo(Word.KEY_TARGET_LANGUAGE, targetLanguage);
-        query.getFirstInBackground((object, e) -> {
-            if (object == null) {
-                saveWord(targetWord, englishWord);
+        query.getFirstInBackground((word, e) -> {
+            if (word == null) {
+                saveWord(targetWord, englishWord, wordPosition);
 
                 // add target language to studied languages if not there already
                 List<String> studiedLanguages = Utils.getCurrentStudiedLanguages();
@@ -172,6 +170,7 @@ public class ArticleFragment extends Fragment {
                 }
             } else {
                 Log.i(TAG, "Word already exists in database: " + targetWord);
+                launchWordDialog(word, wordPosition.left, wordPosition.top, wordPosition.width());
             }
         });
     }
@@ -179,13 +178,21 @@ public class ArticleFragment extends Fragment {
     /*
     Save the word with the provided target language and English meanings to the Parse database.
     */
-    private void saveWord(String targetWord, String englishWord) {
+    private void saveWord(String targetWord, String englishWord, Rect wordPosition) {
         Word word = new Word();
         word.setTargetWord(targetWord);
         word.setEnglishWord(englishWord);
+        // TODO: temporary; fix once other PR is merged
+        word.put("targetWordSearch", targetWord.toLowerCase());
+        word.put("englishWordSearch", englishWord.toLowerCase());
+
         word.setTargetLanguage(Utils.getCurrentTargetLanguage());
         word.setIsStarred(false);
         word.setUser(ParseUser.getCurrentUser());
+
+        // TODO: this takes a while... figure out a better way to do it (if there is one?)
+        launchWordDialog(word, wordPosition.left, wordPosition.top, wordPosition.width());
+
         word.saveInBackground(e -> {
             if (e != null) {
                 Log.e(TAG, "Error while saving word", e);
@@ -199,9 +206,12 @@ public class ArticleFragment extends Fragment {
     Launch a word meaning dialog with the provided target language and English words, relative to
     the position of the word clicked (described by left, top, and width).
     */
-    private void launchWordDialog(String targetLanguage, String english, int left, int top, int width) {
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        WordDialogFragment wordDialogFragment = WordDialogFragment.newInstance(targetLanguage, english, left, top, width);
-        wordDialogFragment.show(fm, "fragment_dialog");
+    private void launchWordDialog(Word word, int left, int top, int width) {
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        if (activity != null) {
+            FragmentManager fm = activity.getSupportFragmentManager();
+            WordDialogFragment wordDialogFragment = WordDialogFragment.newInstance(word, left, top, width);
+            wordDialogFragment.show(fm, "fragment_dialog");
+        }
     }
 }

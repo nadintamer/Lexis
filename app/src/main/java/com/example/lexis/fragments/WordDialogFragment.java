@@ -14,6 +14,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.lexis.databinding.FragmentWordBinding;
+import com.example.lexis.models.Word;
+
+import org.parceler.Parcels;
 
 public class WordDialogFragment extends DialogFragment {
 
@@ -30,11 +33,10 @@ public class WordDialogFragment extends DialogFragment {
         this.width = width;
     }
 
-    public static WordDialogFragment newInstance(String target, String english, int left, int top, int width) {
+    public static WordDialogFragment newInstance(Word word, int left, int top, int width) {
         WordDialogFragment frag = new WordDialogFragment(left, top, width);
         Bundle args = new Bundle();
-        args.putString("targetLanguage", target);
-        args.putString("english", english);
+        args.putParcelable("word", Parcels.wrap(word));
         frag.setArguments(args);
         return frag;
     }
@@ -72,10 +74,23 @@ public class WordDialogFragment extends DialogFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        String target = getArguments().getString("targetLanguage", "");
-        String english = getArguments().getString("english", "");
-        binding.tvTargetLanguage.setText(target);
-        binding.tvEnglish.setText(english);
+        if (getArguments() != null) {
+            Word word = Parcels.unwrap(getArguments().getParcelable("word"));
+            binding.tvTargetLanguage.setText(word.getTargetWord());
+            binding.tvEnglish.setText(word.getEnglishWord());
+
+            binding.ibStar.setSelected(word.getIsStarred());
+            binding.ibStar.setOnClickListener(v -> toggleStarred(word));
+        }
+    }
+
+    /*
+    Toggle whether the word is starred and save to Parse.
+    */
+    private void toggleStarred(Word word) {
+        binding.ibStar.setSelected(!binding.ibStar.isSelected());
+        word.toggleIsStarred();
+        word.saveInBackground();
     }
 
     @Override public void onStart() {

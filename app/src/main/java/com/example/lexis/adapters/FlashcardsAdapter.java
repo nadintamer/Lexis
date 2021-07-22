@@ -1,7 +1,6 @@
 package com.example.lexis.adapters;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
@@ -81,7 +80,6 @@ public class FlashcardsAdapter extends RecyclerView.Adapter<FlashcardsAdapter.Fl
             binding.layoutRear.ibStar.setSelected(word.getIsStarred());
             binding.layoutFront.ibStar.setOnClickListener(v -> toggleStarred(word));
             binding.layoutRear.ibStar.setOnClickListener(v -> toggleStarred(word));
-
 
             String english = word.getEnglishWord();
             String target = word.getTargetWord();
