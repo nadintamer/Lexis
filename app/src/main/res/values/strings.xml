@@ -21,4 +21,6 @@
     <string name="start_practice_button_label">Let\'s go!</string>
     <string name="practice_spinner_label">I want to practice…</string>
     <string name="answer_hint">Answer in…</string>
+    <string name="starred_words_label">Starred words</string>
+    <string name="practice_starred_words_only">Practice starred words only</string>
 </resources>
