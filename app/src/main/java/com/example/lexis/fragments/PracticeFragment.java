@@ -49,13 +49,20 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Log.i(TAG, "onViewCreated");
-
         selectedLanguages = new ArrayList<>(Utils.getCurrentStudiedLanguages());
         vocabulary = new ArrayList<>();
         queryVocabulary(selectedLanguages);
 
-        // set up recyclerView
+        setUpRecyclerView();
+        setUpToolbar();
+        setUpPracticeButton();
+        setUpSearchBar();
+    }
+
+    /*
+    Set up the recyclerView for displaying vocabulary.
+    */
+    private void setUpRecyclerView() {
         adapter = new VocabularyAdapter(this, vocabulary);
         binding.rvVocabulary.setAdapter(adapter);
         binding.rvVocabulary.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -70,8 +77,12 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
                 R.color.light_cyan,
                 R.color.orange_peel,
                 R.color.mellow_apricot);
+    }
 
-        // set up toolbar
+    /*
+    Set up the toolbar logo and button.
+    */
+    private void setUpToolbar() {
         Utils.setLanguageLogo(binding.toolbar.ivLogo);
         binding.toolbar.ibFilter.setOnClickListener((View.OnClickListener) v -> {
             AppCompatActivity activity = (AppCompatActivity) getActivity();
@@ -83,8 +94,12 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
                 dialog.show(fm, "fragment_vocabulary_filter");
             }
         });
+    }
 
-        // set up practice button
+    /*
+    Set up button for navigating to practice session.
+    */
+    private void setUpPracticeButton() {
         binding.btnPractice.setOnClickListener(v -> {
             AppCompatActivity activity = (AppCompatActivity) getActivity();
             if (activity != null) {
@@ -95,9 +110,6 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
                         .commit();
             }
         });
-
-        styleEmptyVocabularyPrompt();
-        setUpSearchBar();
     }
 
     /*
@@ -158,6 +170,7 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
         queries.add(targetWord);
         queries.add(englishWord);
 
+        // get words where either target word OR english word starts with search query
         ParseQuery<Word> query = ParseQuery.or(queries);
         query.include(Word.KEY_USER);
         query.whereEqualTo(Word.KEY_USER, ParseUser.getCurrentUser());
@@ -219,6 +232,9 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
         }
     }
 
+    /*
+    Called after vocabulary filter dialog is dismissed; filter vocabulary based on languages selected.
+    */
     @Override
     public void onFinishDialog(ArrayList<String> selectedLanguages) {
         this.selectedLanguages = selectedLanguages;
