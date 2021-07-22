@@ -7,24 +7,66 @@
     tools:context=".fragments.PracticeFragment">
 
     <include
-        layout="@layout/toolbar_feed"
+        layout="@layout/toolbar_vocabulary"
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/swipeContainer"
-        android:layout_below="@id/toolbar"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinatorLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvVocabulary"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"
+        tools:context=".activities.MainActivity">
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@null" >
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:id="@+id/collapsing_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:contentScrim="@android:color/transparent"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+               <SearchView
+                   android:id="@+id/searchBar"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:layout_marginVertical="5dp"
+                   android:layout_marginHorizontal="10dp"
+                   android:background="@drawable/word_background_shape"
+                   android:queryBackground="@android:color/transparent"
+                   android:queryHint="Search" />
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true" />
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+            android:layout_below="@id/coordinatorLayout"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" >
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvVocabulary"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <TextView
+        android:id="@+id/tvEmptyPrompt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginHorizontal="50dp"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:textAlignment="center"
+        android:visibility="invisible"
+        android:text="@string/empty_vocabulary_prompt" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnPractice"
