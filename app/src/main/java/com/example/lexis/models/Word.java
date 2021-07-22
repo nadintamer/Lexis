@@ -9,6 +9,8 @@ public class Word extends ParseObject {
     public static final String KEY_TARGET_LANGUAGE = "targetLanguage";
     public static final String KEY_TARGET_WORD = "targetWord";
     public static final String KEY_ENGLISH_WORD = "englishWord";
+    public static final String KEY_TARGET_WORD_SEARCH = "targetWordSearch";
+    public static final String KEY_ENGLISH_WORD_SEARCH = "englishWordSearch";
     public static final String KEY_STARRED = "isStarred";
     public static final String KEY_USER = "user";
 
@@ -20,12 +22,28 @@ public class Word extends ParseObject {
         put(KEY_TARGET_WORD, word);
     }
 
+    public String getTargetWordLower() {
+        return getString(KEY_TARGET_WORD_SEARCH);
+    }
+
+    public void setTargetWordLower(String word) {
+        put(KEY_TARGET_WORD_SEARCH, word);
+    }
+
     public String getEnglishWord() {
         return getString(KEY_ENGLISH_WORD);
     }
 
     public void setEnglishWord(String word) {
         put(KEY_ENGLISH_WORD, word);
+    }
+
+    public String getEnglishWordLower() {
+        return getString(KEY_ENGLISH_WORD_SEARCH);
+    }
+
+    public void setEnglishWordLower(String word) {
+        put(KEY_ENGLISH_WORD_SEARCH, word);
     }
 
     public String getTargetLanguage() {
