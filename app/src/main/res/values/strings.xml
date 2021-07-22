@@ -25,4 +25,8 @@
     <string name="starred_words_label">Starred words</string>
     <string name="practice_starred_words_only">Practice starred words only</string>
     <string name="no_search_results">Sorry, no search results found!</string>
+    <string name="languages">Languages</string>
+    <string name="update_vocabulary_filters">Update vocabulary filters</string>
+    <string name="starred_words_only">Starred words only</string>
+    <string name="all">All</string>
 </resources>

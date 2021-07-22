@@ -35,6 +35,7 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
     List<Word> vocabulary;
     VocabularyAdapter adapter;
     ArrayList<String> selectedLanguages;
+    boolean starredOnly;
 
     public PracticeFragment() {}
 
@@ -50,8 +51,9 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
         super.onViewCreated(view, savedInstanceState);
 
         selectedLanguages = new ArrayList<>(Utils.getCurrentStudiedLanguages());
+        starredOnly = false;
         vocabulary = new ArrayList<>();
-        queryVocabulary(selectedLanguages);
+        queryVocabulary(selectedLanguages, starredOnly);
 
         setUpRecyclerView();
         setUpToolbar();
@@ -70,7 +72,7 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
         // set up pull to refresh
         binding.swipeContainer.setOnRefreshListener(() -> {
             adapter.clear();
-            queryVocabulary(selectedLanguages);
+            queryVocabulary(selectedLanguages, starredOnly);
             binding.swipeContainer.setRefreshing(false);
         });
         binding.swipeContainer.setColorSchemeResources(R.color.tiffany_blue,
@@ -89,7 +91,7 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
             if (activity != null) {
                 FragmentManager fm = activity.getSupportFragmentManager();
                 ArrayList<String> languageOptions = new ArrayList<>(Utils.getCurrentStudiedLanguages());
-                VocabularyFilterDialogFragment dialog = VocabularyFilterDialogFragment.newInstance(languageOptions, selectedLanguages);
+                VocabularyFilterDialogFragment dialog = VocabularyFilterDialogFragment.newInstance(languageOptions, selectedLanguages, starredOnly);
                 dialog.setTargetFragment(PracticeFragment.this, 124);
                 dialog.show(fm, "fragment_vocabulary_filter");
             }
@@ -139,11 +141,14 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
     /*
     Fetch the user's vocabulary for the given languages.
     */
-    private void queryVocabulary(ArrayList<String> languages) {
+    private void queryVocabulary(ArrayList<String> languages, boolean starredOnly) {
         ParseQuery<Word> query = ParseQuery.getQuery(Word.class);
         query.include(Word.KEY_USER);
         query.whereEqualTo(Word.KEY_USER, ParseUser.getCurrentUser());
         query.whereContainedIn(Word.KEY_TARGET_LANGUAGE, languages);
+        if (starredOnly) {
+            query.whereEqualTo(Word.KEY_STARRED, true);
+        }
         query.addAscendingOrder(Word.KEY_TARGET_WORD_SEARCH); // sort alphabetically
         query.findInBackground((words, e) -> {
             if (e != null) {
@@ -238,9 +243,10 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
     Called after vocabulary filter dialog is dismissed; filter vocabulary based on languages selected.
     */
     @Override
-    public void onFinishDialog(ArrayList<String> selectedLanguages) {
+    public void onFinishDialog(ArrayList<String> selectedLanguages, boolean starredOnly) {
         this.selectedLanguages = selectedLanguages;
+        this.starredOnly = starredOnly;
         adapter.clear();
-        queryVocabulary(selectedLanguages);
+        queryVocabulary(selectedLanguages, starredOnly);
     }
 }
