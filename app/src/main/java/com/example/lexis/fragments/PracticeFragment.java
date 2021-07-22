@@ -223,11 +223,13 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
             binding.tvEmptyPrompt.setVisibility(View.VISIBLE);
             binding.rvVocabulary.setVisibility(View.INVISIBLE);
             binding.btnPractice.setVisibility(View.INVISIBLE);
+            binding.searchBar.setVisibility(View.INVISIBLE);
             binding.toolbar.ibFilter.setVisibility(View.INVISIBLE);
         } else {
             binding.tvEmptyPrompt.setVisibility(View.INVISIBLE);
             binding.rvVocabulary.setVisibility(View.VISIBLE);
             binding.btnPractice.setVisibility(View.VISIBLE);
+            binding.searchBar.setVisibility(View.VISIBLE);
             binding.toolbar.ibFilter.setVisibility(View.VISIBLE);
         }
     }
