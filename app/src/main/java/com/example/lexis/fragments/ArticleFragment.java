@@ -183,6 +183,8 @@ public class ArticleFragment extends Fragment {
         Word word = new Word();
         word.setTargetWord(targetWord);
         word.setEnglishWord(englishWord);
+        word.setTargetWordLower(targetWord.toLowerCase());
+        word.setEnglishWordLower(englishWord.toLowerCase());
         word.setTargetLanguage(Utils.getCurrentTargetLanguage());
         word.setIsStarred(false);
         word.setUser(ParseUser.getCurrentUser());

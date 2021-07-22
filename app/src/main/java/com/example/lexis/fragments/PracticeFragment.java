@@ -73,17 +73,14 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
 
         // set up toolbar
         Utils.setLanguageLogo(binding.toolbar.ivLogo);
-        binding.toolbar.ibFilter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AppCompatActivity activity = (AppCompatActivity) getActivity();
-                if (activity != null) {
-                    FragmentManager fm = activity.getSupportFragmentManager();
-                    ArrayList<String> languageOptions = new ArrayList<>(Utils.getCurrentStudiedLanguages());
-                    VocabularyFilterDialogFragment dialog = VocabularyFilterDialogFragment.newInstance(languageOptions, selectedLanguages);
-                    dialog.setTargetFragment(PracticeFragment.this, 124);
-                    dialog.show(fm, "fragment_vocabulary_filter");
-                }
+        binding.toolbar.ibFilter.setOnClickListener((View.OnClickListener) v -> {
+            AppCompatActivity activity = (AppCompatActivity) getActivity();
+            if (activity != null) {
+                FragmentManager fm = activity.getSupportFragmentManager();
+                ArrayList<String> languageOptions = new ArrayList<>(Utils.getCurrentStudiedLanguages());
+                VocabularyFilterDialogFragment dialog = VocabularyFilterDialogFragment.newInstance(languageOptions, selectedLanguages);
+                dialog.setTargetFragment(PracticeFragment.this, 124);
+                dialog.show(fm, "fragment_vocabulary_filter");
             }
         });
 
@@ -107,6 +104,7 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
     Set up the vocabulary search bar.
     */
     private void setUpSearchBar() {
+        binding.searchBar.setIconifiedByDefault(true);
         binding.searchBar.setOnClickListener(v -> binding.searchBar.onActionViewExpanded());
         binding.searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -134,8 +132,7 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
         query.include(Word.KEY_USER);
         query.whereEqualTo(Word.KEY_USER, ParseUser.getCurrentUser());
         query.whereContainedIn(Word.KEY_TARGET_LANGUAGE, languages);
-        // TODO: sort case insensitively
-        query.addAscendingOrder(Word.KEY_TARGET_WORD); // sort alphabetically
+        query.addAscendingOrder(Word.KEY_TARGET_WORD_SEARCH); // sort alphabetically
         query.findInBackground((words, e) -> {
             if (e != null) {
                 Log.e(TAG, "Issue with getting vocabulary", e);
@@ -150,14 +147,14 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
     Search the user's vocabulary for the given query.
     */
     private void searchVocabulary(String searchQuery) {
-        // TODO: search case insensitively
+        searchQuery = searchQuery.toLowerCase();
         ParseQuery<Word> targetWord = ParseQuery.getQuery(Word.class);
-        targetWord.whereStartsWith(Word.KEY_TARGET_WORD, searchQuery);
+        targetWord.whereStartsWith(Word.KEY_TARGET_WORD_SEARCH, searchQuery);
 
         ParseQuery<Word> englishWord = ParseQuery.getQuery(Word.class);
-        englishWord.whereStartsWith(Word.KEY_ENGLISH_WORD, searchQuery);
+        englishWord.whereStartsWith(Word.KEY_ENGLISH_WORD_SEARCH, searchQuery);
 
-        List<ParseQuery<Word>> queries = new ArrayList<ParseQuery<Word>>();
+        List<ParseQuery<Word>> queries = new ArrayList<>();
         queries.add(targetWord);
         queries.add(englishWord);
 
