@@ -2,6 +2,7 @@ package com.example.lexis.adapters;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -66,6 +67,18 @@ public class VocabularyAdapter extends RecyclerView.Adapter<VocabularyAdapter.Vo
             binding.tvTargetLanguage.setText(word.getTargetWord());
             binding.tvEnglish.setText(word.getEnglishWord());
             binding.tvFlag.setText(Utils.getFlagEmoji(word.getTargetLanguage()));
+
+            binding.ibStar.setSelected(word.getIsStarred());
+            binding.ibStar.setOnClickListener(v -> toggleStarred(word));
+        }
+
+        /*
+        Toggle whether the word is starred and save to Parse.
+        */
+        private void toggleStarred(Word word) {
+            binding.ibStar.setSelected(!binding.ibStar.isSelected());
+            word.toggleIsStarred();
+            word.saveInBackground();
         }
     }
 }

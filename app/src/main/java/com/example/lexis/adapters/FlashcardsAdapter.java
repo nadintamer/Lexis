@@ -103,6 +103,9 @@ public class FlashcardsAdapter extends RecyclerView.Adapter<FlashcardsAdapter.Fl
             }
         }
 
+        /*
+        Toggle whether the word is starred and save to Parse.
+        */
         private void toggleStarred(Word word) {
             ImageButton starButtonFront = binding.layoutFront.ibStar;
             ImageButton starButtonRear = binding.layoutRear.ibStar;
