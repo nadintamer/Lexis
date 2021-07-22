@@ -44,6 +44,10 @@ public class Word extends ParseObject {
         put(KEY_STARRED, starred);
     }
 
+    public void toggleIsStarred() {
+        put(KEY_STARRED, !getIsStarred());
+    }
+
     public ParseUser getUser() {
         return getParseUser(KEY_USER);
     }
