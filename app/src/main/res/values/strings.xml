@@ -29,4 +29,7 @@
     <string name="update_vocabulary_filters">Update vocabulary filters</string>
     <string name="starred_words_only">Starred words only</string>
     <string name="all">All</string>
+    <string name="sort_by">Sort by</string>
+    <string name="date_added">Date added</string>
+    <string name="alphabetically">Alphabetically</string>
 </resources>
