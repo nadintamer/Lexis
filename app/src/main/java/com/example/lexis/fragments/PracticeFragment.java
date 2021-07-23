@@ -84,7 +84,7 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
     */
     private void setUpToolbar() {
         Utils.setLanguageLogo(binding.toolbar.ivLogo);
-        binding.toolbar.ibFilter.setOnClickListener((View.OnClickListener) v -> {
+        binding.toolbar.ibFilter.setOnClickListener(v -> {
             AppCompatActivity activity = (AppCompatActivity) getActivity();
             if (activity != null) {
                 FragmentManager fm = activity.getSupportFragmentManager();

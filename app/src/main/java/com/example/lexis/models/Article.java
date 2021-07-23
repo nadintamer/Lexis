@@ -6,6 +6,7 @@ import com.example.lexis.utilities.TranslateUtils;
 import com.example.lexis.utilities.Utils;
 import com.google.cloud.translate.TranslateException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.parceler.Parcel;
 
@@ -75,7 +76,12 @@ public class Article {
         String targetLanguage = Utils.getCurrentTargetLanguage();
         language = targetLanguage;
         for (int i = start; i < words.length; i += interval) {
-            String currentWord = words[i];
+            int currentIndex = i;
+            String currentWord = words[currentIndex];
+            while (!StringUtils.isAlpha(currentWord)) {
+                currentIndex++;
+                currentWord = words[currentIndex];
+            }
             String stripped = Utils.stripPunctuation(currentWord, null);
             try {
                 String translated = StringEscapeUtils.unescapeHtml4(TranslateUtils.translateSingleWord(stripped, targetLanguage));
