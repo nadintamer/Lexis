@@ -1,6 +1,7 @@
 package com.example.lexis.utilities;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.StrictMode;
 
 import com.example.lexis.R;
@@ -9,7 +10,11 @@ import com.google.cloud.translate.Translate;
 import com.google.cloud.translate.TranslateException;
 import com.google.cloud.translate.TranslateOptions;
 import com.google.cloud.translate.Translation;
+import com.google.gson.Gson;
 
+import java.io.BufferedOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -56,6 +61,7 @@ public class TranslateUtils {
         InputStream inputStreamNameFinder = context.getAssets().open("en-ner-person.bin");
         TokenNameFinderModel model = new TokenNameFinderModel(inputStreamNameFinder);
         personFinder = new NameFinderME(model);
+        saveModel(model, "personModel.txt");
     }
 
     /*
@@ -65,6 +71,7 @@ public class TranslateUtils {
         InputStream inputStreamNameFinder = context.getAssets().open("en-ner-location.bin");
         TokenNameFinderModel model = new TokenNameFinderModel(inputStreamNameFinder);
         locationFinder = new NameFinderME(model);
+        saveModel(model, "locationModel.txt");
     }
 
     /*
@@ -74,6 +81,38 @@ public class TranslateUtils {
         InputStream inputStreamNameFinder = context.getAssets().open("en-ner-organization.bin");
         TokenNameFinderModel model = new TokenNameFinderModel(inputStreamNameFinder);
         organizationFinder = new NameFinderME(model);
+        saveModel(model, "organizationModel.txt");
+    }
+
+    public static void saveModel(TokenNameFinderModel model, String filename) throws IOException {
+        BufferedOutputStream modelOut = new BufferedOutputStream(new FileOutputStream(filename));
+        model.serialize(modelOut);
+        modelOut.close();
+    }
+
+    /*
+    TODO: add comment here
+    */
+    private static void saveToPreferences(Context context, TokenNameFinderModel model, String key) {
+        SharedPreferences prefs = context.getSharedPreferences("nlp_models", Context.MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = prefs.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(model);
+        prefsEditor.putString(key, json);
+        prefsEditor.commit();
+        prefsEditor.clear();
+    }
+
+    public static void setPersonFinder(NameFinderME personFinder) {
+        TranslateUtils.personFinder = personFinder;
+    }
+
+    public static void setOrganizationFinder(NameFinderME organizationFinder) {
+        TranslateUtils.organizationFinder = organizationFinder;
+    }
+
+    public static void setLocationFinder(NameFinderME locationFinder) {
+        TranslateUtils.locationFinder = locationFinder;
     }
 
     public static NameFinderME getPersonFinder() {

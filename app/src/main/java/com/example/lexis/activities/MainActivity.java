@@ -15,7 +15,13 @@ import com.example.lexis.fragments.ProfileFragment;
 import com.example.lexis.utilities.TranslateUtils;
 import com.parse.ParseUser;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+
+import opennlp.tools.namefind.NameFinderME;
+import opennlp.tools.namefind.TokenNameFinderModel;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,10 +37,42 @@ public class MainActivity extends AppCompatActivity {
         // get named-entity recognition model in background thread
         new Thread(() -> {
             try {
-                TranslateUtils.getPersonModel(MainActivity.this);
-                TranslateUtils.getLocationModel(MainActivity.this);
-                TranslateUtils.getOrganizationModel(MainActivity.this);
-            } catch (IOException e) {
+                /*SharedPreferences prefs = getSharedPreferences("nlp_models", Context.MODE_PRIVATE);
+                Gson gson = new Gson();
+                String jsonPersonFinder = prefs.getString("personFinder", "");
+                String jsonLocationFinder = prefs.getString("locationFinder", "");
+                String jsonOrganizationFinder = prefs.getString("organizationFinder", "");*/
+
+                File filePerson = new File("personModel.txt");
+                if (!filePerson.exists()) {
+                    TranslateUtils.getPersonModel(MainActivity.this);
+                } else {
+                    FileInputStream isPerson = new FileInputStream(filePerson);
+                    ObjectInputStream ois = new ObjectInputStream(isPerson);
+                    TokenNameFinderModel personModel = (TokenNameFinderModel) ois.readObject();
+                    TranslateUtils.setPersonFinder(new NameFinderME(personModel));
+                }
+
+                File fileLocation = new File("locationModel.txt");
+                if (!fileLocation.exists()) {
+                    TranslateUtils.getLocationModel(MainActivity.this);
+                } else {
+                    FileInputStream isLocation = new FileInputStream(fileLocation);
+                    ObjectInputStream ois = new ObjectInputStream(isLocation);
+                    TokenNameFinderModel locationModel = (TokenNameFinderModel) ois.readObject();
+                    TranslateUtils.setLocationFinder(new NameFinderME(locationModel));
+                }
+
+                File fileOrganization = new File("organizationModel.txt");
+                if (!fileOrganization.exists()) {
+                    TranslateUtils.getOrganizationModel(MainActivity.this);
+                } else {
+                    FileInputStream isOrganization = new FileInputStream(fileOrganization);
+                    ObjectInputStream ois = new ObjectInputStream(isOrganization);
+                    TokenNameFinderModel organizationModel = (TokenNameFinderModel) ois.readObject();
+                    TranslateUtils.setOrganizationFinder(new NameFinderME(organizationModel));
+                }
+            } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }).start();
