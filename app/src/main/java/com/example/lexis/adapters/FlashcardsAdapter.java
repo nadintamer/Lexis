@@ -76,10 +76,13 @@ public class FlashcardsAdapter extends RecyclerView.Adapter<FlashcardsAdapter.Fl
             // flip card to ensure front side is always shown first
             binding.flipView.flipSilently(false);
 
-            binding.layoutFront.ibStar.setSelected(word.getIsStarred());
-            binding.layoutRear.ibStar.setSelected(word.getIsStarred());
-            binding.layoutFront.ibStar.setOnClickListener(v -> toggleStarred(word));
-            binding.layoutRear.ibStar.setOnClickListener(v -> toggleStarred(word));
+            ImageButton starButtonFront = binding.layoutFront.ibStar;
+            ImageButton starButtonRear = binding.layoutRear.ibStar;
+
+            starButtonFront.setSelected(word.getIsStarred());
+            starButtonRear.setSelected(word.getIsStarred());
+            starButtonFront.setOnClickListener(v -> toggleStarred(word));
+            starButtonRear.setOnClickListener(v -> toggleStarred(word));
 
             String english = word.getEnglishWord();
             String target = word.getTargetWord();
