@@ -82,13 +82,33 @@
                 android:text="@string/answer_in_english_label" />
     </RadioGroup>
 
+    <TextView
+        android:id="@+id/tvStarredOnly"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/radioGroup"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="start"
+        android:layout_marginHorizontal="50dp"
+        android:text="@string/starred_words_label" />
+
+    <CheckBox
+        android:id="@+id/cbStarredOnly"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvStarredOnly"
+        android:layout_alignStart="@id/tvStarredOnly"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:text="@string/practice_starred_words_only" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnFlashcards"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/radioGroup"
-        android:layout_marginTop="10dp"
+        android:layout_below="@id/cbStarredOnly"
+        android:layout_marginTop="20dp"
         android:text="@string/start_practice_button_label"
         app:cornerRadius="10dp" />
 </RelativeLayout>

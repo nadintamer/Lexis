@@ -22,5 +22,14 @@
     <string name="start_practice_button_label">Let\'s go!</string>
     <string name="practice_spinner_label">I want to practice…</string>
     <string name="answer_hint">Answer in…</string>
+    <string name="starred_words_label">Starred words</string>
+    <string name="practice_starred_words_only">Practice starred words only</string>
     <string name="no_search_results">Sorry, no search results found!</string>
+    <string name="languages">Languages</string>
+    <string name="update_vocabulary_filters">Update vocabulary filters</string>
+    <string name="starred_words_only">Starred words only</string>
+    <string name="all">All</string>
+    <string name="sort_by">Sort by</string>
+    <string name="date_added">Date added</string>
+    <string name="alphabetically">Alphabetically</string>
 </resources>

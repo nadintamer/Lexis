@@ -17,6 +17,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.lexis.R;
+import com.example.lexis.fragments.VocabularyFilterDialogFragment.Sort;
 import com.example.lexis.adapters.VocabularyAdapter;
 import com.example.lexis.databinding.FragmentPracticeBinding;
 import com.example.lexis.models.Word;
@@ -35,6 +36,8 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
     List<Word> vocabulary;
     VocabularyAdapter adapter;
     ArrayList<String> selectedLanguages;
+    boolean starredOnly;
+    Sort sortBy;
 
     public PracticeFragment() {}
 
@@ -49,9 +52,9 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        selectedLanguages = new ArrayList<>(Utils.getCurrentStudiedLanguages());
+        resetVocabularyFilters();
         vocabulary = new ArrayList<>();
-        queryVocabulary(selectedLanguages);
+        queryVocabulary();
 
         setUpRecyclerView();
         setUpToolbar();
@@ -70,7 +73,8 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
         // set up pull to refresh
         binding.swipeContainer.setOnRefreshListener(() -> {
             adapter.clear();
-            queryVocabulary(selectedLanguages);
+            resetVocabularyFilters();
+            queryVocabulary();
             binding.swipeContainer.setRefreshing(false);
         });
         binding.swipeContainer.setColorSchemeResources(R.color.tiffany_blue,
@@ -89,7 +93,8 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
             if (activity != null) {
                 FragmentManager fm = activity.getSupportFragmentManager();
                 ArrayList<String> languageOptions = new ArrayList<>(Utils.getCurrentStudiedLanguages());
-                VocabularyFilterDialogFragment dialog = VocabularyFilterDialogFragment.newInstance(languageOptions, selectedLanguages);
+                VocabularyFilterDialogFragment dialog = VocabularyFilterDialogFragment.newInstance(
+                        languageOptions, selectedLanguages, starredOnly, sortBy);
                 dialog.setTargetFragment(PracticeFragment.this, 124);
                 dialog.show(fm, "fragment_vocabulary_filter");
             }
@@ -139,12 +144,19 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
     /*
     Fetch the user's vocabulary for the given languages.
     */
-    private void queryVocabulary(ArrayList<String> languages) {
+    private void queryVocabulary() {
         ParseQuery<Word> query = ParseQuery.getQuery(Word.class);
         query.include(Word.KEY_USER);
         query.whereEqualTo(Word.KEY_USER, ParseUser.getCurrentUser());
-        query.whereContainedIn(Word.KEY_TARGET_LANGUAGE, languages);
-        query.addAscendingOrder(Word.KEY_TARGET_WORD_SEARCH); // sort alphabetically
+        query.whereContainedIn(Word.KEY_TARGET_LANGUAGE, selectedLanguages);
+        if (starredOnly) {
+            query.whereEqualTo(Word.KEY_STARRED, true);
+        }
+        if (sortBy == Sort.ALPHABETICALLY) {
+            query.addAscendingOrder(Word.KEY_TARGET_WORD_SEARCH); // sort alphabetically
+        } else {
+            query.addDescendingOrder(Word.KEY_CREATED_AT); // sort by date added
+        }
         query.findInBackground((words, e) -> {
             if (e != null) {
                 Log.e(TAG, "Issue with getting vocabulary", e);
@@ -175,7 +187,14 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
         query.include(Word.KEY_USER);
         query.whereEqualTo(Word.KEY_USER, ParseUser.getCurrentUser());
         query.whereContainedIn(Word.KEY_TARGET_LANGUAGE, selectedLanguages);
-        query.addAscendingOrder(Word.KEY_TARGET_WORD); // sort alphabetically
+        if (starredOnly) {
+            query.whereEqualTo(Word.KEY_STARRED, true);
+        }
+        if (sortBy == Sort.ALPHABETICALLY) {
+            query.addAscendingOrder(Word.KEY_TARGET_WORD_SEARCH); // sort alphabetically
+        } else {
+            query.addDescendingOrder(Word.KEY_CREATED_AT); // sort by date added
+        }
         query.findInBackground((words, e) -> {
             if (e != null) {
                 Log.e(TAG, "Issue with getting vocabulary", e);
@@ -235,12 +254,24 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
     }
 
     /*
+    Reset vocabulary filters back to default values.
+    */
+    private void resetVocabularyFilters() {
+        selectedLanguages = new ArrayList<>(Utils.getCurrentStudiedLanguages());
+        starredOnly = false;
+        sortBy = Sort.ALPHABETICALLY;
+    }
+
+    /*
     Called after vocabulary filter dialog is dismissed; filter vocabulary based on languages selected.
     */
     @Override
-    public void onFinishDialog(ArrayList<String> selectedLanguages) {
+    public void onFinishDialog(ArrayList<String> selectedLanguages, boolean starredOnly, Sort sortBy) {
         this.selectedLanguages = selectedLanguages;
+        this.starredOnly = starredOnly;
+        this.sortBy = sortBy;
+
         adapter.clear();
-        queryVocabulary(selectedLanguages);
+        queryVocabulary();
     }
 }

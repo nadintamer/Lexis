@@ -10,10 +10,14 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.lexis.databinding.FragmentWordBinding;
+import com.example.lexis.models.Word;
+
+import org.parceler.Parcels;
 
 public class WordDialogFragment extends DialogFragment {
 
@@ -40,7 +44,7 @@ public class WordDialogFragment extends DialogFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentWordBinding.inflate(inflater);
         setDialogPosition();
@@ -70,12 +74,14 @@ public class WordDialogFragment extends DialogFragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        String target = getArguments().getString("targetLanguage", "");
-        String english = getArguments().getString("english", "");
-        binding.tvTargetLanguage.setText(target);
-        binding.tvEnglish.setText(english);
+        if (getArguments() != null) {
+            String target = getArguments().getString("targetLanguage", "");
+            String english = getArguments().getString("english", "");
+            binding.tvTargetLanguage.setText(target);
+            binding.tvEnglish.setText(english);
+        }
     }
 
     @Override public void onStart() {

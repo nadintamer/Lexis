@@ -20,7 +20,7 @@
         android:textStyle="bold"
         android:textSize="20sp"
         tools:text="Verbreitung" />
-
+    
     <TextView
         android:id="@+id/tvEnglish"
         android:layout_width="wrap_content"

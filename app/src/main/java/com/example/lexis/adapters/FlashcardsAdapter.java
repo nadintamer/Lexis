@@ -2,6 +2,7 @@ package com.example.lexis.adapters;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -75,6 +76,14 @@ public class FlashcardsAdapter extends RecyclerView.Adapter<FlashcardsAdapter.Fl
             // flip card to ensure front side is always shown first
             binding.flipView.flipSilently(false);
 
+            ImageButton starButtonFront = binding.layoutFront.ibStar;
+            ImageButton starButtonRear = binding.layoutRear.ibStar;
+
+            starButtonFront.setSelected(word.getIsStarred());
+            starButtonRear.setSelected(word.getIsStarred());
+            starButtonFront.setOnClickListener(v -> toggleStarred(word));
+            starButtonRear.setOnClickListener(v -> toggleStarred(word));
+
             String english = word.getEnglishWord();
             String target = word.getTargetWord();
             String englishFlag = Utils.getFlagEmoji("en");
@@ -93,6 +102,19 @@ public class FlashcardsAdapter extends RecyclerView.Adapter<FlashcardsAdapter.Fl
                 binding.layoutRear.tvWord.setText(target);
                 binding.layoutRear.tvFlag.setText(targetFlag);
             }
+        }
+
+        /*
+        Toggle whether the word is starred and save to Parse.
+        */
+        private void toggleStarred(Word word) {
+            ImageButton starButtonFront = binding.layoutFront.ibStar;
+            ImageButton starButtonRear = binding.layoutRear.ibStar;
+
+            starButtonFront.setSelected(!starButtonFront.isSelected());
+            starButtonRear.setSelected(!starButtonRear.isSelected());
+            word.toggleIsStarred();
+            word.saveInBackground();
         }
     }
 }

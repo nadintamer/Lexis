@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/word_meaning"
     android:layout_width="325dp"
@@ -29,4 +30,14 @@
         android:layout_marginBottom="20dp"
         android:textSize="24sp"
         tools:text="🇩🇪" />
+
+    <ImageButton
+        android:id="@+id/ibStar"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:backgroundTint="@android:color/transparent"
+        android:layout_margin="10dp"
+        app:srcCompat="@drawable/star_icon" />
 </RelativeLayout>
