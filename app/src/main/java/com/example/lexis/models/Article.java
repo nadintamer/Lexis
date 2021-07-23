@@ -13,6 +13,9 @@ import org.parceler.Parcel;
 import java.util.ArrayList;
 import java.util.List;
 
+import opennlp.tools.namefind.NameFinderME;
+import opennlp.tools.util.Span;
+
 @Parcel
 public class Article {
 
@@ -75,9 +78,19 @@ public class Article {
         words = body.split("\\s+"); // split on whitespace
         String targetLanguage = Utils.getCurrentTargetLanguage();
         language = targetLanguage;
+
+        NameFinderME nameFinder = TranslateUtils.getNameFinder();
+        if (nameFinder != null) {
+            Span[] nameSpans = nameFinder.find(words);
+            for (Span s : nameSpans) {
+                Log.i(TAG, "Found name: " + s.toString() + "  " + words[s.getStart()]);
+            }
+        }
+
         for (int i = start; i < words.length; i += interval) {
             int currentIndex = i;
             String currentWord = words[currentIndex];
+            // move to next word until we find an alphabetical word
             while (!StringUtils.isAlpha(currentWord)) {
                 currentIndex++;
                 currentWord = words[currentIndex];
@@ -85,11 +98,11 @@ public class Article {
             String stripped = Utils.stripPunctuation(currentWord, null);
             try {
                 String translated = StringEscapeUtils.unescapeHtml4(TranslateUtils.translateSingleWord(stripped, targetLanguage));
-                translatedIndices.add(i);
-                originalWords.add(words[i]);
-                words[i] = translated;
+                translatedIndices.add(currentIndex);
+                originalWords.add(words[currentIndex]);
+                words[currentIndex] = translated;
             } catch (TranslateException e) {
-                Log.e(TAG, "Error translating word: " + words[i], e);
+                Log.e(TAG, "Error translating word: " + words[currentIndex], e);
             }
         }
     }

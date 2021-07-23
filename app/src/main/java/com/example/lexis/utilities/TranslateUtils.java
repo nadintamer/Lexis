@@ -13,8 +13,12 @@ import com.google.cloud.translate.Translation;
 import java.io.IOException;
 import java.io.InputStream;
 
+import opennlp.tools.namefind.NameFinderME;
+import opennlp.tools.namefind.TokenNameFinderModel;
+
 public class TranslateUtils {
     private static Translate translate;
+    private static NameFinderME nameFinder;
 
     /*
     Get the translation service using credentials JSON file for the API key.
@@ -33,6 +37,22 @@ public class TranslateUtils {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
+    }
+
+    /*
+    TODO: add comment here
+    */
+    public static void getNERModel(Context context) throws IOException {
+        InputStream inputStreamNameFinder = context.getAssets().open("en-ner-person.bin");
+        TokenNameFinderModel model = new TokenNameFinderModel(inputStreamNameFinder);
+        nameFinder = new NameFinderME(model);
+    }
+
+    /*
+    TODO: add comment here
+    */
+    public static NameFinderME getNameFinder() {
+        return nameFinder;
     }
 
     /*

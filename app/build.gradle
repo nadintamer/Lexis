@@ -78,5 +78,8 @@ dependencies {
     implementation 'com.yuyakaido.android:card-stack-view:2.3.4'
 
     // Coordinator layout for collapsing search bar
-    implementation "androidx.coordinatorlayout:coordinatorlayout:1.1.0"
+    implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
+
+    // OpenNLP for named entity recognition
+    implementation 'org.apache.opennlp:opennlp-tools:1.6.0'
 }

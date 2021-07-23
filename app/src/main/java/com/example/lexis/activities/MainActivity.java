@@ -15,6 +15,8 @@ import com.example.lexis.fragments.ProfileFragment;
 import com.example.lexis.utilities.TranslateUtils;
 import com.parse.ParseUser;
 
+import java.io.IOException;
+
 public class MainActivity extends AppCompatActivity {
 
     ActivityMainBinding binding;
@@ -26,6 +28,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         TranslateUtils.getTranslateService(this);
+        // get named-entity recognition model in background thread
+        new Thread(() -> {
+            try {
+                TranslateUtils.getNERModel(MainActivity.this);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
 
         // set up tab navigation
         binding.bottomNavigation.setOnNavigationItemSelectedListener(item -> {
