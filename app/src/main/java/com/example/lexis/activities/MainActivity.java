@@ -31,7 +31,9 @@ public class MainActivity extends AppCompatActivity {
         // get named-entity recognition model in background thread
         new Thread(() -> {
             try {
-                TranslateUtils.getNERModel(MainActivity.this);
+                TranslateUtils.getPersonModel(MainActivity.this);
+                TranslateUtils.getLocationModel(MainActivity.this);
+                TranslateUtils.getOrganizationModel(MainActivity.this);
             } catch (IOException e) {
                 e.printStackTrace();
             }

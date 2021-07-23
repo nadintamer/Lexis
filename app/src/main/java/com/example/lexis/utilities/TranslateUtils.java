@@ -18,7 +18,9 @@ import opennlp.tools.namefind.TokenNameFinderModel;
 
 public class TranslateUtils {
     private static Translate translate;
-    private static NameFinderME nameFinder;
+    private static NameFinderME personFinder;
+    private static NameFinderME organizationFinder;
+    private static NameFinderME locationFinder;
 
     /*
     Get the translation service using credentials JSON file for the API key.
@@ -40,26 +42,49 @@ public class TranslateUtils {
     }
 
     /*
-    TODO: add comment here
-    */
-    public static void getNERModel(Context context) throws IOException {
-        InputStream inputStreamNameFinder = context.getAssets().open("en-ner-location.bin");
-        TokenNameFinderModel model = new TokenNameFinderModel(inputStreamNameFinder);
-        nameFinder = new NameFinderME(model);
-    }
-
-    /*
-    TODO: add comment here
-    */
-    public static NameFinderME getNameFinder() {
-        return nameFinder;
-    }
-
-    /*
     Translate a single word given by originalWord into the target language.
     */
     public static String translateSingleWord(String originalWord, String targetLanguage) throws TranslateException {
         Translation translation = translate.translate(originalWord, Translate.TranslateOption.targetLanguage(targetLanguage), Translate.TranslateOption.model("base"));
         return translation.getTranslatedText(); // TODO: potentially look into providing more context?
+    }
+
+    /*
+    TODO: add comment here
+    */
+    public static void getPersonModel(Context context) throws IOException {
+        InputStream inputStreamNameFinder = context.getAssets().open("en-ner-person.bin");
+        TokenNameFinderModel model = new TokenNameFinderModel(inputStreamNameFinder);
+        personFinder = new NameFinderME(model);
+    }
+
+    /*
+    TODO: add comment here
+    */
+    public static void getLocationModel(Context context) throws IOException {
+        InputStream inputStreamNameFinder = context.getAssets().open("en-ner-location.bin");
+        TokenNameFinderModel model = new TokenNameFinderModel(inputStreamNameFinder);
+        locationFinder = new NameFinderME(model);
+    }
+
+    /*
+    TODO: add comment here
+    */
+    public static void getOrganizationModel(Context context) throws IOException {
+        InputStream inputStreamNameFinder = context.getAssets().open("en-ner-organization.bin");
+        TokenNameFinderModel model = new TokenNameFinderModel(inputStreamNameFinder);
+        organizationFinder = new NameFinderME(model);
+    }
+
+    public static NameFinderME getPersonFinder() {
+        return personFinder;
+    }
+
+    public static NameFinderME getOrganizationFinder() {
+        return organizationFinder;
+    }
+
+    public static NameFinderME getLocationFinder() {
+        return locationFinder;
     }
 }
