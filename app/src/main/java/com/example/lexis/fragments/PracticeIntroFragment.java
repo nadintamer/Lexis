@@ -100,8 +100,9 @@ public class PracticeIntroFragment extends Fragment {
         List<String> allLanguages = Utils.getCurrentStudiedLanguages();
         String selectedLanguage = allLanguages.get(selectedPosition);
         boolean answerInEnglish = binding.radioEnglish.isChecked();
+        boolean starredWordsOnly = binding.cbStarredOnly.isChecked();
 
-        Fragment flashcardFragment = PracticeFlashcardFragment.newInstance(selectedLanguage, answerInEnglish);
+        Fragment flashcardFragment = PracticeFlashcardFragment.newInstance(selectedLanguage, answerInEnglish, starredWordsOnly);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         if (activity != null) {
             FragmentManager fragmentManager = activity.getSupportFragmentManager();

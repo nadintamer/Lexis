@@ -41,6 +41,7 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
     private static final String TAG = "FlashcardFragment";
     private static final String ARG_LANGUAGE = "targetLanguage";
     private static final String ARG_ENGLISH = "answerInEnglish";
+    private static final String ARG_STARRED_WORDS = "starredWordsOnly";
 
     FragmentPracticeFlashcardBinding binding;
     List<Word> words;
@@ -48,15 +49,17 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
     CardStackLayoutManager cardLayoutManager;
     String targetLanguage;
     boolean answerInEnglish;
+    boolean starredWordsOnly;
     boolean wasFlipped;
 
     public PracticeFlashcardFragment() {}
 
-    public static PracticeFlashcardFragment newInstance(String targetLanguage, boolean answerInEnglish) {
+    public static PracticeFlashcardFragment newInstance(String targetLanguage, boolean answerInEnglish, boolean starredWordsOnly) {
         PracticeFlashcardFragment fragment = new PracticeFlashcardFragment();
         Bundle args = new Bundle();
         args.putString(ARG_LANGUAGE, targetLanguage);
         args.putBoolean(ARG_ENGLISH, answerInEnglish);
+        args.putBoolean(ARG_STARRED_WORDS, starredWordsOnly);
         fragment.setArguments(args);
         return fragment;
     }
@@ -67,6 +70,7 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
         if (getArguments() != null) {
             targetLanguage = getArguments().getString(ARG_LANGUAGE);
             answerInEnglish = getArguments().getBoolean(ARG_ENGLISH);
+            starredWordsOnly = getArguments().getBoolean(ARG_STARRED_WORDS);
         }
     }
 
@@ -83,7 +87,7 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
 
         if (words == null) {
             words = new ArrayList<>();
-            fetchVocabulary(targetLanguage);
+            fetchVocabulary(targetLanguage, starredWordsOnly);
         }
 
         setUpCardStackView();
@@ -94,11 +98,14 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
     /*
     Fetch the vocabulary for the provided language and add to flashcards adapter.
     */
-    private void fetchVocabulary(String targetLanguage) {
+    private void fetchVocabulary(String targetLanguage, boolean starredWordsOnly) {
         ParseQuery<Word> query = ParseQuery.getQuery(Word.class);
         query.include(Word.KEY_USER);
         query.whereEqualTo(Word.KEY_USER, ParseUser.getCurrentUser());
         query.whereEqualTo(Word.KEY_TARGET_LANGUAGE, targetLanguage);
+        if (starredWordsOnly) {
+            query.whereEqualTo(Word.KEY_STARRED, true);
+        }
         query.addDescendingOrder("createdAt");
         query.findInBackground((words, e) -> {
             if (e != null) {

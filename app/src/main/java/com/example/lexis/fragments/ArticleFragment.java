@@ -1,6 +1,7 @@
 package com.example.lexis.fragments;
 
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import android.text.SpannableStringBuilder;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -60,8 +62,19 @@ public class ArticleFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        article = Parcels.unwrap(getArguments().getParcelable("article"));
+        if (getArguments() != null) {
+            article = Parcels.unwrap(getArguments().getParcelable("article"));
 
+            SpannableStringBuilder styledContent = translateArticle();
+            displayArticle(styledContent);
+            setUpToolbar();
+        }
+    }
+
+    /*
+    Translate the article if necessary and return the styled article.
+    */
+    private SpannableStringBuilder translateArticle() {
         // only translate words if we haven't previously done so or if the user has changed their
         // target language since the article's translation
         String currentTargetLanguage = Utils.getCurrentTargetLanguage();
@@ -69,21 +82,38 @@ public class ArticleFragment extends Fragment {
         if (article.getWordList() == null || !isCorrectLanguage) {
             article.translateWordsOnInterval(3, 60);
         }
-        SpannableStringBuilder styledContent = styleTranslatedWords(article);
+        return styleTranslatedWords(article);
+    }
 
+    /*
+    Display the styled article content on the screen.
+    */
+    private void displayArticle(SpannableStringBuilder content) {
         binding.tvTitle.setText(article.getTitle());
-        binding.tvBody.setText(styledContent);
-
+        binding.tvBody.setText(content);
         // needed so that translated words are clickable
         binding.tvBody.setMovementMethod(LinkMovementMethod.getInstance());
+    }
 
-        // set up toolbar with custom back button
+    /*
+    Set up toolbar with custom back button.
+    */
+    private void setUpToolbar() {
         AppCompatActivity activity = ((AppCompatActivity) getActivity());
-        activity.setSupportActionBar(binding.toolbar.getRoot());
-        activity.getSupportActionBar().setTitle("");
-        binding.toolbar.getRoot().setNavigationIcon(R.drawable.back_arrow);
-        binding.toolbar.getRoot().getNavigationIcon().setTint(getResources().getColor(R.color.black));
-        binding.toolbar.getRoot().setNavigationOnClickListener(v -> activity.onBackPressed());
+        if (activity != null) {
+            activity.setSupportActionBar(binding.toolbar.getRoot());
+            ActionBar actionBar = activity.getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.setTitle("");
+            }
+
+            binding.toolbar.getRoot().setNavigationIcon(R.drawable.back_arrow);
+            Drawable navigationIcon = binding.toolbar.getRoot().getNavigationIcon();
+            if (navigationIcon != null) {
+                navigationIcon.setTint(getResources().getColor(R.color.black));
+            }
+            binding.toolbar.getRoot().setNavigationOnClickListener(v -> activity.onBackPressed());
+        }
     }
 
     /*
@@ -113,7 +143,6 @@ public class ArticleFragment extends Fragment {
                 ClickableSpan clickableSpan = new ClickableSpan() {
                     @Override
                     public void onClick(View textView) {
-                        // show word meaning dialog when clicked
                         Rect wordPosition = Utils.getClickedWordPosition((TextView) textView, this);
                         launchWordDialog(targetLanguage, english, wordPosition.left, wordPosition.top, wordPosition.width());
                         addWordToDatabase(targetLanguage, english);
@@ -160,8 +189,8 @@ public class ArticleFragment extends Fragment {
         query.whereEqualTo(Word.KEY_USER, ParseUser.getCurrentUser());
         query.whereEqualTo(Word.KEY_TARGET_WORD, targetWord);
         query.whereEqualTo(Word.KEY_TARGET_LANGUAGE, targetLanguage);
-        query.getFirstInBackground((object, e) -> {
-            if (object == null) {
+        query.getFirstInBackground((word, e) -> {
+            if (word == null) {
                 saveWord(targetWord, englishWord);
 
                 // add target language to studied languages if not there already
@@ -202,8 +231,12 @@ public class ArticleFragment extends Fragment {
     the position of the word clicked (described by left, top, and width).
     */
     private void launchWordDialog(String targetLanguage, String english, int left, int top, int width) {
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        WordDialogFragment wordDialogFragment = WordDialogFragment.newInstance(targetLanguage, english, left, top, width);
-        wordDialogFragment.show(fm, "fragment_dialog");
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        if (activity != null) {
+            FragmentManager fm = activity.getSupportFragmentManager();
+            WordDialogFragment wordDialogFragment = WordDialogFragment.newInstance(
+                    targetLanguage, english, left, top, width);
+            wordDialogFragment.show(fm, "fragment_dialog");
+        }
     }
 }

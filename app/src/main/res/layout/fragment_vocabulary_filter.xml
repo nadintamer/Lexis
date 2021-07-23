@@ -21,7 +21,7 @@
         android:textColor="@color/black"
         android:textSize="22sp"
         android:textStyle="bold"
-        android:text="Update vocabulary filters" />
+        android:text="@string/update_vocabulary_filters" />
 
     <TextView
         android:id="@+id/tvLanguages"
@@ -31,7 +31,7 @@
         android:layout_alignStart="@id/tvTitle"
         android:layout_marginTop="15dp"
         android:textSize="16sp"
-        android:text="Languages" />
+        android:text="@string/languages" />
 
     <LinearLayout
         android:id="@+id/languageList"
@@ -50,9 +50,66 @@
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="20dp"
         android:minHeight="0dp"
-        android:text="All"
+        android:text="@string/all"
         android:textSize="16sp"
         android:textColor="@color/black" />
+
+    <TextView
+        android:id="@+id/tvStarredWords"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/languageList"
+        android:layout_alignStart="@id/languageList"
+        android:layout_marginTop="15dp"
+        android:textSize="16sp"
+        android:text="@string/starred_words_label" />
+
+    <CheckBox
+        android:id="@+id/cbStarredOnly"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvStarredWords"
+        android:layout_alignStart="@id/tvStarredWords"
+        android:layout_marginEnd="20dp"
+        android:minHeight="0dp"
+        android:text="@string/starred_words_only"
+        android:textSize="16sp"
+        android:textColor="@color/black" />
+
+    <TextView
+        android:id="@+id/tvSorting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cbStarredOnly"
+        android:layout_alignStart="@id/cbStarredOnly"
+        android:layout_marginTop="15dp"
+        android:textSize="16sp"
+        android:text="@string/sort_by" />
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvSorting"
+        android:layout_alignStart="@id/tvSorting"
+        android:orientation="horizontal">
+        <RadioButton
+            android:id="@+id/radioAlphabetical"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:text="@string/alphabetically" />
+        <RadioButton
+            android:id="@+id/radioCreatedAt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:text="@string/date_added" />
+    </RadioGroup>
 
     <Button
         android:id="@+id/btnCancel"
