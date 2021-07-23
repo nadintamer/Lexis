@@ -43,7 +43,7 @@ public class TranslateUtils {
     TODO: add comment here
     */
     public static void getNERModel(Context context) throws IOException {
-        InputStream inputStreamNameFinder = context.getAssets().open("en-ner-person.bin");
+        InputStream inputStreamNameFinder = context.getAssets().open("en-ner-location.bin");
         TokenNameFinderModel model = new TokenNameFinderModel(inputStreamNameFinder);
         nameFinder = new NameFinderME(model);
     }

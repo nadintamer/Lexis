@@ -83,7 +83,7 @@ public class Article {
         if (nameFinder != null) {
             Span[] nameSpans = nameFinder.find(words);
             for (Span s : nameSpans) {
-                Log.i(TAG, "Found name: " + s.toString() + "  " + words[s.getStart()]);
+                Log.i(TAG, "Found location: " + s.toString() + "  " + words[s.getStart()]);
             }
         }
 
