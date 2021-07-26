@@ -47,6 +47,11 @@ public class VocabularyAdapter extends RecyclerView.Adapter<VocabularyAdapter.Vo
         notifyDataSetChanged();
     }
 
+    public void insertAt(int position, Word word) {
+        vocabulary.add(position, word);
+        notifyItemInserted(position);
+    }
+
     public void clear() {
         vocabulary.clear();
         notifyDataSetChanged();

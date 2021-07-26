@@ -28,13 +28,17 @@ import com.example.lexis.utilities.SwipeDeleteCallback;
 import com.example.lexis.utilities.Utils;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PracticeFragment extends Fragment implements VocabularyFilterDialogFragment.VocabularyFilterDialogListener {
+public class PracticeFragment extends Fragment implements VocabularyFilterDialogFragment.VocabularyFilterDialogListener, VocabularyNewDialogFragment.VocabularyNewDialogListener{
 
     private static final String TAG = "PracticeFragment";
+    private static final int VOCABULARY_FILTER_REQUEST_CODE = 124;
+    private static final int VOCABULARY_NEW_REQUEST_CODE = 342;
+
     public FragmentPracticeBinding binding;
     List<Word> vocabulary;
     VocabularyAdapter adapter;
@@ -96,15 +100,24 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
     */
     private void setUpToolbar() {
         Utils.setLanguageLogo(binding.toolbar.ivLogo);
-        binding.toolbar.ibFilter.setOnClickListener((View.OnClickListener) v -> {
+        binding.toolbar.ibFilter.setOnClickListener(v -> {
             AppCompatActivity activity = (AppCompatActivity) getActivity();
             if (activity != null) {
                 FragmentManager fm = activity.getSupportFragmentManager();
                 ArrayList<String> languageOptions = new ArrayList<>(Utils.getCurrentStudiedLanguages());
                 VocabularyFilterDialogFragment dialog = VocabularyFilterDialogFragment.newInstance(
                         languageOptions, selectedLanguages, starredOnly, sortBy);
-                dialog.setTargetFragment(PracticeFragment.this, 124);
+                dialog.setTargetFragment(PracticeFragment.this, VOCABULARY_FILTER_REQUEST_CODE);
                 dialog.show(fm, "fragment_vocabulary_filter");
+            }
+        });
+        binding.toolbar.ibAddNew.setOnClickListener(v -> {
+            AppCompatActivity activity = (AppCompatActivity) getActivity();
+            if (activity != null) {
+                FragmentManager fm = activity.getSupportFragmentManager();
+                VocabularyNewDialogFragment dialog = new VocabularyNewDialogFragment();
+                dialog.setTargetFragment(PracticeFragment.this, VOCABULARY_NEW_REQUEST_CODE);
+                dialog.show(fm, "fragment_vocabulary_new");
             }
         });
     }
@@ -283,7 +296,7 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
     private void resetVocabularyFilters() {
         selectedLanguages = new ArrayList<>(Utils.getCurrentStudiedLanguages());
         starredOnly = false;
-        sortBy = Sort.ALPHABETICALLY;
+        sortBy = Sort.DATE;
     }
 
     /*
@@ -297,5 +310,22 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
 
         adapter.clear();
         queryVocabulary();
+    }
+
+    /*
+    Called after new vocabulary dialog is dismissed; add new word to vocabulary.
+    */
+    @Override
+    public void onFinishDialog(String targetLanguage, String targetWord, String englishWord) {
+        SaveCallback callback = e -> {
+            if (e != null) {
+                Log.e(TAG, "Error while saving word", e);
+                return;
+            }
+            // TODO: improve upon this?
+            adapter.clear();
+            queryVocabulary();
+        };
+        Utils.addWordToDatabase(targetLanguage, targetWord, englishWord, callback);
     }
 }

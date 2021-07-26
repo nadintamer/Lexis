@@ -9,6 +9,7 @@ import java.util.Map;
 
 public class Const {
     public static final List<String> languageCodes = Arrays.asList("fr", "es", "de", "tr");
+    public static final List<String> languageNames = Arrays.asList("French", "Spanish", "German", "Turkish");
     public static final Map<String, Integer> languageLogos = new HashMap<String, Integer>() {{
         put("fr", R.drawable.logo_france);
         put("es", R.drawable.logo_spain);

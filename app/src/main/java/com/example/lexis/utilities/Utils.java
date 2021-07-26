@@ -8,9 +8,11 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.lexis.models.Word;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -267,5 +269,46 @@ public class Utils {
         if (currentLanguageLogo != null) {
             imageView.setImageResource(currentLanguageLogo);
         }
+    }
+
+    /*
+    Add a word with the provided target language and English meanings to the Parse database,
+    only if it doesn't already exist in the user's vocabulary.
+    */
+    public static void addWordToDatabase(String targetLanguage, String targetWord, String englishWord, SaveCallback callback) {
+        ParseQuery<Word> query = ParseQuery.getQuery(Word.class);
+        query.include(Word.KEY_USER);
+        query.whereEqualTo(Word.KEY_USER, ParseUser.getCurrentUser());
+        query.whereEqualTo(Word.KEY_TARGET_WORD, targetWord);
+        query.whereEqualTo(Word.KEY_TARGET_LANGUAGE, targetLanguage);
+        query.getFirstInBackground((word, e) -> {
+            if (word == null) {
+                saveWord(targetLanguage, targetWord, englishWord, callback);
+
+                // add target language to studied languages if not there already
+                List<String> studiedLanguages = Utils.getCurrentStudiedLanguages();
+                if (!studiedLanguages.contains(targetLanguage)) {
+                    studiedLanguages.add(targetLanguage);
+                    Utils.setCurrentStudiedLanguages(studiedLanguages);
+                }
+            } else {
+                Log.i(TAG, "Word already exists in database: " + targetWord);
+            }
+        });
+    }
+
+    /*
+    Save the word with the provided target language and English meanings to the Parse database.
+    */
+    public static void saveWord(String targetLanguage, String targetWord, String englishWord, SaveCallback callback) {
+        Word word = new Word();
+        word.setTargetWord(targetWord);
+        word.setEnglishWord(englishWord);
+        word.setTargetWordLower(targetWord.toLowerCase());
+        word.setEnglishWordLower(englishWord.toLowerCase());
+        word.setTargetLanguage(targetLanguage);
+        word.setIsStarred(false);
+        word.setUser(ParseUser.getCurrentUser());
+        word.saveInBackground(callback);
     }
 }

@@ -32,4 +32,7 @@
     <string name="sort_by">Sort by</string>
     <string name="date_added">Date added</string>
     <string name="alphabetically">Alphabetically</string>
+    <string name="add_new_word_to_vocabulary">Add new word to vocabulary</string>
+    <string name="target_language">Target language</string>
+    <string name="english_word">English word</string>
 </resources>

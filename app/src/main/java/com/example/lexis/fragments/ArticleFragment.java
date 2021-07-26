@@ -26,15 +26,11 @@ import javax.annotation.Nullable;
 import com.example.lexis.R;
 import com.example.lexis.databinding.FragmentArticleBinding;
 import com.example.lexis.models.Article;
-import com.example.lexis.models.Word;
 import com.example.lexis.utilities.RoundedHighlightSpan;
 import com.example.lexis.utilities.Utils;
-import com.parse.ParseQuery;
-import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import org.parceler.Parcels;
-
-import java.util.List;
 
 public class ArticleFragment extends Fragment {
 
@@ -145,7 +141,14 @@ public class ArticleFragment extends Fragment {
                     public void onClick(View textView) {
                         Rect wordPosition = Utils.getClickedWordPosition((TextView) textView, this);
                         launchWordDialog(targetLanguage, english, wordPosition.left, wordPosition.top, wordPosition.width());
-                        addWordToDatabase(targetLanguage, english);
+                        SaveCallback callback = e -> {
+                            if (e != null) {
+                                Log.e(TAG, "Error while saving word", e);
+                                return;
+                            }
+                            Log.i(TAG, "Successfully saved word!");
+                        };
+                        Utils.addWordToDatabase(Utils.getCurrentTargetLanguage(), targetLanguage, english, callback);
                     }
 
                     @Override
@@ -176,54 +179,6 @@ public class ArticleFragment extends Fragment {
         }
 
         return spannableStringBuilder;
-    }
-
-    /*
-    Add a word with the provided target language and English meanings to the Parse database,
-    only if it doesn't already exist in the user's vocabulary.
-    */
-    private void addWordToDatabase(String targetWord, String englishWord) {
-        String targetLanguage = Utils.getCurrentTargetLanguage();
-        ParseQuery<Word> query = ParseQuery.getQuery(Word.class);
-        query.include(Word.KEY_USER);
-        query.whereEqualTo(Word.KEY_USER, ParseUser.getCurrentUser());
-        query.whereEqualTo(Word.KEY_TARGET_WORD, targetWord);
-        query.whereEqualTo(Word.KEY_TARGET_LANGUAGE, targetLanguage);
-        query.getFirstInBackground((word, e) -> {
-            if (word == null) {
-                saveWord(targetWord, englishWord);
-
-                // add target language to studied languages if not there already
-                List<String> studiedLanguages = Utils.getCurrentStudiedLanguages();
-                if (!studiedLanguages.contains(targetLanguage)) {
-                    studiedLanguages.add(targetLanguage);
-                    Utils.setCurrentStudiedLanguages(studiedLanguages);
-                }
-            } else {
-                Log.i(TAG, "Word already exists in database: " + targetWord);
-            }
-        });
-    }
-
-    /*
-    Save the word with the provided target language and English meanings to the Parse database.
-    */
-    private void saveWord(String targetWord, String englishWord) {
-        Word word = new Word();
-        word.setTargetWord(targetWord);
-        word.setEnglishWord(englishWord);
-        word.setTargetWordLower(targetWord.toLowerCase());
-        word.setEnglishWordLower(englishWord.toLowerCase());
-        word.setTargetLanguage(Utils.getCurrentTargetLanguage());
-        word.setIsStarred(false);
-        word.setUser(ParseUser.getCurrentUser());
-        word.saveInBackground(e -> {
-            if (e != null) {
-                Log.e(TAG, "Error while saving word", e);
-                return;
-            }
-            Log.i(TAG, "Successfully saved word: " + targetWord);
-        });
     }
 
     /*
