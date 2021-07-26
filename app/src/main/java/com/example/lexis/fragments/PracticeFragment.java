@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.lexis.R;
@@ -23,6 +24,7 @@ import com.example.lexis.adapters.VocabularyAdapter;
 import com.example.lexis.databinding.FragmentPracticeBinding;
 import com.example.lexis.models.Word;
 import com.example.lexis.utilities.RoundedHighlightSpan;
+import com.example.lexis.utilities.SwipeDeleteCallback;
 import com.example.lexis.utilities.Utils;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -82,6 +84,11 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
                 R.color.light_cyan,
                 R.color.orange_peel,
                 R.color.mellow_apricot);
+
+        // set up swipe left to delete
+        SwipeDeleteCallback callback = new SwipeDeleteCallback(adapter);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(binding.rvVocabulary);
     }
 
     /*
@@ -224,13 +231,16 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
     Style the prompt shown when vocabulary is empty.
     */
     private void styleEmptyVocabularyPrompt() {
-        String prompt = getString(R.string.empty_vocabulary_prompt);
-        int start = prompt.indexOf("highlighted");
-        int end = start + "highlighted".length();
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        if (activity != null) {
+            String prompt = activity.getString(R.string.empty_vocabulary_prompt);
+            int start = prompt.indexOf("highlighted");
+            int end = start + "highlighted".length();
 
-        SpannableString styledPrompt = new SpannableString(prompt);
-        styledPrompt.setSpan(new RoundedHighlightSpan(), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        binding.tvEmptyPrompt.setText(styledPrompt);
+            SpannableString styledPrompt = new SpannableString(prompt);
+            styledPrompt.setSpan(new RoundedHighlightSpan(), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            binding.tvEmptyPrompt.setText(styledPrompt);
+        }
     }
 
     /*
@@ -250,7 +260,7 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
     /*
     Check if the user's vocabulary is empty, and display a prompting message if it is.
     */
-    private void checkVocabularyEmpty(List<Word> words) {
+    public void checkVocabularyEmpty(List<Word> words) {
         styleEmptyVocabularyPrompt();
         if (words.isEmpty()) {
             binding.tvEmptyPrompt.setVisibility(View.VISIBLE);

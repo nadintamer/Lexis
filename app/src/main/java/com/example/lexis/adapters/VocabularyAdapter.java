@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.lexis.databinding.ItemVocabularyBinding;
+import com.example.lexis.fragments.PracticeFragment;
 import com.example.lexis.models.Word;
 import com.example.lexis.utilities.Utils;
 
@@ -17,9 +18,9 @@ import java.util.List;
 public class VocabularyAdapter extends RecyclerView.Adapter<VocabularyAdapter.VocabularyViewHolder> {
 
     List<Word> vocabulary;
-    Fragment fragment;
+    PracticeFragment fragment;
 
-    public VocabularyAdapter(Fragment fragment, List<Word> vocabulary) {
+    public VocabularyAdapter(PracticeFragment fragment, List<Word> vocabulary) {
         this.fragment = fragment;
         this.vocabulary = vocabulary;
     }
@@ -50,6 +51,17 @@ public class VocabularyAdapter extends RecyclerView.Adapter<VocabularyAdapter.Vo
     public void clear() {
         vocabulary.clear();
         notifyDataSetChanged();
+    }
+
+    /*
+    Delete word at given position from user's vocabulary.
+    */
+    public void deleteWord(int position) {
+        vocabulary.get(position).deleteInBackground();
+        vocabulary.remove(position);
+        notifyItemRemoved(position);
+        fragment.checkVocabularyEmpty(vocabulary);
+        // make snackbar
     }
 
     public class VocabularyViewHolder extends RecyclerView.ViewHolder {
