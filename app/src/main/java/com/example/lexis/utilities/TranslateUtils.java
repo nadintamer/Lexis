@@ -1,8 +1,8 @@
 package com.example.lexis.utilities;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.StrictMode;
+import android.util.Log;
 
 import com.example.lexis.R;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -10,10 +10,7 @@ import com.google.cloud.translate.Translate;
 import com.google.cloud.translate.TranslateException;
 import com.google.cloud.translate.TranslateOptions;
 import com.google.cloud.translate.Translation;
-import com.google.gson.Gson;
 
-import java.io.BufferedOutputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -61,7 +58,7 @@ public class TranslateUtils {
         InputStream inputStreamNameFinder = context.getAssets().open("en-ner-person.bin");
         TokenNameFinderModel model = new TokenNameFinderModel(inputStreamNameFinder);
         personFinder = new NameFinderME(model);
-        saveModel(model, "personModel.txt");
+        saveModel(context, model, Const.personModelFile);
     }
 
     /*
@@ -71,7 +68,7 @@ public class TranslateUtils {
         InputStream inputStreamNameFinder = context.getAssets().open("en-ner-location.bin");
         TokenNameFinderModel model = new TokenNameFinderModel(inputStreamNameFinder);
         locationFinder = new NameFinderME(model);
-        saveModel(model, "locationModel.txt");
+        saveModel(context, model, Const.locationModelFile);
     }
 
     /*
@@ -81,26 +78,18 @@ public class TranslateUtils {
         InputStream inputStreamNameFinder = context.getAssets().open("en-ner-organization.bin");
         TokenNameFinderModel model = new TokenNameFinderModel(inputStreamNameFinder);
         organizationFinder = new NameFinderME(model);
-        saveModel(model, "organizationModel.txt");
+        saveModel(context, model, Const.organizationModelFile);
     }
 
-    public static void saveModel(TokenNameFinderModel model, String filename) throws IOException {
-        BufferedOutputStream modelOut = new BufferedOutputStream(new FileOutputStream(filename));
-        model.serialize(modelOut);
-        modelOut.close();
-    }
-
-    /*
-    TODO: add comment here
-    */
-    private static void saveToPreferences(Context context, TokenNameFinderModel model, String key) {
-        SharedPreferences prefs = context.getSharedPreferences("nlp_models", Context.MODE_PRIVATE);
-        SharedPreferences.Editor prefsEditor = prefs.edit();
-        Gson gson = new Gson();
-        String json = gson.toJson(model);
-        prefsEditor.putString(key, json);
-        prefsEditor.commit();
-        prefsEditor.clear();
+    public static void saveModel(Context context, TokenNameFinderModel model, String filename) {
+        try {
+            FileOutputStream fileOut = context.openFileOutput(filename, Context.MODE_PRIVATE);
+            model.serialize(fileOut);
+            fileOut.close();
+            Log.i("TranslateUtils", "saved to " + filename);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void setPersonFinder(NameFinderME personFinder) {

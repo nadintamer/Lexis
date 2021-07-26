@@ -15,4 +15,8 @@ public class Const {
         put("de", R.drawable.logo_germany);
         put("tr", R.drawable.logo_turkey);
     }};
+
+    public static final String personModelFile = "personModel.txt";
+    public static final String locationModelFile = "locationModel.txt";
+    public static final String organizationModelFile = "organizationModel.txt";
 }
