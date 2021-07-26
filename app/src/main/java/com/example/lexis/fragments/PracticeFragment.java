@@ -7,11 +7,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SearchView;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -126,17 +127,30 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
         binding.searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                // fetch users
                 searchVocabulary(query);
-                // reset searchView
                 binding.searchBar.clearFocus();
                 binding.searchBar.setQuery("", false);
-                return true;
+                return false;
             }
 
             @Override
-            public boolean onQueryTextChange(String s) {
+            public boolean onQueryTextChange(String newText) {
+                if (!newText.isEmpty()) {
+                    searchVocabulary(newText);
+                }
                 return false;
+            }
+        });
+
+        ImageView clearButton = binding.searchBar.findViewById(androidx.appcompat.R.id.search_close_btn);
+        clearButton.setOnClickListener(v -> {
+            if (binding.searchBar.getQuery().length() == 0) {
+                binding.searchBar.setIconified(true);
+            } else {
+                binding.searchBar.setQuery("", false);
+                binding.searchBar.clearFocus();
+                adapter.clear();
+                queryVocabulary();
             }
         });
     }

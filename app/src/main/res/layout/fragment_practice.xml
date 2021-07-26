@@ -29,15 +29,16 @@
                 android:layout_height="match_parent"
                 app:contentScrim="@android:color/transparent"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
-               <SearchView
+               <androidx.appcompat.widget.SearchView
                    android:id="@+id/searchBar"
                    android:layout_width="match_parent"
                    android:layout_height="wrap_content"
                    android:layout_marginVertical="5dp"
                    android:layout_marginHorizontal="10dp"
                    android:background="@drawable/word_background_shape"
-                   android:queryBackground="@android:color/transparent"
-                   android:queryHint="Search" />
+                   app:queryHint="Search"
+                   app:queryBackground="@android:color/transparent"
+                   app:actionViewClass="androidx.appcompat.widget.SearchView" />
             </com.google.android.material.appbar.CollapsingToolbarLayout>
         </com.google.android.material.appbar.AppBarLayout>
 
