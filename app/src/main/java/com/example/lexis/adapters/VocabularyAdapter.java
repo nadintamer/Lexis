@@ -63,7 +63,7 @@ public class VocabularyAdapter extends RecyclerView.Adapter<VocabularyAdapter.Vo
         notifyItemRemoved(position);
         fragment.checkVocabularyEmpty(vocabulary);
 
-        Snackbar.make(fragment.binding.rvVocabulary, "Deleted word: " + targetWord, Snackbar.LENGTH_LONG)
+        Snackbar.make(fragment.binding.btnPractice, "Deleted word: " + targetWord, Snackbar.LENGTH_LONG)
                 .setAction("Undo", view -> {
                     Word newWord = Word.copyWord(word);
                     newWord.saveInBackground();

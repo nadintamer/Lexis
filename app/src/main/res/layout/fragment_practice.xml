@@ -76,7 +76,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginHorizontal="20dp"
-        android:layout_marginVertical="40dp"
+        android:layout_marginVertical="20dp"
         android:clickable="true"
         android:backgroundTint="@color/tiffany_blue"
         android:src="@drawable/dumbbell_icon"
