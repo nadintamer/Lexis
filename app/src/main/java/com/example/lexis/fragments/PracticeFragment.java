@@ -35,7 +35,7 @@ import java.util.List;
 public class PracticeFragment extends Fragment implements VocabularyFilterDialogFragment.VocabularyFilterDialogListener {
 
     private static final String TAG = "PracticeFragment";
-    FragmentPracticeBinding binding;
+    public FragmentPracticeBinding binding;
     List<Word> vocabulary;
     VocabularyAdapter adapter;
     ArrayList<String> selectedLanguages;
