@@ -32,6 +32,7 @@ import com.yuyakaido.android.cardstackview.StackFrom;
 import com.yuyakaido.android.cardstackview.SwipeAnimationSetting;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import eu.davidea.flipview.FlipView;
@@ -219,14 +220,21 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
     */
     @Override
     public void onCardSwiped(Direction direction) {
+        int index = cardLayoutManager.getTopPosition() - 1;
+        Word word = words.get(index);
+
         binding.stackFlashcards.setTranslationZ(0);
         binding.btnForgot.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
         binding.btnKnow.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
 
         if (direction == Direction.Left) {
-            adapter.add(words.get(cardLayoutManager.getTopPosition() - 1));
+            adapter.add(word);
+            word.decrementScore();
+        } else {
+            word.incrementScore();
         }
-        adapter.remove(cardLayoutManager.getTopPosition() - 1);
+        adapter.remove(index);
+        word.saveInBackground();
 
         if (adapter.getItemCount() == 0) {
             finishSession();
@@ -267,6 +275,10 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
 
     @Override
     public void onCardAppeared(View view, int position) {
+        Word word = words.get(position);
+        word.setLastPracticed(new Date());
+        word.saveInBackground();
+
         wasFlipped = false;
         FlipView flipview = view.findViewById(R.id.flipView);
         flipview.setOnFlippingListener((flipView, checked) -> wasFlipped = true);
