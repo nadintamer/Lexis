@@ -43,6 +43,7 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
     private static final String ARG_LANGUAGE = "targetLanguage";
     private static final String ARG_ENGLISH = "answerInEnglish";
     private static final String ARG_STARRED_WORDS = "starredWordsOnly";
+    private static final int NUM_TO_PRACTICE = 15;
 
     FragmentPracticeFlashcardBinding binding;
     List<Word> words;
@@ -107,7 +108,12 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
         if (starredWordsOnly) {
             query.whereEqualTo(Word.KEY_STARRED, true);
         }
-        query.addDescendingOrder("createdAt");
+
+        // get top cards with lowest score and least recent practice
+        query.orderByAscending(Word.KEY_SCORE);
+        query.addAscendingOrder(Word.KEY_LAST_PRACTICED);
+        query.setLimit(NUM_TO_PRACTICE);
+
         query.findInBackground((words, e) -> {
             if (e != null) {
                 Log.e(TAG, "Issue with getting vocabulary", e);

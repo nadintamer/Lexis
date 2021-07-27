@@ -96,10 +96,6 @@ public class Word extends ParseObject {
         return getDate(KEY_LAST_PRACTICED);
     }
 
-    public Long getLastPracticedLong() {
-        return getLastPracticed().getTime();
-    }
-
     public void setLastPracticed(Date date) {
         put(KEY_LAST_PRACTICED, date);
     }
