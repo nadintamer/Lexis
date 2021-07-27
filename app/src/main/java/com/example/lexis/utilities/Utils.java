@@ -7,6 +7,7 @@ import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -295,6 +296,10 @@ public class Utils {
                 }
             } else {
                 Log.i(TAG, "Word already exists in database: " + targetWord);
+                if (recyclerView != null) {
+                    String message = String.format("Word already exists in vocabulary: %s", targetWord);
+                    Toast.makeText(recyclerView.getContext(), message, Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
