@@ -9,7 +9,6 @@ import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,13 +27,11 @@ import com.example.lexis.databinding.FragmentArticleBinding;
 import com.example.lexis.models.Article;
 import com.example.lexis.utilities.RoundedHighlightSpan;
 import com.example.lexis.utilities.Utils;
-import com.parse.SaveCallback;
 
 import org.parceler.Parcels;
 
 public class ArticleFragment extends Fragment {
 
-    private static final String TAG = "ArticleFragment";
     FragmentArticleBinding binding;
     Article article;
 
@@ -141,14 +138,7 @@ public class ArticleFragment extends Fragment {
                     public void onClick(View textView) {
                         Rect wordPosition = Utils.getClickedWordPosition((TextView) textView, this);
                         launchWordDialog(targetLanguage, english, wordPosition.left, wordPosition.top, wordPosition.width());
-                        SaveCallback callback = e -> {
-                            if (e != null) {
-                                Log.e(TAG, "Error while saving word", e);
-                                return;
-                            }
-                            Log.i(TAG, "Successfully saved word!");
-                        };
-                        Utils.addWordToDatabase(Utils.getCurrentTargetLanguage(), targetLanguage, english, callback);
+                        Utils.addWordToDatabase(Utils.getCurrentTargetLanguage(), targetLanguage, english, null);
                     }
 
                     @Override

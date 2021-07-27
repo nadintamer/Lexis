@@ -28,7 +28,6 @@ import com.example.lexis.utilities.SwipeDeleteCallback;
 import com.example.lexis.utilities.Utils;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -317,15 +316,6 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
     */
     @Override
     public void onFinishDialog(String targetLanguage, String targetWord, String englishWord) {
-        SaveCallback callback = e -> {
-            if (e != null) {
-                Log.e(TAG, "Error while saving word", e);
-                return;
-            }
-            // TODO: improve upon this?
-            adapter.clear();
-            queryVocabulary();
-        };
-        Utils.addWordToDatabase(targetLanguage, targetWord, englishWord, callback);
+        Utils.addWordToDatabase(targetLanguage, targetWord, englishWord, binding.rvVocabulary);
     }
 }
