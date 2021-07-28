@@ -33,4 +33,8 @@
     <string name="date_added">Date added</string>
     <string name="alphabetically">Alphabetically</string>
     <string name="number_of_flashcards">Number of flashcards</string>
+    <string name="back_to_vocabulary">Back to vocabulary</string>
+    <string name="practice_end_congratulations">Congratulations on wrapping up your learning session! 💪</string>
+    <string name="knew">Knew</string>
+    <string name="forgot">Forgot</string>
 </resources>
