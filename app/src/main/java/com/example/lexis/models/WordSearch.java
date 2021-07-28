@@ -5,7 +5,7 @@ import java.util.Random;
 
 public class WordSearch {
 
-    char[][] grid;
+    private char[][] grid;
 
     public WordSearch(String[] words) {
         int max = getLongestWord(words);
@@ -22,6 +22,18 @@ public class WordSearch {
         printGrid();
     }
 
+    public char[][] getGrid() {
+        return grid;
+    }
+
+    public int getWidth() {
+        return grid.length;
+    }
+
+    public int getHeight() {
+        return grid[0].length;
+    }
+
     public void printGrid() {
         for (char[] array : grid) {
             System.out.println(Arrays.toString(array));
@@ -29,8 +41,8 @@ public class WordSearch {
     }
 
     private boolean placeWord(String word) {
-        int width = grid.length;
-        int height = grid[0].length;
+        int width = getWidth();
+        int height = getHeight();
 
         String reverse = new StringBuffer(word).reverse().toString();
         String[] options = { word, reverse };
