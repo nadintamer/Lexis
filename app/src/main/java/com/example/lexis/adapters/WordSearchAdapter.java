@@ -37,6 +37,11 @@ public class WordSearchAdapter extends RecyclerView.Adapter<WordSearchAdapter.Wo
         return letters.length;
     }
 
+    public void setLetters(char[] letters) {
+        this.letters = letters;
+        notifyDataSetChanged();
+    }
+
     public class WordSearchViewHolder extends RecyclerView.ViewHolder {
         ItemWordSearchBinding binding;
 

@@ -43,17 +43,7 @@ public class PracticeIntroFragment extends Fragment {
         setUpPracticeOptions();
         binding.btnFlashcards.setOnClickListener(v -> launchFlashcardSession());
         // TODO: temporary - remove!
-        binding.btnWordSearch.setOnClickListener(v -> {
-            String[] words = {"rouge", "marron", "vert", "violet", "orange", "jaune", "bleu", "rose"} ;
-            Fragment flashcardFragment = WordSearchFragment.newInstance(words);
-            AppCompatActivity activity = (AppCompatActivity) getActivity();
-            if (activity != null) {
-                FragmentManager fragmentManager = activity.getSupportFragmentManager();
-                fragmentManager.beginTransaction()
-                        .replace(R.id.fragmentContainer, flashcardFragment)
-                        .commit();
-            }
-        });
+        binding.btnWordSearch.setOnClickListener(v -> launchWordSearchSession());
     }
 
     /*
@@ -115,6 +105,24 @@ public class PracticeIntroFragment extends Fragment {
         boolean starredWordsOnly = binding.cbStarredOnly.isChecked();
 
         Fragment flashcardFragment = PracticeFlashcardFragment.newInstance(selectedLanguage, answerInEnglish, starredWordsOnly);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        if (activity != null) {
+            FragmentManager fragmentManager = activity.getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainer, flashcardFragment)
+                    .commit();
+        }
+    }
+
+    /*
+    Launch a new word search session with the options selected in the interface.
+    */
+    private void launchWordSearchSession() {
+        int selectedPosition = binding.spinnerLanguage.getSelectedItemPosition();
+        List<String> allLanguages = Utils.getCurrentStudiedLanguages();
+        String selectedLanguage = allLanguages.get(selectedPosition);
+
+        Fragment flashcardFragment = WordSearchFragment.newInstance(selectedLanguage);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         if (activity != null) {
             FragmentManager fragmentManager = activity.getSupportFragmentManager();

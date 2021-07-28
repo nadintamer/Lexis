@@ -12,16 +12,16 @@ public class WordSearch {
     private char[][] grid;
     private List<WordSearchItem> wordItems;
 
-    public WordSearch(String[] words) {
-        int max = Math.max(getLongestWord(words), 8);
+    public WordSearch(List<Word> words) {
+        int max = Math.max(getLongestWord(words) + 1, 6);
         grid = new char[max][max];
         wordItems = new ArrayList<>();
         for (char[] array : grid) {
             Arrays.fill(array, '.');
         }
 
-        for (String word : words) {
-            while (!placeWord(word)) {}
+        for (int i = 0; i < words.size(); i++) {
+            while (!placeWord(words.get(i))) {}
         }
 
         fillGrid();
@@ -44,16 +44,25 @@ public class WordSearch {
         return grid[0].length;
     }
 
+    public List<String> getClues() {
+        List<String> clues = new ArrayList<>();
+        for (WordSearchItem item : wordItems) {
+            clues.add(item.word.getEnglishWord());
+        }
+        return clues;
+    }
+
     public void printGrid() {
         for (char[] array : grid) {
             System.out.println(Arrays.toString(array));
         }
     }
 
-    private boolean placeWord(String word) {
+    private boolean placeWord(Word wordObject) {
         int width = getWidth();
         int height = getHeight();
 
+        String word = wordObject.getTargetWord();
         String reverse = new StringBuffer(word).reverse().toString();
         String[] options = { word, reverse };
         Random random = new java.util.Random();
@@ -83,7 +92,7 @@ public class WordSearch {
             grid[y + d[1] * i][x + d[0] * i] = letter;
         }
 
-        wordItems.add(new WordSearchItem(word, y, x, d));
+        wordItems.add(new WordSearchItem(wordObject, y, x, d));
         return true;
     }
 
@@ -99,27 +108,28 @@ public class WordSearch {
         }
     }
 
-    private int getLongestWord(String[] words) {
-        int longest = words[0].length();
-        for(int i = 1; i < words.length; i++) {
-            if(words[i].length() > longest) {
-                longest = words[i].length();
+    private int getLongestWord(List<Word> words) {
+        int longest = words.get(0).getTargetWord().length();
+        for (int i = 1; i < words.size(); i++) {
+            int currentLength = words.get(i).getTargetWord().length();
+            if (currentLength > longest) {
+                longest = currentLength;
             }
         }
         return longest;
     }
 
     public class WordSearchItem {
-        String word;
+        Word word;
         GridLocation startLocation;
         GridLocation endLocation;
 
-        public WordSearchItem(String word, int row, int col, int[] d) {
+        public WordSearchItem(Word word, int row, int col, int[] d) {
             this.word = word;
             this.startLocation = new GridLocation(row, col);
             GridLocation end = new GridLocation(row, col);
-            if (d[0] == 1) end.col += word.length() - 1;
-            if (d[1] == 1) end.row += word.length() - 1;
+            if (d[0] == 1) end.col += word.getTargetWord().length() - 1;
+            if (d[1] == 1) end.row += word.getTargetWord().length() - 1;
             this.endLocation = end;
         }
     }
