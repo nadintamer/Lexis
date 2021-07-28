@@ -8,7 +8,8 @@ public class WordSearch {
     char[][] grid;
 
     public WordSearch(String[] words) {
-        grid = new char[8][8];
+        int max = getLongestWord(words);
+        grid = new char[max][max];
         for (char[] array : grid) {
             Arrays.fill(array, '.');
         }
@@ -27,7 +28,7 @@ public class WordSearch {
         }
     }
 
-    public boolean placeWord(String word) {
+    private boolean placeWord(String word) {
         int width = grid.length;
         int height = grid[0].length;
 
@@ -63,7 +64,7 @@ public class WordSearch {
         return true;
     }
 
-    public void fillGrid() {
+    private void fillGrid() {
         Random random = new java.util.Random();
         for (int row = 0; row < grid.length; row++) {
             for (int col = 0; col < grid[0].length; col++) {
@@ -73,5 +74,15 @@ public class WordSearch {
                 }
             }
         }
+    }
+
+    private int getLongestWord(String[] words) {
+        int longest = words[0].length();
+        for(int i = 1; i < words.length; i++) {
+            if(words[i].length() > longest) {
+                longest = words[i].length();
+            }
+        }
+        return longest;
     }
 }
