@@ -43,7 +43,7 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
     private static final String ARG_LANGUAGE = "targetLanguage";
     private static final String ARG_ENGLISH = "answerInEnglish";
     private static final String ARG_STARRED_WORDS = "starredWordsOnly";
-    private static final int NUM_TO_PRACTICE = 15;
+    private static final String ARG_NUM_FLASHCARDS = "numFlashcards";
 
     FragmentPracticeFlashcardBinding binding;
     List<Word> words;
@@ -53,15 +53,18 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
     boolean answerInEnglish;
     boolean starredWordsOnly;
     boolean wasFlipped;
+    int numFlashcards;
 
     public PracticeFlashcardFragment() {}
 
-    public static PracticeFlashcardFragment newInstance(String targetLanguage, boolean answerInEnglish, boolean starredWordsOnly) {
+    public static PracticeFlashcardFragment newInstance(
+            String targetLanguage, boolean answerInEnglish, boolean starredWordsOnly, int numFlashcards) {
         PracticeFlashcardFragment fragment = new PracticeFlashcardFragment();
         Bundle args = new Bundle();
         args.putString(ARG_LANGUAGE, targetLanguage);
         args.putBoolean(ARG_ENGLISH, answerInEnglish);
         args.putBoolean(ARG_STARRED_WORDS, starredWordsOnly);
+        args.putInt(ARG_NUM_FLASHCARDS, numFlashcards);
         fragment.setArguments(args);
         return fragment;
     }
@@ -73,6 +76,7 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
             targetLanguage = getArguments().getString(ARG_LANGUAGE);
             answerInEnglish = getArguments().getBoolean(ARG_ENGLISH);
             starredWordsOnly = getArguments().getBoolean(ARG_STARRED_WORDS);
+            numFlashcards = getArguments().getInt(ARG_NUM_FLASHCARDS);
         }
     }
 
@@ -112,7 +116,7 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
         // get top cards with lowest score and least recent practice
         query.orderByAscending(Word.KEY_SCORE);
         query.addAscendingOrder(Word.KEY_LAST_PRACTICED);
-        query.setLimit(NUM_TO_PRACTICE);
+        query.setLimit(numFlashcards);
 
         query.findInBackground((words, e) -> {
             if (e != null) {
