@@ -32,4 +32,6 @@
     <string name="sort_by">Sort by</string>
     <string name="date_added">Date added</string>
     <string name="alphabetically">Alphabetically</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

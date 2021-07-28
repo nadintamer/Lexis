@@ -42,6 +42,18 @@ public class PracticeIntroFragment extends Fragment {
         setUpToolbar();
         setUpPracticeOptions();
         binding.btnFlashcards.setOnClickListener(v -> launchFlashcardSession());
+        // TODO: temporary - remove!
+        binding.btnWordSearch.setOnClickListener(v -> {
+            String[] words = {"rouge", "marron", "vert", "violet", "orange", "jaune", "bleu", "rose"} ;
+            Fragment flashcardFragment = WordSearchFragment.newInstance(words);
+            AppCompatActivity activity = (AppCompatActivity) getActivity();
+            if (activity != null) {
+                FragmentManager fragmentManager = activity.getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainer, flashcardFragment)
+                        .commit();
+            }
+        });
     }
 
     /*

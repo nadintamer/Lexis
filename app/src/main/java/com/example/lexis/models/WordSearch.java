@@ -1,15 +1,21 @@
 package com.example.lexis.models;
 
+import com.google.common.primitives.Chars;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class WordSearch {
 
     private char[][] grid;
+    private List<WordSearchItem> wordItems;
 
     public WordSearch(String[] words) {
-        int max = getLongestWord(words);
+        int max = Math.max(getLongestWord(words), 8);
         grid = new char[max][max];
+        wordItems = new ArrayList<>();
         for (char[] array : grid) {
             Arrays.fill(array, '.');
         }
@@ -24,6 +30,10 @@ public class WordSearch {
 
     public char[][] getGrid() {
         return grid;
+    }
+
+    public char[] getFlatGrid() {
+        return Chars.concat(grid);
     }
 
     public int getWidth() {
@@ -73,6 +83,7 @@ public class WordSearch {
             grid[y + d[1] * i][x + d[0] * i] = letter;
         }
 
+        wordItems.add(new WordSearchItem(word, y, x, d));
         return true;
     }
 
@@ -96,5 +107,35 @@ public class WordSearch {
             }
         }
         return longest;
+    }
+
+    public class WordSearchItem {
+        String word;
+        GridLocation startLocation;
+        GridLocation endLocation;
+
+        public WordSearchItem(String word, int row, int col, int[] d) {
+            this.word = word;
+            this.startLocation = new GridLocation(row, col);
+            GridLocation end = new GridLocation(row, col);
+            if (d[0] == 1) end.col += word.length() - 1;
+            if (d[1] == 1) end.row += word.length() - 1;
+            this.endLocation = end;
+        }
+    }
+
+    public class GridLocation {
+        public int row;
+        public int col;
+
+        public GridLocation(int row, int col) {
+            this.row = row;
+            this.col = col;
+        }
+
+        @Override
+        public String toString() {
+            return "(" + row +  ", " + col + ")";
+        }
     }
 }

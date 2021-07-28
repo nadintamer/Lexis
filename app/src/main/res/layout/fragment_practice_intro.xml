@@ -111,4 +111,14 @@
         android:layout_marginTop="20dp"
         android:text="@string/start_practice_button_label"
         app:cornerRadius="10dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnWordSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/btnFlashcards"
+        android:layout_marginTop="20dp"
+        android:text="Word search"
+        app:cornerRadius="10dp" />
 </RelativeLayout>
