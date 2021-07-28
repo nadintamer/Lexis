@@ -82,7 +82,7 @@ public class WordSearchFragment extends Fragment {
         wordSearchAdapter = new WordSearchAdapter(this, letters);
 
         wordListAdapter = new WordListAdapter(this, clues);
-        binding.rvWordList.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+        binding.rvWordList.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         binding.rvWordList.setAdapter(wordListAdapter);
 
         setUpToolbar();
@@ -109,6 +109,8 @@ public class WordSearchFragment extends Fragment {
 
             wordSearchAdapter.setLetters(wordSearch.getFlatGrid());
             wordListAdapter.addAll(wordSearch.getClues());
+
+            // TODO: set last practiced time after PR is merged
         });
     }
 
