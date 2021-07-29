@@ -12,6 +12,9 @@ public class WordSearch {
     private char[][] grid;
     private List<WordSearchItem> wordItems;
 
+    /*
+    Construct a new WordSearch object from the given word list by generating the grid.
+    */
     public WordSearch(List<Word> words) {
         int max = Math.max(getLongestWord(words) + 1, 6);
         grid = new char[max][max];
@@ -21,6 +24,7 @@ public class WordSearch {
         }
 
         for (int i = 0; i < words.size(); i++) {
+            // attempt to place the word until we succeed
             while (!placeWord(words.get(i))) {}
         }
 
@@ -32,6 +36,9 @@ public class WordSearch {
         return grid;
     }
 
+    /*
+    Return a flattened, 1-D version of the word search grid.
+    */
     public char[] getFlatGrid() {
         return Chars.concat(grid);
     }
@@ -44,6 +51,9 @@ public class WordSearch {
         return grid[0].length;
     }
 
+    /*
+    Return a list of the clues (i.e. English words) for the word search puzzle.
+    */
     public List<String> getClues() {
         List<String> clues = new ArrayList<>();
         for (WordSearchItem item : wordItems) {
@@ -58,6 +68,10 @@ public class WordSearch {
         }
     }
 
+    /*
+    Attempt to place the given word somewhere within the word search grid without overlapping any
+    incorrect letters. Return true if successful, false otherwise.
+    */
     private boolean placeWord(Word wordObject) {
         int width = getWidth();
         int height = getHeight();
@@ -96,6 +110,9 @@ public class WordSearch {
         return true;
     }
 
+    /*
+    Fill the remaining empty cells in the grid with random characters.
+    */
     private void fillGrid() {
         Random random = new java.util.Random();
         for (int row = 0; row < grid.length; row++) {
@@ -108,6 +125,9 @@ public class WordSearch {
         }
     }
 
+    /*
+    Return the length of the longest word in the word list.
+    */
     private int getLongestWord(List<Word> words) {
         int longest = words.get(0).getTargetWord().length();
         for (int i = 1; i < words.size(); i++) {
@@ -119,10 +139,15 @@ public class WordSearch {
         return longest;
     }
 
+    /*
+    Represents a single word within the word search, along with its start and end location, as
+    well as direction.
+    */
     public class WordSearchItem {
         Word word;
         GridLocation startLocation;
         GridLocation endLocation;
+        int[] direction;
 
         public WordSearchItem(Word word, int row, int col, int[] d) {
             this.word = word;
@@ -131,9 +156,13 @@ public class WordSearch {
             if (d[0] == 1) end.col += word.getTargetWord().length() - 1;
             if (d[1] == 1) end.row += word.getTargetWord().length() - 1;
             this.endLocation = end;
+            this.direction = d;
         }
     }
 
+    /*
+    Represents a single row-column location within the word search grid.
+    */
     public class GridLocation {
         public int row;
         public int col;
