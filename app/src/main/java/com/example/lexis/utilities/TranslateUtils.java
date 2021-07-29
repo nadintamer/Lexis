@@ -6,6 +6,11 @@ import android.util.Log;
 
 import com.example.lexis.R;
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.language.v1.AnalyzeEntitiesRequest;
+import com.google.cloud.language.v1.AnalyzeEntitiesResponse;
+import com.google.cloud.language.v1.Document;
+import com.google.cloud.language.v1.EncodingType;
+import com.google.cloud.language.v1.LanguageServiceClient;
 import com.google.cloud.translate.Translate;
 import com.google.cloud.translate.TranslateException;
 import com.google.cloud.translate.TranslateOptions;
@@ -20,6 +25,7 @@ import opennlp.tools.namefind.TokenNameFinderModel;
 
 public class TranslateUtils {
     private static Translate translate;
+    private static LanguageServiceClient language;
     private static NameFinderME personFinder;
     private static NameFinderME organizationFinder;
     private static NameFinderME locationFinder;
@@ -49,6 +55,28 @@ public class TranslateUtils {
     public static String translateSingleWord(String originalWord, String targetLanguage) throws TranslateException {
         Translation translation = translate.translate(originalWord, Translate.TranslateOption.targetLanguage(targetLanguage), Translate.TranslateOption.model("base"));
         return translation.getTranslatedText(); // TODO: potentially look into providing more context?
+    }
+
+    // TODO: add comment
+    public static void getNLPService() {
+        try (LanguageServiceClient languageClient = LanguageServiceClient.create()) {
+            language = languageClient;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // TODO: add comment
+    public static AnalyzeEntitiesResponse analyzeEntities(String text) {
+        Document doc = Document.newBuilder().setContent(text).setType(Document.Type.PLAIN_TEXT).build();
+        AnalyzeEntitiesRequest request =
+                AnalyzeEntitiesRequest.newBuilder()
+                        .setDocument(doc)
+                        .setEncodingType(EncodingType.UTF16)
+                        .build();
+
+        AnalyzeEntitiesResponse response = language.analyzeEntities(request);
+        return response;
     }
 
     /*

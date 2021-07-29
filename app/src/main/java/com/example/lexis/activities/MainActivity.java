@@ -35,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         TranslateUtils.getTranslateService(this);
+        TranslateUtils.getNLPService()
+        ;
         // get named-entity recognition model in background thread
         new Thread(() -> {
             try {
