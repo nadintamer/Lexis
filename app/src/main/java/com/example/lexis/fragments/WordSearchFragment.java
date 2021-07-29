@@ -21,13 +21,15 @@ import com.example.lexis.adapters.WordSearchAdapter;
 import com.example.lexis.databinding.FragmentWordSearchBinding;
 import com.example.lexis.models.Word;
 import com.example.lexis.models.WordSearch;
+import com.michaelflisar.dragselectrecyclerview.DragSelectTouchListener;
+import com.michaelflisar.dragselectrecyclerview.DragSelectionProcessor;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import org.parceler.Parcels;
-
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class WordSearchFragment extends Fragment {
 
@@ -40,9 +42,15 @@ public class WordSearchFragment extends Fragment {
     private WordSearch wordSearch;
 
     private WordSearchAdapter wordSearchAdapter;
+    private GridLayoutManager wordSearchLayoutManager;
     private WordListAdapter wordListAdapter;
     private char[] letters;
+    private Set<Integer> selectedPositions;
     private List<String> clues;
+
+    private int startCol;
+    private int startRow;
+    private DragDirection dragDirection;
 
     public WordSearchFragment() {}
 
@@ -54,11 +62,16 @@ public class WordSearchFragment extends Fragment {
         return fragment;
     }
 
+    private enum DragDirection {
+        HORIZONTAL, VERTICAL, NONE
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             targetLanguage = getArguments().getString(ARG_LANGUAGE);
+            selectedPositions = new HashSet<>();
         }
     }
 
@@ -78,8 +91,6 @@ public class WordSearchFragment extends Fragment {
             clues = new ArrayList<>();
             fetchWords(targetLanguage);
         }
-
-        wordSearchAdapter = new WordSearchAdapter(this, letters);
 
         wordListAdapter = new WordListAdapter(this, clues);
         binding.rvWordList.setLayoutManager(new GridLayoutManager(getActivity(), 2));
@@ -104,7 +115,62 @@ public class WordSearchFragment extends Fragment {
             }
 
             wordSearch = new WordSearch(words);
-            binding.rvWordSearch.setLayoutManager(new GridLayoutManager(getActivity(), wordSearch.getWidth()));
+            DragSelectionProcessor onDragSelectionListener = new DragSelectionProcessor(new DragSelectionProcessor.ISelectionHandler() {
+                @Override
+                public Set<Integer> getSelection() {
+                    return selectedPositions;
+                }
+
+                @Override
+                public boolean isSelected(int index) {
+                    return selectedPositions.contains(index);
+                }
+
+                @Override
+                public void updateSelection(int start, int end, boolean isSelected, boolean calledFromOnStart) {
+                    if (calledFromOnStart) {
+                        startCol = start % wordSearch.getWidth();
+                        startRow = start / wordSearch.getWidth();
+                        System.out.println(String.format("%d %d", start, end));
+                    }
+
+                    // TODO: this has a bug when dragging vertically up
+                    int currentCol = end % wordSearch.getWidth();
+                    int currentRow = end / wordSearch.getWidth();
+                    if (currentCol == startCol) {
+                        dragDirection = DragDirection.VERTICAL;
+                    } else if (currentRow == startRow) {
+                        dragDirection = DragDirection.HORIZONTAL;
+                    } else {
+                        dragDirection = DragDirection.NONE;
+                    }
+
+                    for (int i = start; i <= end; i++) {
+                        currentCol = i % wordSearch.getWidth();
+                        currentRow = i / wordSearch.getWidth();
+
+                        if (startCol != currentCol && dragDirection == DragDirection.VERTICAL) continue;
+                        if (startRow != currentRow && dragDirection == DragDirection.HORIZONTAL) continue;
+                        if (dragDirection == DragDirection.NONE) continue;
+
+                        if (isSelected) {
+                            selectedPositions.add(i);
+                            wordSearchAdapter.notifyItemChanged(i);
+                        } else {
+                            selectedPositions.remove(i);
+                            wordSearchAdapter.notifyItemChanged(i);
+                        }
+                    }
+                }
+            }).withMode(DragSelectionProcessor.Mode.Simple);
+
+            DragSelectTouchListener dragSelectTouchListener = new DragSelectTouchListener()
+                    // check region OnDragSelectListener for more infos
+                    .withSelectListener(onDragSelectionListener);
+            binding.rvWordSearch.addOnItemTouchListener(dragSelectTouchListener);
+            wordSearchAdapter = new WordSearchAdapter(this, letters, selectedPositions, dragSelectTouchListener);
+            wordSearchLayoutManager = new GridLayoutManager(getActivity(), wordSearch.getWidth());
+            binding.rvWordSearch.setLayoutManager(wordSearchLayoutManager);
             binding.rvWordSearch.setAdapter(wordSearchAdapter);
 
             wordSearchAdapter.setLetters(wordSearch.getFlatGrid());

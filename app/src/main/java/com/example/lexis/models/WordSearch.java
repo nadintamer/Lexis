@@ -69,7 +69,7 @@ public class WordSearch {
         int random_word = random.nextInt(options.length);
         word = options[random_word];
 
-        int[][] directions = {{1, 0}, {0, 1}, {1, 1}};
+        int[][] directions = {{1, 0}, {0, 1}};
         int random_direction = random.nextInt(directions.length);
         int[] d = directions[random_direction];
 

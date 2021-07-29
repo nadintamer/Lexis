@@ -1,22 +1,33 @@
 package com.example.lexis.adapters;
 
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.lexis.R;
 import com.example.lexis.databinding.ItemWordSearchBinding;
+import com.michaelflisar.dragselectrecyclerview.DragSelectTouchListener;
+
+import java.util.Set;
 
 public class WordSearchAdapter extends RecyclerView.Adapter<WordSearchAdapter.WordSearchViewHolder> {
 
     char[] letters;
+    Set<Integer> selectedPositions;
     Fragment fragment;
+    DragSelectTouchListener dragSelectTouchListener;
 
-    public WordSearchAdapter(Fragment fragment, char[] letters) {
+    public WordSearchAdapter(Fragment fragment, char[] letters, Set<Integer> selectedPositions, DragSelectTouchListener dragSelectTouchListener) {
         this.fragment = fragment;
         this.letters = letters;
+        this.dragSelectTouchListener = dragSelectTouchListener;
+        this.selectedPositions = selectedPositions;
     }
 
     @NonNull
@@ -29,7 +40,7 @@ public class WordSearchAdapter extends RecyclerView.Adapter<WordSearchAdapter.Wo
     @Override
     public void onBindViewHolder(@NonNull WordSearchViewHolder holder, int position) {
         char letter = letters[position];
-        holder.bind(letter);
+        holder.bind(letter, position);
     }
 
     @Override
@@ -37,21 +48,48 @@ public class WordSearchAdapter extends RecyclerView.Adapter<WordSearchAdapter.Wo
         return letters.length;
     }
 
+    public Set<Integer> getSelectedPositions() {
+        return selectedPositions;
+    }
+
+    public void addSelected(int index) {
+        selectedPositions.add(index);
+        notifyItemChanged(index);
+    }
+
+    public void removeSelected(int index) {
+        selectedPositions.remove(index);
+        notifyItemChanged(index);
+    }
+
     public void setLetters(char[] letters) {
         this.letters = letters;
         notifyDataSetChanged();
     }
 
-    public class WordSearchViewHolder extends RecyclerView.ViewHolder {
+    public class WordSearchViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
         ItemWordSearchBinding binding;
 
         public WordSearchViewHolder(@NonNull ItemWordSearchBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
+            binding.getRoot().setOnLongClickListener(this);
         }
 
-        public void bind(char letter) {
+        public void bind(char letter, int position) {
             binding.tvLetter.setText(String.valueOf(letter).toUpperCase());
+            if (selectedPositions.contains(position)) {
+                Drawable highlight = fragment.getResources().getDrawable(R.drawable.word_search_highlight);
+                binding.getRoot().setBackground(highlight);
+            } else {
+                binding.getRoot().setBackgroundColor(Color.WHITE);
+            }
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            dragSelectTouchListener.startDragSelection(getAdapterPosition());
+            return true;
         }
     }
 }
