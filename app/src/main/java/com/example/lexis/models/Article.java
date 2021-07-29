@@ -4,19 +4,16 @@ import android.util.Log;
 
 import com.example.lexis.utilities.TranslateUtils;
 import com.example.lexis.utilities.Utils;
+import com.google.cloud.language.v1.Entity;
+import com.google.cloud.language.v1.EntityMention;
 import com.google.cloud.translate.TranslateException;
+import com.google.cloud.language.v1.AnalyzeEntitiesResponse;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.parceler.Parcel;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import opennlp.tools.namefind.NameFinderME;
-import opennlp.tools.util.Span;
 
 @Parcel
 public class Article {
@@ -81,36 +78,26 @@ public class Article {
         String targetLanguage = Utils.getCurrentTargetLanguage();
         language = targetLanguage;
 
-        NameFinderME personFinder = TranslateUtils.getPersonFinder();
-        NameFinderME locationFinder = TranslateUtils.getLocationFinder();
-        NameFinderME organizationFinder = TranslateUtils.getOrganizationFinder();
-
         for (int i = start; i < words.length; i += interval) {
             int currentIndex = i;
             String currentWord = words[currentIndex];
-            String[] token = { currentWord };
 
-            Span[] personSpans = personFinder != null ? personFinder.find(token) : new Span[]{};
-            Span[] locationSpans = locationFinder != null ? locationFinder.find(token) : new Span[]{};
-            Span[] organizationSpans = organizationFinder != null ? organizationFinder.find(token) : new Span[]{};
-
-            Span[] namedEntities = ArrayUtils.addAll(personSpans, locationSpans);
-            namedEntities = ArrayUtils.addAll(namedEntities, organizationSpans);
-
-            Log.i(TAG, Arrays.toString(namedEntities));
+            AnalyzeEntitiesResponse response = TranslateUtils.analyzeEntities(currentWord);
+            for (Entity entity : response.getEntitiesList()) {
+                System.out.printf("Entity: %s%n\n", entity.getName());
+                for (EntityMention mention : entity.getMentionsList()) {
+                    System.out.printf("Type: %s\n\n%n\n\n", mention.getType());
+                }
+            }
+            
+            /*
             // move to next word until we find an alphabetical word that is not a named entity
-            while (!StringUtils.isAlpha(currentWord) || namedEntities.length > 0) {
+            while (!StringUtils.isAlpha(currentWord)) {
                 currentIndex++;
                 currentWord = words[currentIndex];
-                token = new String[]{ currentWord };
-                personSpans = personFinder != null ? personFinder.find(token) : new Span[]{};
-                locationSpans = personFinder != null ? locationFinder.find(token) : new Span[]{};
-                organizationSpans = personFinder != null ? organizationFinder.find(token) : new Span[]{};
-
-                namedEntities = ArrayUtils.addAll(personSpans, locationSpans);
-                namedEntities = ArrayUtils.addAll(namedEntities, organizationSpans);
-                Log.i(TAG, Arrays.toString(namedEntities));
             }
+            */
+
             String stripped = Utils.stripPunctuation(currentWord, null);
             try {
                 String translated = StringEscapeUtils.unescapeHtml4(TranslateUtils.translateSingleWord(stripped, targetLanguage));

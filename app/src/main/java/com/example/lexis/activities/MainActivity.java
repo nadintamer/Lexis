@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 
 import com.example.lexis.R;
@@ -13,16 +12,8 @@ import com.example.lexis.databinding.ActivityMainBinding;
 import com.example.lexis.fragments.FeedFragment;
 import com.example.lexis.fragments.PracticeFragment;
 import com.example.lexis.fragments.ProfileFragment;
-import com.example.lexis.utilities.Const;
 import com.example.lexis.utilities.TranslateUtils;
 import com.parse.ParseUser;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-
-import opennlp.tools.namefind.NameFinderME;
-import opennlp.tools.namefind.TokenNameFinderModel;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,47 +26,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         TranslateUtils.getTranslateService(this);
-        TranslateUtils.getNLPService()
-        ;
-        // get named-entity recognition model in background thread
-        new Thread(() -> {
-            try {
-                File filePerson = new File(getFilesDir(), Const.personModelFile);
-                if (!filePerson.exists()) {
-                    Log.i("MainActivity", "creating personModel.txt!");
-                    TranslateUtils.getPersonModel(MainActivity.this);
-                } else {
-                    Log.i("MainActivity", "personModel.txt exists!");
-                    FileInputStream isPerson = openFileInput(Const.personModelFile);
-                    TokenNameFinderModel personModel = new TokenNameFinderModel(isPerson);
-                    TranslateUtils.setPersonFinder(new NameFinderME(personModel));
-                }
-
-                File fileLocation = new File(getFilesDir(), Const.locationModelFile);
-                if (!fileLocation.exists()) {
-                    Log.i("MainActivity", "creating locationModel.txt!");
-                    TranslateUtils.getLocationModel(MainActivity.this);
-                } else {
-                    Log.i("MainActivity", "locationModel.txt exists!");
-                    FileInputStream isLocation = openFileInput(Const.locationModelFile);
-                    TokenNameFinderModel locationModel = new TokenNameFinderModel(isLocation);
-                    TranslateUtils.setLocationFinder(new NameFinderME(locationModel));
-                }
-
-                File fileOrganization = new File(getFilesDir(), Const.organizationModelFile);
-                if (!fileOrganization.exists()) {
-                    Log.i("MainActivity", "creating organizationModel.txt!");
-                    TranslateUtils.getOrganizationModel(MainActivity.this);
-                } else {
-                    Log.i("MainActivity", "organizationModel.txt exists!");
-                    FileInputStream isOrganization = openFileInput(Const.organizationModelFile);
-                    TokenNameFinderModel organizationModel = new TokenNameFinderModel(isOrganization);
-                    TranslateUtils.setOrganizationFinder(new NameFinderME(organizationModel));
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
+        TranslateUtils.getNLPService(this);
 
         // set up tab navigation
         binding.bottomNavigation.setOnNavigationItemSelectedListener(item -> {

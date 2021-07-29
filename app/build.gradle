@@ -5,6 +5,7 @@ plugins {
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
+    useLibrary 'org.apache.http.legacy'
 
     defaultConfig {
         applicationId "com.example.lexis"
@@ -34,6 +35,11 @@ android {
     packagingOptions {
         exclude 'project.properties'
         exclude 'META-INF/INDEX.LIST'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'edu/stanford/nlp/pipeline/demo/corenlp-parseviewer.js'
+        exclude 'edu/stanford/nlp/pipeline/demo/corenlp-brat.css'
+        exclude 'edu/stanford/nlp/pipeline/demo/corenlp-brat.html'
+        exclude 'edu/stanford/nlp/pipeline/demo/corenlp-brat.js'
     }
 }
 
@@ -64,6 +70,7 @@ dependencies {
     // Google NLP API for entity recognition
     implementation platform('com.google.cloud:libraries-bom:20.9.0')
     implementation 'com.google.cloud:google-cloud-language'
+    implementation 'io.grpc:grpc-okhttp:0.9.0'
 
     // Parceler for passing objects
     implementation 'org.parceler:parceler-api:1.1.12'
@@ -83,7 +90,4 @@ dependencies {
 
     // Coordinator layout for collapsing search bar
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
-
-    // OpenNLP for named entity recognition
-    implementation 'org.apache.opennlp:opennlp-tools:1.6.0'
 }

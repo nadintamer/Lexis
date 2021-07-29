@@ -2,33 +2,27 @@ package com.example.lexis.utilities;
 
 import android.content.Context;
 import android.os.StrictMode;
-import android.util.Log;
 
 import com.example.lexis.R;
+import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.language.v1.AnalyzeEntitiesRequest;
 import com.google.cloud.language.v1.AnalyzeEntitiesResponse;
 import com.google.cloud.language.v1.Document;
 import com.google.cloud.language.v1.EncodingType;
 import com.google.cloud.language.v1.LanguageServiceClient;
+import com.google.cloud.language.v1.LanguageServiceSettings;
 import com.google.cloud.translate.Translate;
 import com.google.cloud.translate.TranslateException;
 import com.google.cloud.translate.TranslateOptions;
 import com.google.cloud.translate.Translation;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
-import opennlp.tools.namefind.NameFinderME;
-import opennlp.tools.namefind.TokenNameFinderModel;
 
 public class TranslateUtils {
     private static Translate translate;
     private static LanguageServiceClient language;
-    private static NameFinderME personFinder;
-    private static NameFinderME organizationFinder;
-    private static NameFinderME locationFinder;
 
     /*
     Get the translation service using credentials JSON file for the API key.
@@ -57,16 +51,25 @@ public class TranslateUtils {
         return translation.getTranslatedText(); // TODO: potentially look into providing more context?
     }
 
-    // TODO: add comment
-    public static void getNLPService() {
-        try (LanguageServiceClient languageClient = LanguageServiceClient.create()) {
-            language = languageClient;
-        } catch (IOException e) {
-            e.printStackTrace();
+    /*
+    Get the NLP service using credentials JSON file for the API key.
+    */
+    public static void getNLPService(Context context) {
+        try (InputStream is = context.getResources().openRawResource(R.raw.credentials)) {
+            final GoogleCredentials myCredentials = GoogleCredentials.fromStream(is);
+            LanguageServiceSettings languageServiceSettings =
+                    LanguageServiceSettings.newBuilder()
+                            .setCredentialsProvider(FixedCredentialsProvider.create(myCredentials))
+                            .build();
+            language = LanguageServiceClient.create(languageServiceSettings);
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
         }
     }
 
-    // TODO: add comment
+    /*
+    Return a list of entities (e.g. names, organizations, etc.) found within the supplied text.
+    */
     public static AnalyzeEntitiesResponse analyzeEntities(String text) {
         Document doc = Document.newBuilder().setContent(text).setType(Document.Type.PLAIN_TEXT).build();
         AnalyzeEntitiesRequest request =
@@ -75,72 +78,6 @@ public class TranslateUtils {
                         .setEncodingType(EncodingType.UTF16)
                         .build();
 
-        AnalyzeEntitiesResponse response = language.analyzeEntities(request);
-        return response;
-    }
-
-    /*
-    TODO: add comment here
-    */
-    public static void getPersonModel(Context context) throws IOException {
-        InputStream inputStreamNameFinder = context.getAssets().open("en-ner-person.bin");
-        TokenNameFinderModel model = new TokenNameFinderModel(inputStreamNameFinder);
-        personFinder = new NameFinderME(model);
-        saveModel(context, model, Const.personModelFile);
-    }
-
-    /*
-    TODO: add comment here
-    */
-    public static void getLocationModel(Context context) throws IOException {
-        InputStream inputStreamNameFinder = context.getAssets().open("en-ner-location.bin");
-        TokenNameFinderModel model = new TokenNameFinderModel(inputStreamNameFinder);
-        locationFinder = new NameFinderME(model);
-        saveModel(context, model, Const.locationModelFile);
-    }
-
-    /*
-    TODO: add comment here
-    */
-    public static void getOrganizationModel(Context context) throws IOException {
-        InputStream inputStreamNameFinder = context.getAssets().open("en-ner-organization.bin");
-        TokenNameFinderModel model = new TokenNameFinderModel(inputStreamNameFinder);
-        organizationFinder = new NameFinderME(model);
-        saveModel(context, model, Const.organizationModelFile);
-    }
-
-    public static void saveModel(Context context, TokenNameFinderModel model, String filename) {
-        try {
-            FileOutputStream fileOut = context.openFileOutput(filename, Context.MODE_PRIVATE);
-            model.serialize(fileOut);
-            fileOut.close();
-            Log.i("TranslateUtils", "saved to " + filename);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void setPersonFinder(NameFinderME personFinder) {
-        TranslateUtils.personFinder = personFinder;
-    }
-
-    public static void setOrganizationFinder(NameFinderME organizationFinder) {
-        TranslateUtils.organizationFinder = organizationFinder;
-    }
-
-    public static void setLocationFinder(NameFinderME locationFinder) {
-        TranslateUtils.locationFinder = locationFinder;
-    }
-
-    public static NameFinderME getPersonFinder() {
-        return personFinder;
-    }
-
-    public static NameFinderME getOrganizationFinder() {
-        return organizationFinder;
-    }
-
-    public static NameFinderME getLocationFinder() {
-        return locationFinder;
+        return language.analyzeEntities(request);
     }
 }
