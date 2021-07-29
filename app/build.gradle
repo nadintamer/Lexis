@@ -36,10 +36,6 @@ android {
         exclude 'project.properties'
         exclude 'META-INF/INDEX.LIST'
         exclude 'META-INF/DEPENDENCIES'
-        exclude 'edu/stanford/nlp/pipeline/demo/corenlp-parseviewer.js'
-        exclude 'edu/stanford/nlp/pipeline/demo/corenlp-brat.css'
-        exclude 'edu/stanford/nlp/pipeline/demo/corenlp-brat.html'
-        exclude 'edu/stanford/nlp/pipeline/demo/corenlp-brat.js'
     }
 }
 

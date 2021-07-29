@@ -89,7 +89,7 @@ public class Article {
                     System.out.printf("Type: %s\n\n%n\n\n", mention.getType());
                 }
             }
-            
+
             /*
             // move to next word until we find an alphabetical word that is not a named entity
             while (!StringUtils.isAlpha(currentWord)) {
