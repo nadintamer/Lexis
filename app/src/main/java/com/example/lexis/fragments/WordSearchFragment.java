@@ -110,6 +110,8 @@ public class WordSearchFragment extends Fragment {
         query.whereEqualTo(Word.KEY_TARGET_LANGUAGE, targetLanguage);
         query.orderByAscending(Word.KEY_SCORE);
         query.addAscendingOrder(Word.KEY_LAST_PRACTICED);
+        // get short words first for easier display
+        query.addAscendingOrder(Word.KEY_WORD_LENGTH);
         query.setLimit(6);
         query.findInBackground((words, e) -> {
             if (e != null) {

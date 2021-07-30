@@ -311,6 +311,7 @@ public class Utils {
         Word word = new Word();
         word.setTargetWord(targetWord);
         word.setEnglishWord(englishWord);
+        word.setTargetWordLength(targetWord.length());
         word.setTargetWordLower(targetWord.toLowerCase());
         word.setEnglishWordLower(englishWord.toLowerCase());
         word.setTargetLanguage(targetLanguage);
