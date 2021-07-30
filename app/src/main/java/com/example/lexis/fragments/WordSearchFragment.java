@@ -253,7 +253,15 @@ public class WordSearchFragment extends Fragment {
                     }
                     Log.i(TAG, "found word: " + word);
                 } else { // not a valid word, automatically de-select
+                    // TODO: has bug! does not check for vertical/horizontal de-selection, need to check again
                     for (int i = startIndex; i <= end; i++) {
+                        int currentCol = i % wordSearch.getWidth();
+                        int currentRow = i / wordSearch.getWidth();
+
+                        if (startCol != currentCol && dragDirection == DragDirection.VERTICAL) continue;
+                        if (startRow != currentRow && dragDirection == DragDirection.HORIZONTAL) continue;
+                        if (dragDirection == DragDirection.NONE) continue;
+
                         selectedPositions.remove(i);
                         wordSearchAdapter.notifyItemChanged(i);
                     }
