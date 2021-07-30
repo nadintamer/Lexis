@@ -10,10 +10,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.lexis.R;
 import com.example.lexis.adapters.WordListAdapter;
@@ -53,6 +56,7 @@ public class WordSearchFragment extends Fragment {
     private char[] letters;
     private Set<Integer> selectedPositions;
     private List<Clue> clues;
+    private int numCluesFound;
 
     private int startCol;
     private int startRow;
@@ -96,6 +100,8 @@ public class WordSearchFragment extends Fragment {
         if (words == null) {
             words = new ArrayList<>();
             clues = new ArrayList<>();
+            letters = new char[]{};
+            numCluesFound = 0;
             fetchWords(targetLanguage);
         }
 
@@ -103,6 +109,7 @@ public class WordSearchFragment extends Fragment {
         binding.rvWordList.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         binding.rvWordList.setAdapter(wordListAdapter);
 
+        binding.btnFinish.setOnClickListener(v -> returnToPracticeTab());
         setUpToolbar();
     }
 
@@ -264,15 +271,28 @@ public class WordSearchFragment extends Fragment {
                     int index = words.indexOf(word);
                     Clue clue = clues.get(index);
                     clue.setFound(true);
+                    numCluesFound++;
                     wordListAdapter.notifyItemChanged(index);
 
                     // save last practiced time
                     word.setLastPracticed(new Date());
                     word.saveInBackground();
 
+                    if (numCluesFound == clues.size()) {
+                        // display congratulations message after 0.5 seconds
+                        final Handler handler = new Handler(Looper.getMainLooper());
+                        handler.postDelayed(() -> {
+                            binding.rvWordSearch.setVisibility(View.GONE);
+                            binding.rvWordList.setVisibility(View.GONE);
+                            binding.layoutFinished.setVisibility(View.VISIBLE);
+                        }, 500);
+                    }
+
                     Log.i(TAG, "found word: " + word.getTargetWord());
                     Log.i(TAG, "relevant clue: " + clue.getText());
                 } else { // not a valid word, automatically de-select
+                    // TODO: don't deselect if part of a found word
+                    // FIXME: highlighting incorrectly upwards/left does not de-select
                     for (int i = startIndex; i <= end; i++) {
                         int currentCol = i % wordSearch.getWidth();
                         int currentRow = i / wordSearch.getWidth();
