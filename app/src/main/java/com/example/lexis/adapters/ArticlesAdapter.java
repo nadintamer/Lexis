@@ -87,6 +87,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.Articl
             task.execute(position);
         }
 
+        // TODO: AsyncTask is deprecated so I am unsure if I should be using something else instead
         class TranslateTask extends AsyncTask<Integer, Void, Integer> {
             @Override
             protected Integer doInBackground(Integer... integers) {
