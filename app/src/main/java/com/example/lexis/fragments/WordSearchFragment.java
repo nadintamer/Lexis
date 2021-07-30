@@ -50,6 +50,7 @@ public class WordSearchFragment extends Fragment {
 
     private int startCol;
     private int startRow;
+    private int startIndex;
     private DragDirection dragDirection;
 
     public WordSearchFragment() {}
@@ -107,7 +108,8 @@ public class WordSearchFragment extends Fragment {
         query.include(Word.KEY_USER);
         query.whereEqualTo(Word.KEY_USER, ParseUser.getCurrentUser());
         query.whereEqualTo(Word.KEY_TARGET_LANGUAGE, targetLanguage);
-        // TODO: add sorting by score, lastPracticed
+        query.orderByAscending(Word.KEY_SCORE);
+        query.addAscendingOrder(Word.KEY_LAST_PRACTICED);
         query.setLimit(6);
         query.findInBackground((words, e) -> {
             if (e != null) {
@@ -116,59 +118,13 @@ public class WordSearchFragment extends Fragment {
             }
 
             wordSearch = new WordSearch(words);
-            DragSelectionProcessor onDragSelectionListener = new DragSelectionProcessor(new DragSelectionProcessor.ISelectionHandler() {
-                @Override
-                public Set<Integer> getSelection() {
-                    return selectedPositions;
-                }
 
-                @Override
-                public boolean isSelected(int index) {
-                    return selectedPositions.contains(index);
-                }
-
-                @Override
-                public void updateSelection(int start, int end, boolean isSelected, boolean calledFromOnStart) {
-                    if (calledFromOnStart) {
-                        startCol = start % wordSearch.getWidth();
-                        startRow = start / wordSearch.getWidth();
-                        System.out.println(String.format("%d %d", start, end));
-                    }
-
-                    // TODO: this has a bug when dragging vertically up
-                    int currentCol = end % wordSearch.getWidth();
-                    int currentRow = end / wordSearch.getWidth();
-                    if (currentCol == startCol) {
-                        dragDirection = DragDirection.VERTICAL;
-                    } else if (currentRow == startRow) {
-                        dragDirection = DragDirection.HORIZONTAL;
-                    } else {
-                        dragDirection = DragDirection.NONE;
-                    }
-
-                    for (int i = start; i <= end; i++) {
-                        currentCol = i % wordSearch.getWidth();
-                        currentRow = i / wordSearch.getWidth();
-
-                        if (startCol != currentCol && dragDirection == DragDirection.VERTICAL) continue;
-                        if (startRow != currentRow && dragDirection == DragDirection.HORIZONTAL) continue;
-                        if (dragDirection == DragDirection.NONE) continue;
-
-                        if (isSelected) {
-                            selectedPositions.add(i);
-                            wordSearchAdapter.notifyItemChanged(i);
-                        } else {
-                            selectedPositions.remove(i);
-                            wordSearchAdapter.notifyItemChanged(i);
-                        }
-                    }
-                }
-            }).withMode(DragSelectionProcessor.Mode.Simple);
-
+            // set up drag selection listener
+            DragSelectionProcessor onDragSelectionListener = createOnDragSelectionListener();
             DragSelectTouchListener dragSelectTouchListener = new DragSelectTouchListener()
-                    // check region OnDragSelectListener for more infos
                     .withSelectListener(onDragSelectionListener);
             binding.rvWordSearch.addOnItemTouchListener(dragSelectTouchListener);
+
             wordSearchAdapter = new WordSearchAdapter(this, letters, selectedPositions, dragSelectTouchListener);
             wordSearchLayoutManager = new GridLayoutManager(getActivity(), wordSearch.getWidth());
             binding.rvWordSearch.setLayoutManager(wordSearchLayoutManager);
@@ -176,7 +132,7 @@ public class WordSearchFragment extends Fragment {
 
             wordSearchAdapter.setLetters(wordSearch.getFlatGrid());
             wordListAdapter.addAll(wordSearch.getClues());
-
+            
             // TODO: set last practiced time after PR is merged
         });
     }
@@ -212,5 +168,63 @@ public class WordSearchFragment extends Fragment {
                     .replace(R.id.fragmentContainer, new PracticeFragment())
                     .commit();
         }
+    }
+
+    private DragSelectionProcessor createOnDragSelectionListener() {
+        DragSelectionProcessor onDragSelectionListener = new DragSelectionProcessor(new DragSelectionProcessor.ISelectionHandler() {
+            @Override
+            public Set<Integer> getSelection() {
+                return selectedPositions;
+            }
+
+            @Override
+            public boolean isSelected(int index) {
+                return selectedPositions.contains(index);
+            }
+
+            @Override
+            public void updateSelection(int start, int end, boolean isSelected, boolean calledFromOnStart) {
+                if (calledFromOnStart) {
+                    startIndex = start;
+                    startCol = start % wordSearch.getWidth();
+                    startRow = start / wordSearch.getWidth();
+                }
+
+                int current = end;
+                if (start < startIndex) { // dragging vertically upwards
+                    current = start;
+                }
+
+                // TODO: reset previous cells if switching direction mid-drag
+                int currentCol = current % wordSearch.getWidth();
+                int currentRow = current / wordSearch.getWidth();
+                if (currentCol == startCol) {
+                    dragDirection = DragDirection.VERTICAL;
+                } else if (currentRow == startRow) {
+                    dragDirection = DragDirection.HORIZONTAL;
+                } else {
+                    dragDirection = DragDirection.NONE;
+                }
+
+                for (int i = start; i <= end; i++) {
+                    currentCol = i % wordSearch.getWidth();
+                    currentRow = i / wordSearch.getWidth();
+
+                    if (startCol != currentCol && dragDirection == DragDirection.VERTICAL) continue;
+                    if (startRow != currentRow && dragDirection == DragDirection.HORIZONTAL) continue;
+                    if (dragDirection == DragDirection.NONE) continue;
+
+                    if (isSelected) {
+                        selectedPositions.add(i);
+                        wordSearchAdapter.notifyItemChanged(i);
+                    } else {
+                        selectedPositions.remove(i);
+                        wordSearchAdapter.notifyItemChanged(i);
+                    }
+                }
+            }
+        }).withMode(DragSelectionProcessor.Mode.Simple);
+
+        return onDragSelectionListener;
     }
 }

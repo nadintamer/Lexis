@@ -2,6 +2,8 @@ package com.example.lexis.models;
 
 import com.google.common.primitives.Chars;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -172,6 +174,7 @@ public class WordSearch {
             this.col = col;
         }
 
+        @NotNull
         @Override
         public String toString() {
             return "(" + row +  ", " + col + ")";
