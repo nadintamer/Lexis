@@ -14,6 +14,18 @@ public class Word extends ParseObject {
     public static final String KEY_STARRED = "isStarred";
     public static final String KEY_USER = "user";
 
+    public static Word copyWord(Word word) {
+        Word newWord = new Word();
+        newWord.setTargetWord(word.getTargetWord());
+        newWord.setEnglishWord(word.getEnglishWord());
+        newWord.setTargetWordLower(word.getTargetWord().toLowerCase());
+        newWord.setEnglishWordLower(word.getEnglishWord().toLowerCase());
+        newWord.setTargetLanguage(word.getTargetLanguage());
+        newWord.setIsStarred(word.getIsStarred());
+        newWord.setUser(word.getUser());
+        return newWord;
+    }
+
     public String getTargetWord() {
         return getString(KEY_TARGET_WORD);
     }
