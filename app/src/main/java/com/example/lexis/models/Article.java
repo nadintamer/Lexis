@@ -100,6 +100,11 @@ public class Article {
             */
             while (!StringUtils.isAlpha(currentWord) || (entity != null && (
                     type == EntityMention.Type.PROPER || type == EntityMention.Type.TYPE_UNKNOWN))) {
+                // we reached the last word and couldn't find anything appropriate to translate
+                if (currentIndex == words.length - 1) {
+                    break;
+                }
+
                 currentIndex++;
                 currentWord = words[currentIndex];
 
@@ -110,6 +115,12 @@ public class Article {
                         type = entity.getMentionsList().get(0).getType();
                     }
                 }
+            }
+
+            // we reached the last word and couldn't find anything appropriate to translate, so
+            // don't translate the last word and finish translating entirely
+            if (currentIndex == words.length - 1) {
+                break;
             }
 
             String stripped = Utils.stripPunctuation(currentWord, null);
