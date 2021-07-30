@@ -9,6 +9,7 @@ import com.google.cloud.language.v1.EntityMention;
 import com.google.cloud.translate.TranslateException;
 import com.google.cloud.language.v1.AnalyzeEntitiesResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.parceler.Parcel;
 
@@ -83,20 +84,33 @@ public class Article {
             String currentWord = words[currentIndex];
 
             AnalyzeEntitiesResponse response = TranslateUtils.analyzeEntities(currentWord);
-            for (Entity entity : response.getEntitiesList()) {
-                System.out.printf("Entity: %s%n\n", entity.getName());
-                for (EntityMention mention : entity.getMentionsList()) {
-                    System.out.printf("Type: %s\n\n%n\n\n", mention.getType());
+            Entity entity = null;
+            EntityMention.Type type = null;
+            if (response.getEntitiesCount() > 0) {
+                entity = response.getEntitiesList().get(0);
+                if (entity.getMentionsCount() > 0) {
+                    type = entity.getMentionsList().get(0).getType();
                 }
             }
 
             /*
-            // move to next word until we find an alphabetical word that is not a named entity
-            while (!StringUtils.isAlpha(currentWord)) {
+            Move to the next word until we find an alphabetical word that is not a named entity
+            (specifically checking for PROPER types like person names or locations, and TYPE_UNKNOWN
+            which generally refers to numbers)
+            */
+            while (!StringUtils.isAlpha(currentWord) || (entity != null && (
+                    type == EntityMention.Type.PROPER || type == EntityMention.Type.TYPE_UNKNOWN))) {
                 currentIndex++;
                 currentWord = words[currentIndex];
+
+                response = TranslateUtils.analyzeEntities(currentWord);
+                if (response.getEntitiesCount() > 0) {
+                    entity = response.getEntitiesList().get(0);
+                    if (entity.getMentionsCount() > 0) {
+                        type = entity.getMentionsList().get(0).getType();
+                    }
+                }
             }
-            */
 
             String stripped = Utils.stripPunctuation(currentWord, null);
             try {
