@@ -107,6 +107,7 @@ public class WordSearchFragment extends Fragment {
         query.include(Word.KEY_USER);
         query.whereEqualTo(Word.KEY_USER, ParseUser.getCurrentUser());
         query.whereEqualTo(Word.KEY_TARGET_LANGUAGE, targetLanguage);
+        // TODO: add sorting by score, lastPracticed
         query.setLimit(6);
         query.findInBackground((words, e) -> {
             if (e != null) {

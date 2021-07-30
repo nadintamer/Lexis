@@ -44,7 +44,7 @@
         android:layout_marginBottom="20dp"
         android:layout_alignStart="@id/btnForgot"
         android:textAlignment="center"
-        android:text="Forgot" />
+        android:text="@string/forgot" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnKnow"
@@ -71,7 +71,7 @@
         android:layout_marginBottom="20dp"
         android:layout_alignStart="@id/btnKnow"
         android:textAlignment="center"
-        android:text="Knew" />
+        android:text="@string/knew" />
 
     <TextView
         android:id="@+id/tvFinished"
@@ -84,7 +84,7 @@
         android:textSize="24sp"
         android:textAlignment="center"
         android:visibility="gone"
-        android:text="Congratulations on wrapping up your learning session! 💪" />
+        android:text="@string/practice_end_congratulations" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnFinish"
@@ -95,6 +95,6 @@
         android:layout_marginTop="20dp"
         app:cornerRadius="10dp"
         android:visibility="gone"
-        android:text="Back to practice" />
+        android:text="@string/back_to_vocabulary" />
 
 </RelativeLayout>

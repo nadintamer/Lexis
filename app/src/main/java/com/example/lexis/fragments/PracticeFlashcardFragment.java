@@ -32,6 +32,7 @@ import com.yuyakaido.android.cardstackview.StackFrom;
 import com.yuyakaido.android.cardstackview.SwipeAnimationSetting;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import eu.davidea.flipview.FlipView;
@@ -42,6 +43,7 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
     private static final String ARG_LANGUAGE = "targetLanguage";
     private static final String ARG_ENGLISH = "answerInEnglish";
     private static final String ARG_STARRED_WORDS = "starredWordsOnly";
+    private static final String ARG_NUM_FLASHCARDS = "numFlashcards";
 
     FragmentPracticeFlashcardBinding binding;
     List<Word> words;
@@ -51,15 +53,18 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
     boolean answerInEnglish;
     boolean starredWordsOnly;
     boolean wasFlipped;
+    int numFlashcards;
 
     public PracticeFlashcardFragment() {}
 
-    public static PracticeFlashcardFragment newInstance(String targetLanguage, boolean answerInEnglish, boolean starredWordsOnly) {
+    public static PracticeFlashcardFragment newInstance(
+            String targetLanguage, boolean answerInEnglish, boolean starredWordsOnly, int numFlashcards) {
         PracticeFlashcardFragment fragment = new PracticeFlashcardFragment();
         Bundle args = new Bundle();
         args.putString(ARG_LANGUAGE, targetLanguage);
         args.putBoolean(ARG_ENGLISH, answerInEnglish);
         args.putBoolean(ARG_STARRED_WORDS, starredWordsOnly);
+        args.putInt(ARG_NUM_FLASHCARDS, numFlashcards);
         fragment.setArguments(args);
         return fragment;
     }
@@ -71,6 +76,7 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
             targetLanguage = getArguments().getString(ARG_LANGUAGE);
             answerInEnglish = getArguments().getBoolean(ARG_ENGLISH);
             starredWordsOnly = getArguments().getBoolean(ARG_STARRED_WORDS);
+            numFlashcards = getArguments().getInt(ARG_NUM_FLASHCARDS);
         }
     }
 
@@ -106,7 +112,12 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
         if (starredWordsOnly) {
             query.whereEqualTo(Word.KEY_STARRED, true);
         }
-        query.addDescendingOrder("createdAt");
+
+        // get top cards with lowest score and least recent practice
+        query.orderByAscending(Word.KEY_SCORE);
+        query.addAscendingOrder(Word.KEY_LAST_PRACTICED);
+        query.setLimit(numFlashcards);
+
         query.findInBackground((words, e) -> {
             if (e != null) {
                 Log.e(TAG, "Issue with getting vocabulary", e);
@@ -219,14 +230,21 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
     */
     @Override
     public void onCardSwiped(Direction direction) {
+        int index = cardLayoutManager.getTopPosition() - 1;
+        Word word = words.get(index);
+
         binding.stackFlashcards.setTranslationZ(0);
         binding.btnForgot.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
         binding.btnKnow.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
 
         if (direction == Direction.Left) {
-            adapter.add(words.get(cardLayoutManager.getTopPosition() - 1));
+            adapter.add(word);
+            word.decrementScore();
+        } else {
+            word.incrementScore();
         }
-        adapter.remove(cardLayoutManager.getTopPosition() - 1);
+        adapter.remove(index);
+        word.saveInBackground();
 
         if (adapter.getItemCount() == 0) {
             finishSession();
@@ -267,6 +285,10 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
 
     @Override
     public void onCardAppeared(View view, int position) {
+        Word word = words.get(position);
+        word.setLastPracticed(new Date());
+        word.saveInBackground();
+
         wasFlipped = false;
         FlipView flipview = view.findViewById(R.id.flipView);
         flipview.setOnFlippingListener((flipView, checked) -> wasFlipped = true);

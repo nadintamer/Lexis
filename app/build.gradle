@@ -78,8 +78,11 @@ dependencies {
     implementation 'com.yuyakaido.android:card-stack-view:2.3.4'
 
     // Coordinator layout for collapsing search bar
-    implementation "androidx.coordinatorlayout:coordinatorlayout:1.1.0"
+    implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
 
     // Drag select for word search
     implementation 'com.github.MFlisar:DragSelectRecyclerView:0.3'
+
+    // SwipeDecorator for adding background when swiping
+    implementation 'it.xabaras.android:recyclerview-swipedecorator:1.2.3'
 }

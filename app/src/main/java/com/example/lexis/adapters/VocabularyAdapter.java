@@ -2,24 +2,24 @@ package com.example.lexis.adapters;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.lexis.databinding.ItemVocabularyBinding;
+import com.example.lexis.fragments.PracticeFragment;
 import com.example.lexis.models.Word;
 import com.example.lexis.utilities.Utils;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 
 public class VocabularyAdapter extends RecyclerView.Adapter<VocabularyAdapter.VocabularyViewHolder> {
 
     List<Word> vocabulary;
-    Fragment fragment;
+    PracticeFragment fragment;
 
-    public VocabularyAdapter(Fragment fragment, List<Word> vocabulary) {
+    public VocabularyAdapter(PracticeFragment fragment, List<Word> vocabulary) {
         this.fragment = fragment;
         this.vocabulary = vocabulary;
     }
@@ -47,9 +47,36 @@ public class VocabularyAdapter extends RecyclerView.Adapter<VocabularyAdapter.Vo
         notifyDataSetChanged();
     }
 
+    public void insertAt(int position, Word word) {
+        vocabulary.add(position, word);
+        notifyItemInserted(position);
+    }
+
     public void clear() {
         vocabulary.clear();
         notifyDataSetChanged();
+    }
+
+    /*
+    Delete word at given position from user's vocabulary.
+    */
+    public void deleteWord(int position) {
+        Word word = vocabulary.get(position);
+        String targetWord = word.getTargetWord();
+        word.deleteInBackground();
+        vocabulary.remove(position);
+        notifyItemRemoved(position);
+        fragment.checkVocabularyEmpty(vocabulary);
+
+        Snackbar.make(fragment.binding.btnPractice, "Deleted word: " + targetWord, Snackbar.LENGTH_LONG)
+                .setAction("Undo", view -> {
+                    Word newWord = Word.copyWord(word);
+                    newWord.saveInBackground();
+
+                    vocabulary.add(position, word);
+                    notifyItemInserted(position);
+                    fragment.binding.rvVocabulary.scrollToPosition(position);
+                }).show();
     }
 
     public class VocabularyViewHolder extends RecyclerView.ViewHolder {
