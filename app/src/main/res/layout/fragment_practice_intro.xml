@@ -102,12 +102,43 @@
         android:paddingEnd="5dp"
         android:text="@string/practice_starred_words_only" />
 
+    <TextView
+        android:id="@+id/tvNumFlashcards"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cbStarredOnly"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="start"
+        android:layout_marginHorizontal="50dp"
+        android:text="@string/number_of_flashcards" />
+
+    <EditText
+        android:id="@+id/etQuestionLimit"
+        android:layout_width="50dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/tvNumFlashcards"
+        android:layout_marginStart="50dp"
+        android:inputType="number" />
+
+    <TextView
+        android:id="@+id/tvQuestionLimit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvNumFlashcards"
+        android:layout_toEndOf="@id/etQuestionLimit"
+        android:layout_gravity="start"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        tools:text="of 49 words" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnFlashcards"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/cbStarredOnly"
+        android:layout_below="@id/etQuestionLimit"
         android:layout_marginTop="20dp"
         android:text="@string/start_practice_button_label"
         app:cornerRadius="10dp" />
