@@ -63,7 +63,14 @@ public class FeedFragment extends Fragment {
             fetchTopWikipediaArticles(Utils.getYesterday(), false);
         }
 
-        // set up recyclerView
+        setUpRecyclerView();
+        Utils.setLanguageLogo(binding.toolbar.ivLogo);
+    }
+
+    /*
+    Set up the recyclerView for displaying articles.
+    */
+    private void setUpRecyclerView() {
         adapter = new ArticlesAdapter(this, articles);
         binding.rvArticles.setAdapter(adapter);
         binding.rvArticles.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -78,8 +85,6 @@ public class FeedFragment extends Fragment {
                 R.color.light_cyan,
                 R.color.orange_peel,
                 R.color.mellow_apricot);
-
-        Utils.setLanguageLogo(binding.toolbar.ivLogo);
     }
 
     /*
