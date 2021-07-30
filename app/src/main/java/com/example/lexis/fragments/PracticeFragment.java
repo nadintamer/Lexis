@@ -7,13 +7,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SearchView;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.lexis.R;
@@ -22,6 +24,7 @@ import com.example.lexis.adapters.VocabularyAdapter;
 import com.example.lexis.databinding.FragmentPracticeBinding;
 import com.example.lexis.models.Word;
 import com.example.lexis.utilities.RoundedHighlightSpan;
+import com.example.lexis.utilities.SwipeDeleteCallback;
 import com.example.lexis.utilities.Utils;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -29,10 +32,13 @@ import com.parse.ParseUser;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PracticeFragment extends Fragment implements VocabularyFilterDialogFragment.VocabularyFilterDialogListener {
+public class PracticeFragment extends Fragment implements VocabularyFilterDialogFragment.VocabularyFilterDialogListener, VocabularyNewDialogFragment.VocabularyNewDialogListener{
 
     private static final String TAG = "PracticeFragment";
-    FragmentPracticeBinding binding;
+    private static final int VOCABULARY_FILTER_REQUEST_CODE = 124;
+    private static final int VOCABULARY_NEW_REQUEST_CODE = 342;
+
+    public FragmentPracticeBinding binding;
     List<Word> vocabulary;
     VocabularyAdapter adapter;
     ArrayList<String> selectedLanguages;
@@ -81,6 +87,11 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
                 R.color.light_cyan,
                 R.color.orange_peel,
                 R.color.mellow_apricot);
+
+        // set up swipe left to delete
+        SwipeDeleteCallback callback = new SwipeDeleteCallback(adapter);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(binding.rvVocabulary);
     }
 
     /*
@@ -95,8 +106,17 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
                 ArrayList<String> languageOptions = new ArrayList<>(Utils.getCurrentStudiedLanguages());
                 VocabularyFilterDialogFragment dialog = VocabularyFilterDialogFragment.newInstance(
                         languageOptions, selectedLanguages, starredOnly, sortBy);
-                dialog.setTargetFragment(PracticeFragment.this, 124);
+                dialog.setTargetFragment(PracticeFragment.this, VOCABULARY_FILTER_REQUEST_CODE);
                 dialog.show(fm, "fragment_vocabulary_filter");
+            }
+        });
+        binding.toolbar.ibAddNew.setOnClickListener(v -> {
+            AppCompatActivity activity = (AppCompatActivity) getActivity();
+            if (activity != null) {
+                FragmentManager fm = activity.getSupportFragmentManager();
+                VocabularyNewDialogFragment dialog = new VocabularyNewDialogFragment();
+                dialog.setTargetFragment(PracticeFragment.this, VOCABULARY_NEW_REQUEST_CODE);
+                dialog.show(fm, "fragment_vocabulary_new");
             }
         });
     }
@@ -126,17 +146,30 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
         binding.searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                // fetch users
                 searchVocabulary(query);
-                // reset searchView
                 binding.searchBar.clearFocus();
                 binding.searchBar.setQuery("", false);
-                return true;
+                return false;
             }
 
             @Override
-            public boolean onQueryTextChange(String s) {
+            public boolean onQueryTextChange(String newText) {
+                if (!newText.isEmpty()) {
+                    searchVocabulary(newText);
+                }
                 return false;
+            }
+        });
+
+        ImageView clearButton = binding.searchBar.findViewById(androidx.appcompat.R.id.search_close_btn);
+        clearButton.setOnClickListener(v -> {
+            if (binding.searchBar.getQuery().length() == 0) {
+                binding.searchBar.setIconified(true);
+            } else {
+                binding.searchBar.setQuery("", false);
+                binding.searchBar.clearFocus();
+                adapter.clear();
+                queryVocabulary();
             }
         });
     }
@@ -210,13 +243,16 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
     Style the prompt shown when vocabulary is empty.
     */
     private void styleEmptyVocabularyPrompt() {
-        String prompt = getString(R.string.empty_vocabulary_prompt);
-        int start = prompt.indexOf("highlighted");
-        int end = start + "highlighted".length();
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        if (activity != null) {
+            String prompt = activity.getString(R.string.empty_vocabulary_prompt);
+            int start = prompt.indexOf("highlighted");
+            int end = start + "highlighted".length();
 
-        SpannableString styledPrompt = new SpannableString(prompt);
-        styledPrompt.setSpan(new RoundedHighlightSpan(), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        binding.tvEmptyPrompt.setText(styledPrompt);
+            SpannableString styledPrompt = new SpannableString(prompt);
+            styledPrompt.setSpan(new RoundedHighlightSpan(), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            binding.tvEmptyPrompt.setText(styledPrompt);
+        }
     }
 
     /*
@@ -236,7 +272,7 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
     /*
     Check if the user's vocabulary is empty, and display a prompting message if it is.
     */
-    private void checkVocabularyEmpty(List<Word> words) {
+    public void checkVocabularyEmpty(List<Word> words) {
         styleEmptyVocabularyPrompt();
         if (words.isEmpty()) {
             binding.tvEmptyPrompt.setVisibility(View.VISIBLE);
@@ -259,7 +295,7 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
     private void resetVocabularyFilters() {
         selectedLanguages = new ArrayList<>(Utils.getCurrentStudiedLanguages());
         starredOnly = false;
-        sortBy = Sort.ALPHABETICALLY;
+        sortBy = Sort.DATE;
     }
 
     /*
@@ -273,5 +309,13 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
 
         adapter.clear();
         queryVocabulary();
+    }
+
+    /*
+    Called after new vocabulary dialog is dismissed; add new word to vocabulary.
+    */
+    @Override
+    public void onFinishDialog(String targetLanguage, String targetWord, String englishWord) {
+        Utils.addWordToDatabase(targetLanguage, targetWord, englishWord, binding.rvVocabulary);
     }
 }

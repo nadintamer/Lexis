@@ -86,4 +86,7 @@ dependencies {
 
     // Coordinator layout for collapsing search bar
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
+
+    // SwipeDecorator for adding background when swiping
+    implementation 'it.xabaras.android:recyclerview-swipedecorator:1.2.3'
 }

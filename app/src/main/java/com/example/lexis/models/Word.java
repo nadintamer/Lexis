@@ -4,6 +4,8 @@ import com.parse.ParseClassName;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
+import java.util.Date;
+
 @ParseClassName("Word")
 public class Word extends ParseObject {
     public static final String KEY_TARGET_LANGUAGE = "targetLanguage";
@@ -13,6 +15,20 @@ public class Word extends ParseObject {
     public static final String KEY_ENGLISH_WORD_SEARCH = "englishWordSearch";
     public static final String KEY_STARRED = "isStarred";
     public static final String KEY_USER = "user";
+    public static final String KEY_SCORE = "score";
+    public static final String KEY_LAST_PRACTICED = "lastPracticed";
+
+    public static Word copyWord(Word word) {
+        Word newWord = new Word();
+        newWord.setTargetWord(word.getTargetWord());
+        newWord.setEnglishWord(word.getEnglishWord());
+        newWord.setTargetWordLower(word.getTargetWord().toLowerCase());
+        newWord.setEnglishWordLower(word.getEnglishWord().toLowerCase());
+        newWord.setTargetLanguage(word.getTargetLanguage());
+        newWord.setIsStarred(word.getIsStarred());
+        newWord.setUser(word.getUser());
+        return newWord;
+    }
 
     public String getTargetWord() {
         return getString(KEY_TARGET_WORD);
@@ -72,5 +88,25 @@ public class Word extends ParseObject {
 
     public void setUser(ParseUser user) {
         put(KEY_USER, user);
+    }
+
+    public int getScore() {
+        return getInt(KEY_SCORE);
+    }
+
+    public void incrementScore() {
+        put(KEY_SCORE, getScore() + 1);
+    }
+
+    public void decrementScore() {
+        put(KEY_SCORE, getScore() - 1);
+    }
+
+    public Date getLastPracticed() {
+        return getDate(KEY_LAST_PRACTICED);
+    }
+
+    public void setLastPracticed(Date date) {
+        put(KEY_LAST_PRACTICED, date);
     }
 }

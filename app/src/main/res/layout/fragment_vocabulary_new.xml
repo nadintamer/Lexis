@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/vocabulary_filter"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="145dp"
+    android:paddingBottom="135dp"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp"
+    android:background="@drawable/dialog_background_shape">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="20dp"
+        android:textColor="@color/black"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:text="@string/add_new_word_to_vocabulary" />
+
+    <TextView
+        android:id="@+id/tvTargetLanguage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvTitle"
+        android:layout_alignStart="@id/tvTitle"
+        android:layout_marginTop="15dp"
+        android:textSize="16sp"
+        android:text="@string/target_language" />
+
+    <Spinner
+        android:id="@+id/spinnerLanguage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvTargetLanguage"
+        android:minHeight="50dp"
+        android:paddingHorizontal="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginHorizontal="20dp"
+        android:background="@drawable/spinner_background_shape"
+        android:entries="@array/languages_array" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/etLayoutEnglish"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spinnerLanguage"
+        app:boxCornerRadiusTopStart="10dp"
+        app:boxCornerRadiusTopEnd="10dp"
+        app:boxCornerRadiusBottomStart="10dp"
+        app:boxCornerRadiusBottomEnd="10dp"
+        app:boxStrokeWidthFocused="0dp"
+        app:boxStrokeWidth="0dp">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etEnglishWord"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="30dp"
+            android:ems="10"
+            android:inputType="textEmailAddress"
+            android:hint="English word" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/etLayoutTarget"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/etLayoutEnglish"
+        app:boxCornerRadiusTopStart="10dp"
+        app:boxCornerRadiusTopEnd="10dp"
+        app:boxCornerRadiusBottomStart="10dp"
+        app:boxCornerRadiusBottomEnd="10dp"
+        app:boxStrokeWidthFocused="0dp"
+        app:boxStrokeWidth="0dp">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etTargetWord"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="30dp"
+            android:ems="10"
+            android:inputType="textEmailAddress"
+            tools:hint="French translation" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/btnCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginStart="20dp"
+        android:padding="0dp"
+        android:minWidth="0dp"
+        android:textColor="@color/gray"
+        android:textSize="16sp"
+        android:background="@android:color/transparent"
+        android:text="Cancel" />
+
+    <Button
+        android:id="@+id/btnUpdate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:padding="0dp"
+        android:minWidth="0dp"
+        android:textColor="@color/tiffany_blue"
+        android:textSize="16sp"
+        android:background="@android:color/transparent"
+        android:text="Add" />
+</RelativeLayout>

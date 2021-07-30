@@ -7,7 +7,12 @@ import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.lexis.adapters.VocabularyAdapter;
+import com.example.lexis.models.Word;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -267,5 +272,62 @@ public class Utils {
         if (currentLanguageLogo != null) {
             imageView.setImageResource(currentLanguageLogo);
         }
+    }
+
+    /*
+    Add a word with the provided target language and English meanings to the Parse database,
+    only if it doesn't already exist in the user's vocabulary.
+    */
+    public static void addWordToDatabase(String targetLanguage, String targetWord, String englishWord, RecyclerView recyclerView) {
+        ParseQuery<Word> query = ParseQuery.getQuery(Word.class);
+        query.include(Word.KEY_USER);
+        query.whereEqualTo(Word.KEY_USER, ParseUser.getCurrentUser());
+        query.whereEqualTo(Word.KEY_TARGET_WORD, targetWord);
+        query.whereEqualTo(Word.KEY_TARGET_LANGUAGE, targetLanguage);
+        query.getFirstInBackground((word, e) -> {
+            if (word == null) {
+                saveWord(targetLanguage, targetWord, englishWord, recyclerView);
+
+                // add target language to studied languages if not there already
+                List<String> studiedLanguages = Utils.getCurrentStudiedLanguages();
+                if (!studiedLanguages.contains(targetLanguage)) {
+                    studiedLanguages.add(targetLanguage);
+                    Utils.setCurrentStudiedLanguages(studiedLanguages);
+                }
+            } else {
+                Log.i(TAG, "Word already exists in database: " + targetWord);
+                if (recyclerView != null) {
+                    String message = String.format("Word already exists in vocabulary: %s", targetWord);
+                    Toast.makeText(recyclerView.getContext(), message, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    /*
+    Save the word with the provided target language and English meanings to the Parse database.
+    */
+    public static void saveWord(String targetLanguage, String targetWord, String englishWord, RecyclerView recyclerView) {
+        Word word = new Word();
+        word.setTargetWord(targetWord);
+        word.setEnglishWord(englishWord);
+        word.setTargetWordLower(targetWord.toLowerCase());
+        word.setEnglishWordLower(englishWord.toLowerCase());
+        word.setTargetLanguage(targetLanguage);
+        word.setIsStarred(false);
+        word.setUser(ParseUser.getCurrentUser());
+        word.saveInBackground(e -> {
+            if (e != null) {
+                Log.e(TAG, "Error while saving word", e);
+                return;
+            }
+
+            Log.i(TAG, "Successfully saved word!");
+            if (recyclerView != null) {
+                VocabularyAdapter adapter = (VocabularyAdapter) recyclerView.getAdapter();
+                adapter.insertAt(0, word);
+                recyclerView.scrollToPosition(0);
+            }
+        });
     }
 }
