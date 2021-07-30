@@ -83,13 +83,11 @@ public class Word extends ParseObject {
     }
 
     public void incrementScore() {
-        int score = getScore();
-        put(KEY_SCORE, score + 1);
+        put(KEY_SCORE, getScore() + 1);
     }
 
     public void decrementScore() {
-        int score = getScore();
-        put(KEY_SCORE, score - 1);
+        put(KEY_SCORE, getScore() - 1);
     }
 
     public Date getLastPracticed() {
