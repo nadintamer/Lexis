@@ -2,6 +2,8 @@ package com.example.lexis.models;
 
 import com.google.common.primitives.Chars;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -139,6 +141,55 @@ public class WordSearch {
             }
         }
         return longest;
+    }
+
+    /*
+    Check whether the grid has a word starting at the specified row and column.
+    */
+    public boolean hasWordStartingAt(int row, int col) {
+        for (WordSearchItem item : wordItems) {
+            if (item.startLocation.row == row && item.startLocation.col == col) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /*
+    Check whether the grid has a word ending at the specified row and column.
+    */
+    public boolean hasWordEndingAt(int row, int col) {
+        for (WordSearchItem item : wordItems) {
+            if (item.endLocation.row == row && item.endLocation.col == col) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /*
+    Check whether the grid has a word between the specified start and end locations (accounts for
+    left and upwards dragging, in which the start and end positions will be reversed).
+    */
+    public Pair<Boolean, String> hasWordBetween(int startRow, int startCol, int endRow, int endCol) {
+        if (hasWordStartingAt(startRow, startCol) && hasWordEndingAt(endRow, endCol)) {
+            return new ImmutablePair<>(true, "regular");
+        } else if (hasWordStartingAt(endRow, endCol) && hasWordEndingAt(startRow, startCol)) {
+            return new ImmutablePair<>(true, "reversed");
+        }
+        return new ImmutablePair<>(false, "");
+    }
+
+    /*
+    Get the word starting at the specified row and column.
+    */
+    public Word getWordStartingAt(int row, int col) {
+        for (WordSearchItem item : wordItems) {
+            if (item.startLocation.row == row && item.startLocation.col == col) {
+                return item.word;
+            }
+        }
+        return null;
     }
 
     /*

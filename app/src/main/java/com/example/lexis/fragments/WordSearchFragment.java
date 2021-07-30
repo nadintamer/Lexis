@@ -26,6 +26,8 @@ import com.michaelflisar.dragselectrecyclerview.DragSelectionProcessor;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -119,6 +121,7 @@ public class WordSearchFragment extends Fragment {
                 return;
             }
 
+            this.words.addAll(words);
             wordSearch = new WordSearch(words);
 
             // set up drag selection listener
@@ -173,7 +176,7 @@ public class WordSearchFragment extends Fragment {
     }
 
     private DragSelectionProcessor createOnDragSelectionListener() {
-        DragSelectionProcessor onDragSelectionListener = new DragSelectionProcessor(new DragSelectionProcessor.ISelectionHandler() {
+        return new DragSelectionProcessor(new DragSelectionProcessor.ISelectionHandler() {
             @Override
             public Set<Integer> getSelection() {
                 return selectedPositions;
@@ -225,8 +228,37 @@ public class WordSearchFragment extends Fragment {
                     }
                 }
             }
-        }).withMode(DragSelectionProcessor.Mode.Simple);
+        }).withMode(DragSelectionProcessor.Mode.Simple).withStartFinishedListener(new DragSelectionProcessor.ISelectionStartFinishedListener() {
+            @Override
+            public void onSelectionStarted(int start, boolean originalSelectionState) {
+                Log.i(TAG, "started dragging");
+            }
 
-        return onDragSelectionListener;
+            @Override
+            public void onSelectionFinished(int end) {
+                int endCol = end % wordSearch.getWidth();
+                int endRow = end / wordSearch.getWidth();
+
+                Pair<Boolean, String> hasWordBetween = wordSearch.hasWordBetween(
+                        startRow, startCol, endRow, endCol);
+                boolean wordExists = hasWordBetween.getLeft();
+                String direction = hasWordBetween.getRight();
+
+                if (wordExists) {
+                    String word;
+                    if (direction.equals("regular")) {
+                        word = wordSearch.getWordStartingAt(startRow, startCol).getTargetWord();
+                    } else {
+                        word = wordSearch.getWordStartingAt(endRow, endCol).getTargetWord();
+                    }
+                    Log.i(TAG, "found word: " + word);
+                } else { // not a valid word, automatically de-select
+                    for (int i = startIndex; i <= end; i++) {
+                        selectedPositions.remove(i);
+                        wordSearchAdapter.notifyItemChanged(i);
+                    }
+                }
+            }
+        });
     }
 }
