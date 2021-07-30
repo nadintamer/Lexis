@@ -19,7 +19,6 @@ import com.example.lexis.R;
 import com.example.lexis.adapters.ArticlesAdapter;
 import com.example.lexis.databinding.FragmentFeedBinding;
 import com.example.lexis.models.Article;
-import com.example.lexis.utilities.Const;
 import com.example.lexis.utilities.Utils;
 
 import org.json.JSONArray;
@@ -60,6 +59,7 @@ public class FeedFragment extends Fragment {
         // only fetch articles if we haven't already fetched them
         if (articles == null) {
             articles = new ArrayList<>();
+            showProgressBar();
             fetchTopWikipediaArticles(Utils.getYesterday(), false);
         }
 
@@ -159,6 +159,11 @@ public class FeedFragment extends Fragment {
                     Article article = new Article(title, intro, "Wikipedia");
                     articles.add(article);
                     adapter.notifyItemInserted(articles.size() - 1);
+
+                    // we just added the last item, hide progress bar
+                    if (adapter.getItemCount() == 20) {
+                        hideProgressBar();
+                    }
                 } catch (JSONException e) {
                     Log.d(TAG, "JSON Exception", e);
                 }
@@ -169,5 +174,16 @@ public class FeedFragment extends Fragment {
                 Log.d(TAG, "onFailure to fetch Wikipedia article");
             }
         });
+    }
+
+    /*
+    Helper functions to hide and show progress bar.
+    */
+    public void showProgressBar() {
+        binding.progressBar.setVisibility(View.VISIBLE);
+    }
+
+    public void hideProgressBar() {
+        binding.progressBar.setVisibility(View.INVISIBLE);
     }
 }
