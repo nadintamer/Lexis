@@ -154,9 +154,7 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (!newText.isEmpty()) {
-                    searchVocabulary(newText);
-                }
+                searchVocabulary(newText);
                 return false;
             }
         });
@@ -178,6 +176,7 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
     Fetch the user's vocabulary for the given languages.
     */
     private void queryVocabulary() {
+        showProgressBar();
         ParseQuery<Word> query = ParseQuery.getQuery(Word.class);
         query.include(Word.KEY_USER);
         query.whereEqualTo(Word.KEY_USER, ParseUser.getCurrentUser());
@@ -195,6 +194,7 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
                 Log.e(TAG, "Issue with getting vocabulary", e);
                 return;
             }
+            hideProgressBar();
             adapter.addAll(words);
             checkVocabularyEmpty(words);
         });
@@ -204,6 +204,7 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
     Search the user's vocabulary for the given query.
     */
     private void searchVocabulary(String searchQuery) {
+        showProgressBar();
         searchQuery = searchQuery.toLowerCase();
         ParseQuery<Word> targetWord = ParseQuery.getQuery(Word.class);
         targetWord.whereStartsWith(Word.KEY_TARGET_WORD_SEARCH, searchQuery);
@@ -233,6 +234,7 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
                 Log.e(TAG, "Issue with getting vocabulary", e);
                 return;
             }
+            hideProgressBar();
             adapter.clear();
             adapter.addAll(words);
             checkSearchEmpty(words);
@@ -317,5 +319,16 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
     @Override
     public void onFinishDialog(String targetLanguage, String targetWord, String englishWord) {
         Utils.addWordToDatabase(targetLanguage, targetWord, englishWord, binding.rvVocabulary);
+    }
+
+    /*
+    Helper functions to hide and show progress bar.
+    */
+    public void showProgressBar() {
+        binding.progressBar.setVisibility(View.VISIBLE);
+    }
+
+    public void hideProgressBar() {
+        binding.progressBar.setVisibility(View.INVISIBLE);
     }
 }

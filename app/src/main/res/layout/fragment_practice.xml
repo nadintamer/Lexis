@@ -86,4 +86,13 @@
         app:borderWidth="0dp"
         app:elevation="10dp"/>
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:indeterminateTint="@color/light_gray"
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
+
 </RelativeLayout>
