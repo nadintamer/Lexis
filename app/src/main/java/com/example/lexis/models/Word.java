@@ -5,6 +5,7 @@ import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 import java.util.Date;
+import java.util.List;
 
 @ParseClassName("Word")
 public class Word extends ParseObject {
@@ -124,5 +125,19 @@ public class Word extends ParseObject {
 
     public void setTargetWordLength(int length) {
         put(KEY_WORD_LENGTH, length);
+    }
+
+    /*
+    Return the length of the longest word in the word list.
+    */
+    public static int getLongestWord(List<Word> words) {
+        int longest = words.get(0).getTargetWord().length();
+        for (int i = 1; i < words.size(); i++) {
+            int currentLength = words.get(i).getTargetWord().length();
+            if (currentLength > longest) {
+                longest = currentLength;
+            }
+        }
+        return longest;
     }
 }

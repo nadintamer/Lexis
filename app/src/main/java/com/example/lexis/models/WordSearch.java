@@ -19,9 +19,8 @@ public class WordSearch {
     /*
     Construct a new WordSearch object from the given word list by generating the grid.
     */
-    public WordSearch(List<Word> words) {
-        int max = Math.max(getLongestWord(words) + 1, 6);
-        grid = new char[max][max];
+    public WordSearch(List<Word> words, int size) {
+        grid = new char[size][size];
         wordItems = new ArrayList<>();
         for (char[] array : grid) {
             Arrays.fill(array, '.');
@@ -127,20 +126,6 @@ public class WordSearch {
                 }
             }
         }
-    }
-
-    /*
-    Return the length of the longest word in the word list.
-    */
-    private int getLongestWord(List<Word> words) {
-        int longest = words.get(0).getTargetWord().length();
-        for (int i = 1; i < words.size(); i++) {
-            int currentLength = words.get(i).getTargetWord().length();
-            if (currentLength > longest) {
-                longest = currentLength;
-            }
-        }
-        return longest;
     }
 
     /*

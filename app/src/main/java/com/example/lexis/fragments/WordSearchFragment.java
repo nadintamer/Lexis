@@ -19,6 +19,7 @@ import com.example.lexis.R;
 import com.example.lexis.adapters.WordListAdapter;
 import com.example.lexis.adapters.WordSearchAdapter;
 import com.example.lexis.databinding.FragmentWordSearchBinding;
+import com.example.lexis.models.Clue;
 import com.example.lexis.models.Word;
 import com.example.lexis.models.WordSearch;
 import com.michaelflisar.dragselectrecyclerview.DragSelectTouchListener;
@@ -29,6 +30,7 @@ import com.parse.ParseUser;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,6 +39,8 @@ public class WordSearchFragment extends Fragment {
 
     private static final String ARG_LANGUAGE = "targetLanguage";
     private static final String TAG = "WordSearchFragment";
+    public static final int DEFAULT_WORD_NUM = 6;
+    public static final int DEFAULT_GRID_SIZE = 8;
 
     private FragmentWordSearchBinding binding;
     private String targetLanguage;
@@ -48,7 +52,7 @@ public class WordSearchFragment extends Fragment {
     private WordListAdapter wordListAdapter;
     private char[] letters;
     private Set<Integer> selectedPositions;
-    private List<String> clues;
+    private List<Clue> clues;
 
     private int startCol;
     private int startRow;
@@ -114,15 +118,20 @@ public class WordSearchFragment extends Fragment {
         query.addAscendingOrder(Word.KEY_LAST_PRACTICED);
         // get short words first for easier display
         query.addAscendingOrder(Word.KEY_WORD_LENGTH);
-        query.setLimit(6);
+        query.setLimit(DEFAULT_WORD_NUM);
         query.findInBackground((words, e) -> {
             if (e != null) {
                 Log.e(TAG, "Issue with getting vocabulary", e);
                 return;
             }
 
+            int gridSize = DEFAULT_GRID_SIZE;
+            int longestWord = Word.getLongestWord(words);
+            if (longestWord > gridSize) {
+                gridSize = longestWord + 1;
+            }
+            wordSearch = new WordSearch(words, gridSize);
             this.words.addAll(words);
-            wordSearch = new WordSearch(words);
 
             // set up drag selection listener
             DragSelectionProcessor onDragSelectionListener = createOnDragSelectionListener();
@@ -137,8 +146,6 @@ public class WordSearchFragment extends Fragment {
 
             wordSearchAdapter.setLetters(wordSearch.getFlatGrid());
             wordListAdapter.addAll(wordSearch.getClues());
-            
-            // TODO: set last practiced time after PR is merged
         });
     }
 
@@ -175,6 +182,9 @@ public class WordSearchFragment extends Fragment {
         }
     }
 
+    /*
+    Create an onDragSelectionListener to highlight cells upon dragging.
+    */
     private DragSelectionProcessor createOnDragSelectionListener() {
         return new DragSelectionProcessor(new DragSelectionProcessor.ISelectionHandler() {
             @Override
@@ -221,11 +231,10 @@ public class WordSearchFragment extends Fragment {
 
                     if (isSelected) {
                         selectedPositions.add(i);
-                        wordSearchAdapter.notifyItemChanged(i);
                     } else {
                         selectedPositions.remove(i);
-                        wordSearchAdapter.notifyItemChanged(i);
                     }
+                    wordSearchAdapter.notifyItemChanged(i);
                 }
             }
         }).withMode(DragSelectionProcessor.Mode.Simple).withStartFinishedListener(new DragSelectionProcessor.ISelectionStartFinishedListener() {
@@ -245,15 +254,25 @@ public class WordSearchFragment extends Fragment {
                 String direction = hasWordBetween.getRight();
 
                 if (wordExists) {
-                    String word;
+                    Word word;
                     if (direction.equals("regular")) {
-                        word = wordSearch.getWordStartingAt(startRow, startCol).getTargetWord();
+                        word = wordSearch.getWordStartingAt(startRow, startCol);
                     } else {
-                        word = wordSearch.getWordStartingAt(endRow, endCol).getTargetWord();
+                        word = wordSearch.getWordStartingAt(endRow, endCol);
                     }
-                    Log.i(TAG, "found word: " + word);
+
+                    int index = words.indexOf(word);
+                    Clue clue = clues.get(index);
+                    clue.setFound(true);
+                    wordListAdapter.notifyItemChanged(index);
+
+                    // save last practiced time
+                    word.setLastPracticed(new Date());
+                    word.saveInBackground();
+
+                    Log.i(TAG, "found word: " + word.getTargetWord());
+                    Log.i(TAG, "relevant clue: " + clue.getText());
                 } else { // not a valid word, automatically de-select
-                    // TODO: has bug! does not check for vertical/horizontal de-selection, need to check again
                     for (int i = startIndex; i <= end; i++) {
                         int currentCol = i % wordSearch.getWidth();
                         int currentRow = i / wordSearch.getWidth();
