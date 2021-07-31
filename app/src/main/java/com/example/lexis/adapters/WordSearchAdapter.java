@@ -20,14 +20,16 @@ public class WordSearchAdapter extends RecyclerView.Adapter<WordSearchAdapter.Wo
 
     char[] letters;
     Set<Integer> selectedPositions;
+    Set<Integer> currentlySelected;
     Fragment fragment;
     DragSelectTouchListener dragSelectTouchListener;
 
-    public WordSearchAdapter(Fragment fragment, char[] letters, Set<Integer> selectedPositions, DragSelectTouchListener dragSelectTouchListener) {
+    public WordSearchAdapter(Fragment fragment, char[] letters, Set<Integer> selectedPositions, Set<Integer> currentlySelected, DragSelectTouchListener dragSelectTouchListener) {
         this.fragment = fragment;
         this.letters = letters;
         this.dragSelectTouchListener = dragSelectTouchListener;
         this.selectedPositions = selectedPositions;
+        this.currentlySelected = currentlySelected;
     }
 
     @NonNull
@@ -62,6 +64,16 @@ public class WordSearchAdapter extends RecyclerView.Adapter<WordSearchAdapter.Wo
         notifyItemChanged(index);
     }
 
+    public void addCurrentlySelected(int index) {
+        currentlySelected.add(index);
+        notifyItemChanged(index);
+    }
+
+    public void removeCurrentlySelected(int index) {
+        currentlySelected.remove(index);
+        notifyItemChanged(index);
+    }
+
     public void setLetters(char[] letters) {
         this.letters = letters;
         notifyDataSetChanged();
@@ -79,6 +91,9 @@ public class WordSearchAdapter extends RecyclerView.Adapter<WordSearchAdapter.Wo
         public void bind(char letter, int position) {
             binding.tvLetter.setText(String.valueOf(letter).toUpperCase());
             if (selectedPositions.contains(position)) {
+                Drawable highlight = fragment.getResources().getDrawable(R.drawable.word_search_highlight_correct);
+                binding.getRoot().setBackground(highlight);
+            } else if (currentlySelected.contains(position)) {
                 Drawable highlight = fragment.getResources().getDrawable(R.drawable.word_search_highlight);
                 binding.getRoot().setBackground(highlight);
             } else {

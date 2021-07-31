@@ -55,6 +55,7 @@ public class WordSearchFragment extends Fragment {
     private WordListAdapter wordListAdapter;
     private char[] letters;
     private Set<Integer> selectedPositions;
+    private Set<Integer> currentlySelected;
     private List<Clue> clues;
     private int numCluesFound;
 
@@ -83,6 +84,7 @@ public class WordSearchFragment extends Fragment {
         if (getArguments() != null) {
             targetLanguage = getArguments().getString(ARG_LANGUAGE);
             selectedPositions = new HashSet<>();
+            currentlySelected = new HashSet<>();
         }
     }
 
@@ -146,7 +148,8 @@ public class WordSearchFragment extends Fragment {
                     .withSelectListener(onDragSelectionListener);
             binding.rvWordSearch.addOnItemTouchListener(dragSelectTouchListener);
 
-            wordSearchAdapter = new WordSearchAdapter(this, letters, selectedPositions, dragSelectTouchListener);
+            wordSearchAdapter = new WordSearchAdapter(
+                    this, letters, selectedPositions, currentlySelected, dragSelectTouchListener);
             wordSearchLayoutManager = new GridLayoutManager(getActivity(), wordSearch.getWidth());
             binding.rvWordSearch.setLayoutManager(wordSearchLayoutManager);
             binding.rvWordSearch.setAdapter(wordSearchAdapter);
@@ -237,11 +240,13 @@ public class WordSearchFragment extends Fragment {
                     if (dragDirection == DragDirection.NONE) continue;
 
                     if (isSelected) {
-                        selectedPositions.add(i);
+                        wordSearchAdapter.addCurrentlySelected(i);
+                        // selectedPositions.add(i);
                     } else {
-                        selectedPositions.remove(i);
+                        wordSearchAdapter.removeCurrentlySelected(i);
+                        // selectedPositions.remove(i);
                     }
-                    wordSearchAdapter.notifyItemChanged(i);
+                    // wordSearchAdapter.notifyItemChanged(i);
                 }
             }
         }).withMode(DragSelectionProcessor.Mode.Simple).withStartFinishedListener(new DragSelectionProcessor.ISelectionStartFinishedListener() {
@@ -261,6 +266,24 @@ public class WordSearchFragment extends Fragment {
                 String direction = hasWordBetween.getRight();
 
                 if (wordExists) {
+                    int beginHighlight = startIndex;
+                    int endHighlight = end;
+
+                    if (end < startIndex) {
+                        beginHighlight = end;
+                        endHighlight = startIndex;
+                    }
+
+                    for (int i = beginHighlight; i <= endHighlight; i++) {
+                        int currentCol = i % wordSearch.getWidth();
+                        int currentRow = i / wordSearch.getWidth();
+
+                        if (isValid(currentRow, currentCol)) {
+                            wordSearchAdapter.removeCurrentlySelected(i);
+                            wordSearchAdapter.addSelected(i);
+                        }
+                    }
+
                     Word word;
                     if (direction.equals("regular")) {
                         word = wordSearch.getWordStartingAt(startRow, startCol);
@@ -291,21 +314,33 @@ public class WordSearchFragment extends Fragment {
                     Log.i(TAG, "found word: " + word.getTargetWord());
                     Log.i(TAG, "relevant clue: " + clue.getText());
                 } else { // not a valid word, automatically de-select
-                    // TODO: don't deselect if part of a found word
-                    // FIXME: highlighting incorrectly upwards/left does not de-select
-                    for (int i = startIndex; i <= end; i++) {
+                    // TODO: lots of repeated code, need to refactor
+                    int beginHighlight = startIndex;
+                    int endHighlight = end;
+
+                    if (end < startIndex) {
+                        beginHighlight = end;
+                        endHighlight = startIndex;
+                    }
+
+                    for (int i = beginHighlight; i <= endHighlight; i++) {
                         int currentCol = i % wordSearch.getWidth();
                         int currentRow = i / wordSearch.getWidth();
 
-                        if (startCol != currentCol && dragDirection == DragDirection.VERTICAL) continue;
-                        if (startRow != currentRow && dragDirection == DragDirection.HORIZONTAL) continue;
-                        if (dragDirection == DragDirection.NONE) continue;
-
-                        selectedPositions.remove(i);
-                        wordSearchAdapter.notifyItemChanged(i);
+                        if (isValid(currentRow, currentCol)) {
+                            wordSearchAdapter.removeCurrentlySelected(i);
+                        }
                     }
                 }
             }
         });
+    }
+
+    // TODO: add comment here
+    private boolean isValid(int currentRow, int currentCol) {
+        if (startCol != currentCol && dragDirection == DragDirection.VERTICAL) return false;
+        if (startRow != currentRow && dragDirection == DragDirection.HORIZONTAL) return false;
+        if (dragDirection == DragDirection.NONE) return false;
+        return true;
     }
 }
