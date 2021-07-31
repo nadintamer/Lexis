@@ -136,7 +136,7 @@ public class WordSearchFragment extends Fragment {
 
             int gridSize = DEFAULT_GRID_SIZE;
             int longestWord = Word.getLongestWord(words);
-            if (longestWord > gridSize) {
+            if (longestWord >= gridSize) {
                 gridSize = longestWord + 1;
             }
             wordSearch = new WordSearch(words, gridSize);
