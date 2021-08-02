@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import com.example.lexis.R;
@@ -37,6 +38,7 @@ public class PracticeIntroFragment extends Fragment {
 
     FragmentPracticeIntroBinding binding;
     int maxNumQuestions;
+    int maxNumQuestionsStarred;
 
     public PracticeIntroFragment() {}
 
@@ -68,6 +70,22 @@ public class PracticeIntroFragment extends Fragment {
 
         binding.spinnerLanguage.setAdapter(spinnerArrayAdapter);
         binding.spinnerLanguage.setSelection(formattedLanguages.indexOf(targetLanguage));
+
+        // set up starred checkbox
+        binding.cbStarredOnly.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                String numWords;
+                if (isChecked) {
+                    numWords = String.format("of %d words", maxNumQuestionsStarred);
+                    adjustQuestionLimitToMax(maxNumQuestionsStarred);
+                } else {
+                    numWords = String.format("of %d words", maxNumQuestions);
+                    adjustQuestionLimitToMax(maxNumQuestions);
+                }
+                binding.tvQuestionLimit.setText(numWords);
+            }
+        });
 
         // answer in target language by default
         binding.radioTarget.setText(targetLanguage);
@@ -220,16 +238,31 @@ public class PracticeIntroFragment extends Fragment {
                 return;
             }
 
+            int numStarred = 0;
+            for (Word word : words) {
+                if (word.getIsStarred()) {
+                    numStarred++;
+                }
+            }
+
             maxNumQuestions = words.size();
+            maxNumQuestionsStarred = numStarred;
             String numWords = String.format("of %d words", maxNumQuestions);
             binding.tvQuestionLimit.setText(numWords);
 
-            int questionLimit = Integer.parseInt(binding.etQuestionLimit.getText().toString());
-            if (questionLimit > maxNumQuestions) {
-                questionLimit = maxNumQuestions;
-                setQuestionLimit(questionLimit);
-            }
+            adjustQuestionLimitToMax(maxNumQuestions);
         });
+    }
+
+    /*
+    Check if the number of questions to study is larger than the maximum and adjust if needed.
+    */
+    private void adjustQuestionLimitToMax(int max) {
+        int questionLimit = Integer.parseInt(binding.etQuestionLimit.getText().toString());
+        if (questionLimit > max) {
+            questionLimit = max;
+            setQuestionLimit(questionLimit);
+        }
     }
 
     private void setQuestionLimit(int limit) {
