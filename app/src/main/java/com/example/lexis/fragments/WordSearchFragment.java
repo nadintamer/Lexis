@@ -314,6 +314,7 @@ public class WordSearchFragment extends Fragment {
                         handler.postDelayed(() -> {
                             binding.rvWordSearch.setVisibility(View.GONE);
                             binding.rvWordList.setVisibility(View.GONE);
+                            binding.toolbar.tvFlag.setVisibility(View.GONE);
                             binding.layoutFinished.setVisibility(View.VISIBLE);
                         }, 500);
                     }

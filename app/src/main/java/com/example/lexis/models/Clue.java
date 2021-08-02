@@ -1,11 +1,11 @@
 package com.example.lexis.models;
 
 public class Clue {
-    String text;
+    Word word;
     boolean found;
 
-    public Clue(String word) {
-        text = word;
+    public Clue(Word word) {
+        this.word = word;
         found = false;
     }
 
@@ -14,7 +14,11 @@ public class Clue {
     }
 
     public String getText() {
-        return text;
+        return word.getEnglishWord();
+    }
+
+    public String getSolution() {
+        return word.getTargetWord();
     }
 
     public boolean isFound() {

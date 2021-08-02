@@ -55,12 +55,12 @@ public class WordSearch {
     }
 
     /*
-    Return a list of the clues (i.e. English words) for the word search puzzle.
+    Return a list of the clues / words for the word search puzzle.
     */
-    public List<String> getClues() {
-        List<String> clues = new ArrayList<>();
+    public List<Word> getClues() {
+        List<Word> clues = new ArrayList<>();
         for (WordSearchItem item : wordItems) {
-            clues.add(item.word.getEnglishWord());
+            clues.add(item.word);
         }
         return clues;
     }
