@@ -1,6 +1,7 @@
 package com.example.lexis.adapters;
 
-import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,8 @@ import com.example.lexis.models.Article;
 import com.example.lexis.utilities.Utils;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ArticleViewHolder> {
     List<Article> articles;
@@ -83,16 +86,13 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.Articl
         @Override
         public void onClick(View v) {
             int position = getAdapterPosition();
-            TranslateTask task = new TranslateTask();
-            task.execute(position);
-        }
 
-        // TODO: AsyncTask is deprecated so I am unsure if I should be using something else instead
-        class TranslateTask extends AsyncTask<Integer, Void, Integer> {
-            @Override
-            protected Integer doInBackground(Integer... integers) {
-                int position = integers[0];
+            fragment.showProgressBar();
 
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            Handler handler = new Handler(Looper.getMainLooper());
+
+            executor.execute(() -> {
                 // only translate words if we haven't previously done so or if the user has changed their
                 // target language since the article's translation
                 Article article = articles.get(position);
@@ -102,29 +102,22 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.Articl
                     article.translateWordsOnInterval(3, 60);
                 }
 
-                return position;
-            }
+                // executed when async work is completed
+                handler.post(() -> {
+                    fragment.hideProgressBar();
 
-            @Override
-            protected void onPostExecute(Integer position) {
-                fragment.hideProgressBar();
+                    AppCompatActivity activity = (AppCompatActivity) fragment.getActivity();
+                    if (activity == null) return;
 
-                AppCompatActivity activity = (AppCompatActivity) fragment.getActivity();
-                if (activity == null) return;
+                    final FragmentManager fragmentManager = activity.getSupportFragmentManager();
+                    final Fragment articleFragment = ArticleFragment.newInstance(articles.get(position));
 
-                final FragmentManager fragmentManager = activity.getSupportFragmentManager();
-                final Fragment articleFragment = ArticleFragment.newInstance(articles.get(position));
-
-                fragmentManager.beginTransaction()
-                        .replace(R.id.fragmentContainer, articleFragment)
-                        .addToBackStack(null) // add to back stack so we can return to this fragment
-                        .commit();
-            }
-
-            @Override
-            protected void onPreExecute() {
-                fragment.showProgressBar();
-            }
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.fragmentContainer, articleFragment)
+                            .addToBackStack(null)
+                            .commit();
+                });
+            });
         }
     }
 }
