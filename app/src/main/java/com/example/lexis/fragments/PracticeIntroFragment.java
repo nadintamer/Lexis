@@ -88,14 +88,11 @@ public class PracticeIntroFragment extends Fragment {
             public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        binding.etQuestionLimit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    String s = binding.etQuestionLimit.getText().toString();
-                    if (Integer.parseInt(s) > maxNumQuestions) {
-                        binding.etQuestionLimit.setText(String.valueOf(maxNumQuestions));
-                    }
+        binding.etQuestionLimit.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                String s = binding.etQuestionLimit.getText().toString();
+                if (Integer.parseInt(s) > maxNumQuestions) {
+                    binding.etQuestionLimit.setText(String.valueOf(maxNumQuestions));
                 }
             }
         });

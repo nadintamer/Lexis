@@ -25,6 +25,7 @@ import com.example.lexis.databinding.FragmentWordSearchBinding;
 import com.example.lexis.models.Clue;
 import com.example.lexis.models.Word;
 import com.example.lexis.models.WordSearch;
+import com.example.lexis.utilities.Utils;
 import com.michaelflisar.dragselectrecyclerview.DragSelectTouchListener;
 import com.michaelflisar.dragselectrecyclerview.DragSelectionProcessor;
 import com.parse.ParseQuery;
@@ -177,6 +178,12 @@ public class WordSearchFragment extends Fragment {
                 navigationIcon.setTint(getResources().getColor(R.color.black));
             }
             binding.toolbar.getRoot().setNavigationOnClickListener(v -> returnToPracticeTab());
+
+            binding.toolbar.tvFlag.setText(Utils.getFlagEmoji(targetLanguage));
+            binding.toolbar.tvFlag.setOnClickListener(v -> {
+                String hint = String.format("Look for %s translations of the word search clues!", Utils.getSpinnerText(targetLanguage));
+                Toast.makeText(getActivity(), hint, Toast.LENGTH_SHORT).show();
+            });
         }
     }
 

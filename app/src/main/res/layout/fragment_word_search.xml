@@ -8,7 +8,7 @@
     tools:context=".fragments.WordSearchFragment">
 
     <include
-        layout="@layout/toolbar_article"
+        layout="@layout/toolbar_word_search"
         android:id="@+id/toolbar"
         android:layout_weight="0"
         android:layout_width="match_parent"
