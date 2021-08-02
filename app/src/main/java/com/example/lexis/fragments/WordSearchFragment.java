@@ -152,7 +152,7 @@ public class WordSearchFragment extends Fragment {
             binding.rvWordSearch.addOnItemTouchListener(dragSelectTouchListener);
 
             wordSearchAdapter = new WordSearchAdapter(
-                    this, letters, selectedPositions, currentlySelected, dragSelectTouchListener);
+                    this, letters, targetLanguage, selectedPositions, currentlySelected, dragSelectTouchListener);
             wordSearchLayoutManager = new GridLayoutManager(getActivity(), wordSearch.getWidth());
             binding.rvWordSearch.setLayoutManager(wordSearchLayoutManager);
             binding.rvWordSearch.setAdapter(wordSearchAdapter);

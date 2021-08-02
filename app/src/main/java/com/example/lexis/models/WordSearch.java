@@ -1,6 +1,11 @@
 package com.example.lexis.models;
 
+import android.util.Log;
+
 import com.google.common.primitives.Chars;
+import com.ibm.icu.text.UnicodeSet;
+import com.ibm.icu.util.LocaleData;
+import com.ibm.icu.util.ULocale;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -13,6 +18,7 @@ import java.util.Random;
 
 public class WordSearch {
 
+    private String targetLanguage;
     private char[][] grid;
     private List<WordSearchItem> wordItems;
 
@@ -20,8 +26,10 @@ public class WordSearch {
     Construct a new WordSearch object from the given word list by generating the grid.
     */
     public WordSearch(List<Word> words, int size) {
+        targetLanguage = words.get(0).getTargetLanguage();
         grid = new char[size][size];
         wordItems = new ArrayList<>();
+
         for (char[] array : grid) {
             Arrays.fill(array, '.');
         }
@@ -117,12 +125,17 @@ public class WordSearch {
     Fill the remaining empty cells in the grid with random characters.
     */
     private void fillGrid() {
+        ULocale ulocale;
+        ulocale = ULocale.forLanguageTag(targetLanguage);
+        UnicodeSet unicodeSet = LocaleData.getExemplarSet(ulocale, LocaleData.ES_STANDARD);
+        String[] characters = UnicodeSet.toArray(unicodeSet);
+
         Random random = new java.util.Random();
         for (int row = 0; row < grid.length; row++) {
             for (int col = 0; col < grid[0].length; col++) {
                 if (grid[row][col] == '.') {
-                    char c = (char) (random.nextInt(26) + 'a');
-                    grid[row][col] = c;
+                    int i = new Random().nextInt(characters.length);
+                    grid[row][col] = characters[i].charAt(0);
                 }
             }
         }

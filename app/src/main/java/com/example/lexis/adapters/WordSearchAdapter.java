@@ -21,12 +21,14 @@ public class WordSearchAdapter extends RecyclerView.Adapter<WordSearchAdapter.Wo
     char[] letters;
     Set<Integer> selectedPositions;
     Set<Integer> currentlySelected;
+    String targetLanguage;
     Fragment fragment;
     DragSelectTouchListener dragSelectTouchListener;
 
-    public WordSearchAdapter(Fragment fragment, char[] letters, Set<Integer> selectedPositions, Set<Integer> currentlySelected, DragSelectTouchListener dragSelectTouchListener) {
+    public WordSearchAdapter(Fragment fragment, char[] letters, String targetLanguage, Set<Integer> selectedPositions, Set<Integer> currentlySelected, DragSelectTouchListener dragSelectTouchListener) {
         this.fragment = fragment;
         this.letters = letters;
+        this.targetLanguage = targetLanguage;
         this.dragSelectTouchListener = dragSelectTouchListener;
         this.selectedPositions = selectedPositions;
         this.currentlySelected = currentlySelected;
@@ -50,17 +52,8 @@ public class WordSearchAdapter extends RecyclerView.Adapter<WordSearchAdapter.Wo
         return letters.length;
     }
 
-    public Set<Integer> getSelectedPositions() {
-        return selectedPositions;
-    }
-
     public void addSelected(int index) {
         selectedPositions.add(index);
-        notifyItemChanged(index);
-    }
-
-    public void removeSelected(int index) {
-        selectedPositions.remove(index);
         notifyItemChanged(index);
     }
 
@@ -89,7 +82,14 @@ public class WordSearchAdapter extends RecyclerView.Adapter<WordSearchAdapter.Wo
         }
 
         public void bind(char letter, int position) {
-            binding.tvLetter.setText(String.valueOf(letter).toUpperCase());
+            String letterStr = String.valueOf(letter);
+            // special case -- turkish uppercase i should have dot
+            if (letterStr.equals("i") && targetLanguage.equals("tr")) {
+                String capitalized = "\u0130";
+                binding.tvLetter.setText(capitalized);
+            } else {
+                binding.tvLetter.setText(letterStr.toUpperCase());
+            }
             if (selectedPositions.contains(position)) {
                 Drawable highlight = fragment.getResources().getDrawable(R.drawable.word_search_highlight_correct);
                 binding.getRoot().setBackground(highlight);
