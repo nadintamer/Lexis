@@ -41,4 +41,7 @@
     <string name="add_new_word_to_vocabulary">Add new word to vocabulary</string>
     <string name="target_language">Target language</string>
     <string name="english_word">English word</string>
+    <string name="practice_with">Practice with...</string>
+    <string name="flashcards">Flashcards</string>
+    <string name="word_search">Word search</string>
 </resources>

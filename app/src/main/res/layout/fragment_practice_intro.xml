@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/toolbar"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:layout_marginHorizontal="50dp"
         android:textColor="@color/black"
         android:textSize="24sp"
@@ -47,11 +47,74 @@
         android:background="@drawable/spinner_background_shape" />
 
     <TextView
-        android:id="@+id/tvAnswerHint"
+        android:id="@+id/tvPracticeWith"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/spinnerLanguage"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="start"
+        android:layout_marginHorizontal="50dp"
+        android:text="@string/practice_with" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnFlashcards"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvPracticeWith"
+        android:layout_alignStart="@id/tvPracticeWith"
+        android:paddingHorizontal="30dp"
+        android:paddingVertical="5dp"
+        android:gravity="center"
+        android:text="@string/flashcards"
+        android:textAllCaps="false"
+        android:textSize="12sp"
+        android:fontFamily="sans-serif"
+        android:textColor="@color/black"
+        app:backgroundTint="@color/white"
+        app:icon="@drawable/flashcards_icon"
+        app:iconSize="30dp"
+        app:iconGravity="top"
+        app:iconTint="@color/black"
+        app:strokeColor="@color/black"
+        app:strokeWidth="1dp"
+        app:cornerRadius="10dp"
+        app:elevation="0dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnWordSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/btnFlashcards"
+        android:layout_alignEnd="@id/spinnerLanguage"
+        android:paddingHorizontal="30dp"
+        android:paddingVertical="5dp"
+        android:gravity="center"
+        android:text="@string/word_search"
+        android:textAllCaps="false"
+        android:textSize="12sp"
+        android:fontFamily="sans-serif"
+        android:textColor="@color/black"
+        app:backgroundTint="@color/white"
+        app:icon="@drawable/word_search_icon"
+        app:iconSize="30dp"
+        app:iconGravity="top"
+        app:iconTint="@color/black"
+        app:strokeColor="@color/black"
+        app:strokeWidth="1dp"
+        app:cornerRadius="10dp"
+        app:elevation="0dp" />
+
+    <RelativeLayout
+        android:id="@+id/flashcardOptions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnFlashcards">
+    <TextView
+        android:id="@+id/tvAnswerHint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginTop="20dp"
         android:layout_gravity="start"
         android:layout_marginHorizontal="50dp"
         android:text="@string/answer_hint" />
@@ -87,7 +150,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/radioGroup"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="15dp"
         android:layout_gravity="start"
         android:layout_marginHorizontal="50dp"
         android:text="@string/starred_words_label" />
@@ -107,7 +170,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/cbStarredOnly"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="15dp"
         android:layout_gravity="start"
         android:layout_marginHorizontal="50dp"
         android:text="@string/number_of_flashcards" />
@@ -132,24 +195,15 @@
         android:textColor="@color/black"
         android:textSize="16sp"
         tools:text="of 49 words" />
+    </RelativeLayout>
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnFlashcards"
+        android:id="@+id/btnStart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/etQuestionLimit"
+        android:layout_below="@id/flashcardOptions"
         android:layout_marginTop="20dp"
         android:text="@string/start_practice_button_label"
-        app:cornerRadius="10dp" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnWordSearch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/btnFlashcards"
-        android:layout_marginTop="20dp"
-        android:text="Word search"
         app:cornerRadius="10dp" />
 </RelativeLayout>

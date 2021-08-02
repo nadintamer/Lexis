@@ -1,5 +1,6 @@
 package com.example.lexis.fragments;
 
+import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
@@ -52,9 +53,7 @@ public class PracticeIntroFragment extends Fragment {
 
         setUpToolbar();
         setUpPracticeOptions();
-        binding.btnFlashcards.setOnClickListener(v -> launchFlashcardSession());
-        // TODO: temporary - remove!
-        binding.btnWordSearch.setOnClickListener(v -> launchWordSearchSession());
+        binding.btnStart.setOnClickListener(v -> startPractice());
     }
 
     /*
@@ -96,6 +95,37 @@ public class PracticeIntroFragment extends Fragment {
                 }
             }
         });
+
+        // set up buttons to select flashcard / word search
+        binding.btnFlashcards.setSelected(true); // flashcards is selected by default
+        binding.btnFlashcards.setStrokeColorResource(R.color.orange_peel);
+        binding.btnFlashcards.setStrokeWidth(6);
+        binding.btnWordSearch.setStrokeWidth(2);
+
+        binding.btnFlashcards.setOnClickListener(v -> togglePracticeSelection());
+        binding.btnWordSearch.setOnClickListener(v -> togglePracticeSelection());
+    }
+
+    /*
+    Toggle between selecting flashcards and word search.
+    */
+    private void togglePracticeSelection() {
+        binding.btnFlashcards.setSelected(!binding.btnFlashcards.isSelected());
+        binding.btnWordSearch.setSelected(!binding.btnWordSearch.isSelected());
+
+        if (binding.btnFlashcards.isSelected()) {
+            binding.btnFlashcards.setStrokeColorResource(R.color.orange_peel);
+            binding.btnFlashcards.setStrokeWidth(6);
+            binding.btnWordSearch.setStrokeColorResource(R.color.black);
+            binding.btnWordSearch.setStrokeWidth(2);
+            binding.flashcardOptions.setVisibility(View.VISIBLE);
+        } else {
+            binding.btnWordSearch.setStrokeColorResource(R.color.orange_peel);
+            binding.btnWordSearch.setStrokeWidth(6);
+            binding.btnFlashcards.setStrokeColorResource(R.color.black);
+            binding.btnFlashcards.setStrokeWidth(2);
+            binding.flashcardOptions.setVisibility(View.GONE);
+        }
     }
 
     /*
@@ -116,6 +146,17 @@ public class PracticeIntroFragment extends Fragment {
                 navigationIcon.setTint(getResources().getColor(R.color.black));
             }
             binding.toolbar.getRoot().setNavigationOnClickListener(v -> activity.onBackPressed());
+        }
+    }
+
+    /*
+    Start a new practice session with either flashcards or word search.
+    */
+    private void startPractice() {
+        if (binding.btnFlashcards.isSelected()) {
+            launchFlashcardSession();
+        } else {
+            launchWordSearchSession();
         }
     }
 
