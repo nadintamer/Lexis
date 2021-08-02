@@ -58,24 +58,10 @@ public class ArticleFragment extends Fragment {
         if (getArguments() != null) {
             article = Parcels.unwrap(getArguments().getParcelable("article"));
 
-            SpannableStringBuilder styledContent = translateArticle();
+            SpannableStringBuilder styledContent = styleTranslatedWords(article);
             displayArticle(styledContent);
             setUpToolbar();
         }
-    }
-
-    /*
-    Translate the article if necessary and return the styled article.
-    */
-    private SpannableStringBuilder translateArticle() {
-        // only translate words if we haven't previously done so or if the user has changed their
-        // target language since the article's translation
-        String currentTargetLanguage = Utils.getCurrentTargetLanguage();
-        boolean isCorrectLanguage = article.getLanguage().equals(currentTargetLanguage);
-        if (article.getWordList() == null || !isCorrectLanguage) {
-            article.translateWordsOnInterval(3, 60);
-        }
-        return styleTranslatedWords(article);
     }
 
     /*
