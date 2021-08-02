@@ -18,4 +18,12 @@
         android:layout_marginEnd="20dp"
         android:textSize="22sp"
         tools:text="🇫🇷" />
+    <Chronometer
+        android:id="@+id/timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:visibility="visible"
+        android:textColor="@color/black"
+        android:layout_marginEnd="10dp" />
 </androidx.appcompat.widget.Toolbar>

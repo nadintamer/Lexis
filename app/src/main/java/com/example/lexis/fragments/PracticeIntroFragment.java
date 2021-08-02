@@ -72,19 +72,16 @@ public class PracticeIntroFragment extends Fragment {
         binding.spinnerLanguage.setSelection(formattedLanguages.indexOf(targetLanguage));
 
         // set up starred checkbox
-        binding.cbStarredOnly.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                String numWords;
-                if (isChecked) {
-                    numWords = String.format("of %d words", maxNumQuestionsStarred);
-                    adjustQuestionLimitToMax(maxNumQuestionsStarred);
-                } else {
-                    numWords = String.format("of %d words", maxNumQuestions);
-                    adjustQuestionLimitToMax(maxNumQuestions);
-                }
-                binding.tvQuestionLimit.setText(numWords);
+        binding.cbStarredOnly.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            String numWords;
+            if (isChecked) {
+                numWords = String.format("of %d words", maxNumQuestionsStarred);
+                adjustQuestionLimitToMax(maxNumQuestionsStarred);
+            } else {
+                numWords = String.format("of %d words", maxNumQuestions);
+                adjustQuestionLimitToMax(maxNumQuestions);
             }
+            binding.tvQuestionLimit.setText(numWords);
         });
 
         // answer in target language by default

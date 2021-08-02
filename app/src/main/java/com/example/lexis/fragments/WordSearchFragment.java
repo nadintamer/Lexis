@@ -114,6 +114,8 @@ public class WordSearchFragment extends Fragment {
 
         binding.btnFinish.setOnClickListener(v -> returnToPracticeTab());
         setUpToolbar();
+
+        binding.toolbar.timer.start();
     }
 
     /*
@@ -248,12 +250,9 @@ public class WordSearchFragment extends Fragment {
 
                     if (isSelected) {
                         wordSearchAdapter.addCurrentlySelected(i);
-                        // selectedPositions.add(i);
                     } else {
                         wordSearchAdapter.removeCurrentlySelected(i);
-                        // selectedPositions.remove(i);
                     }
-                    // wordSearchAdapter.notifyItemChanged(i);
                 }
             }
         }).withMode(DragSelectionProcessor.Mode.Simple).withStartFinishedListener(new DragSelectionProcessor.ISelectionStartFinishedListener() {
@@ -309,13 +308,17 @@ public class WordSearchFragment extends Fragment {
                     word.saveInBackground();
 
                     if (numCluesFound == clues.size()) {
+                        binding.toolbar.timer.stop();
+                        String time = binding.toolbar.timer.getText().toString();
                         // display congratulations message after 0.5 seconds
                         final Handler handler = new Handler(Looper.getMainLooper());
                         handler.postDelayed(() -> {
                             binding.rvWordSearch.setVisibility(View.GONE);
                             binding.rvWordList.setVisibility(View.GONE);
                             binding.toolbar.tvFlag.setVisibility(View.GONE);
+                            binding.toolbar.timer.setVisibility(View.GONE);
                             binding.layoutFinished.setVisibility(View.VISIBLE);
+                            binding.tvFinished.setText(getString(R.string.word_search_congratulations) + "\n\n Your time was: " + time);
                         }, 500);
                     }
 
