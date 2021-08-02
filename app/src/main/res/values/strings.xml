@@ -44,4 +44,5 @@
     <string name="practice_with">Practice with...</string>
     <string name="flashcards">Flashcards</string>
     <string name="word_search">Word search</string>
+    <string name="word_search_puzzle">Word search puzzle</string>
 </resources>

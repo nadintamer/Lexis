@@ -74,8 +74,10 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.WordLi
             if (clue.isFound()) {
                 binding.tvWord.setTextColor(fragment.getResources().getColor(R.color.light_gray));
                 binding.tvWord.setPaintFlags(binding.tvWord.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                binding.wordHighlight.setBackgroundResource(R.drawable.word_list_highlight_found);
             } else {
                 binding.tvWord.setTextColor(Color.BLACK);
+                binding.wordHighlight.setBackgroundResource(R.drawable.word_list_highlight);
             }
         }
 

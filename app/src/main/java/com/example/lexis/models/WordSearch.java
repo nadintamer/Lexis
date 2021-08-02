@@ -1,7 +1,5 @@
 package com.example.lexis.models;
 
-import android.util.Log;
-
 import com.google.common.primitives.Chars;
 import com.ibm.icu.text.UnicodeSet;
 import com.ibm.icu.util.LocaleData;

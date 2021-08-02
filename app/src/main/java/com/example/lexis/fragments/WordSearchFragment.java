@@ -8,10 +8,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,12 +41,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class WordSearchFragment extends Fragment {
+public class WordSearchFragment extends Fragment implements WordSearchHelpDialogFragment.WordSearchHelpDialogListener  {
 
     private static final String ARG_LANGUAGE = "targetLanguage";
     private static final String TAG = "WordSearchFragment";
-    public static final int DEFAULT_WORD_NUM = 6;
-    public static final int DEFAULT_GRID_SIZE = 8;
+    private static final int HELP_REQUEST_CODE = 145;
+    private static final int DEFAULT_WORD_NUM = 6;
+    private static final int DEFAULT_GRID_SIZE = 8;
 
     private FragmentWordSearchBinding binding;
     private String targetLanguage;
@@ -64,6 +67,8 @@ public class WordSearchFragment extends Fragment {
     private int startRow;
     private int startIndex;
     private DragDirection dragDirection;
+
+    private long timeWhenPaused = 0;
 
     public WordSearchFragment() {}
 
@@ -182,9 +187,14 @@ public class WordSearchFragment extends Fragment {
             binding.toolbar.getRoot().setNavigationOnClickListener(v -> returnToPracticeTab());
 
             binding.toolbar.tvFlag.setText(Utils.getFlagEmoji(targetLanguage));
-            binding.toolbar.tvFlag.setOnClickListener(v -> {
-                String hint = String.format("Look for %s translations of the word search clues!", Utils.getSpinnerText(targetLanguage));
-                Toast.makeText(getActivity(), hint, Toast.LENGTH_SHORT).show();
+            binding.toolbar.btnQuestion.setOnClickListener(v -> {
+                timeWhenPaused = binding.toolbar.timer.getBase() - SystemClock.elapsedRealtime();
+                binding.toolbar.timer.stop();
+
+                FragmentManager fm = activity.getSupportFragmentManager();
+                WordSearchHelpDialogFragment dialog = WordSearchHelpDialogFragment.newInstance(targetLanguage);
+                dialog.setTargetFragment(WordSearchFragment.this, HELP_REQUEST_CODE);
+                dialog.show(fm, "fragment_word_search_help");
             });
         }
     }
@@ -316,6 +326,7 @@ public class WordSearchFragment extends Fragment {
                             binding.rvWordList.setVisibility(View.GONE);
                             binding.toolbar.tvFlag.setVisibility(View.GONE);
                             binding.toolbar.timer.setVisibility(View.GONE);
+                            binding.toolbar.btnQuestion.setVisibility(View.GONE);
                             binding.layoutFinished.setVisibility(View.VISIBLE);
                             binding.tvFinished.setText(String.format(getString(R.string.word_search_congratulations), time));
                         }, 500);
@@ -341,5 +352,14 @@ public class WordSearchFragment extends Fragment {
         if (startRow != currentRow && dragDirection == DragDirection.HORIZONTAL) return false;
         if (dragDirection == DragDirection.NONE) return false;
         return true;
+    }
+
+    /*
+    Resume timer when exiting out of help dialog.
+    */
+    @Override
+    public void onFinishDialog() {
+        binding.toolbar.timer.setBase(SystemClock.elapsedRealtime() + timeWhenPaused);
+        binding.toolbar.timer.start();
     }
 }
