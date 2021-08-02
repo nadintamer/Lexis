@@ -271,15 +271,14 @@ public class WordSearchFragment extends Fragment {
                 boolean wordExists = hasWordBetween.getLeft();
                 String direction = hasWordBetween.getRight();
 
+                int beginHighlight = startIndex;
+                int endHighlight = end;
+                if (end < startIndex) {
+                    beginHighlight = end;
+                    endHighlight = startIndex;
+                }
+
                 if (wordExists) {
-                    int beginHighlight = startIndex;
-                    int endHighlight = end;
-
-                    if (end < startIndex) {
-                        beginHighlight = end;
-                        endHighlight = startIndex;
-                    }
-
                     for (int i = beginHighlight; i <= endHighlight; i++) {
                         int currentCol = i % wordSearch.getWidth();
                         int currentRow = i / wordSearch.getWidth();
@@ -318,22 +317,11 @@ public class WordSearchFragment extends Fragment {
                             binding.toolbar.tvFlag.setVisibility(View.GONE);
                             binding.toolbar.timer.setVisibility(View.GONE);
                             binding.layoutFinished.setVisibility(View.VISIBLE);
-                            binding.tvFinished.setText(getString(R.string.word_search_congratulations) + "\n\n Your time was: " + time);
+                            binding.tvFinished.setText(String.format(getString(R.string.word_search_congratulations), time));
                         }, 500);
                     }
-
-                    Log.i(TAG, "found word: " + word.getTargetWord());
-                    Log.i(TAG, "relevant clue: " + clue.getText());
                 } else { // not a valid word, automatically de-select
                     // TODO: lots of repeated code, need to refactor
-                    int beginHighlight = startIndex;
-                    int endHighlight = end;
-
-                    if (end < startIndex) {
-                        beginHighlight = end;
-                        endHighlight = startIndex;
-                    }
-
                     for (int i = beginHighlight; i <= endHighlight; i++) {
                         int currentCol = i % wordSearch.getWidth();
                         int currentRow = i / wordSearch.getWidth();
