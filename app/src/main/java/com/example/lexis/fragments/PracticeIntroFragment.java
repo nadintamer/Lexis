@@ -23,7 +23,6 @@ import android.widget.Toast;
 import com.example.lexis.R;
 import com.example.lexis.databinding.FragmentPracticeIntroBinding;
 import com.example.lexis.models.Word;
-import com.example.lexis.utilities.Const;
 import com.example.lexis.utilities.Utils;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -74,14 +73,15 @@ public class PracticeIntroFragment extends Fragment {
         // answer in target language by default
         binding.radioTarget.setText(targetLanguage);
         binding.radioTarget.setChecked(true);
-        setNumWordsSeen(targetLanguageCode);
         setQuestionLimit(NUM_TO_PRACTICE);
+        setNumWordsSeen(targetLanguageCode);
 
         binding.spinnerLanguage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                binding.radioTarget.setText(formattedLanguages.get(position));
-                setNumWordsSeen(Const.languageCodes.get(position));
+                String spinnerText = formattedLanguages.get(position);
+                binding.radioTarget.setText(spinnerText);
+                setNumWordsSeen(Utils.getLanguageCode(spinnerText));
             }
 
             @Override
@@ -158,12 +158,12 @@ public class PracticeIntroFragment extends Fragment {
         List<String> allLanguages = Utils.getCurrentStudiedLanguages();
         String selectedLanguage = allLanguages.get(selectedPosition);
 
-        Fragment flashcardFragment = WordSearchFragment.newInstance(selectedLanguage);
+        Fragment wordSearchFragment = WordSearchFragment.newInstance(selectedLanguage);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         if (activity != null) {
             FragmentManager fragmentManager = activity.getSupportFragmentManager();
             fragmentManager.beginTransaction()
-                    .replace(R.id.fragmentContainer, flashcardFragment)
+                    .replace(R.id.fragmentContainer, wordSearchFragment)
                     .commit();
         }
     }

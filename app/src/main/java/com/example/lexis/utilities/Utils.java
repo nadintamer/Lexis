@@ -176,6 +176,22 @@ public class Utils {
     }
 
     /*
+    Return the ISO language code of the language with the spinner text.
+    */
+    public static String getLanguageCode(String spinnerText) {
+        Map<String, String> languageCodes = new HashMap<String, String>() {{
+            put("French", "fr");
+            put("Spanish", "es");
+            put("German", "de");
+            put("Turkish", "tr");
+        }};
+
+        int index = spinnerText.indexOf(' ');
+        String language = spinnerText.substring(index + 1);
+        return languageCodes.get(language);
+    }
+
+    /*
     Return the appropriate spinner text with flag and full language name the given ISO language code.
     */
     public static String getSpinnerText(String code) {
