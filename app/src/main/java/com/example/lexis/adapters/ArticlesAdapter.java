@@ -1,10 +1,13 @@
 package com.example.lexis.adapters;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,15 +15,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.lexis.R;
 import com.example.lexis.databinding.ItemArticleBinding;
 import com.example.lexis.fragments.ArticleFragment;
+import com.example.lexis.fragments.FeedFragment;
 import com.example.lexis.models.Article;
+import com.example.lexis.utilities.Utils;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ArticleViewHolder> {
     List<Article> articles;
-    Fragment fragment;
+    FeedFragment fragment;
 
-    public ArticlesAdapter(Fragment fragment, List<Article> articles) {
+    public ArticlesAdapter(FeedFragment fragment, List<Article> articles) {
         this.fragment = fragment;
         this.articles = articles;
     }
@@ -74,18 +81,43 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.Articl
         }
 
         /*
-        Show ArticleFragment when an item is clicked.
+        Translate article if necessary and show ArticleFragment when an item is clicked.
         */
         @Override
         public void onClick(View v) {
             int position = getAdapterPosition();
-            final FragmentManager fragmentManager = fragment.getActivity().getSupportFragmentManager();
-            final Fragment articleFragment = ArticleFragment.newInstance(articles.get(position));
 
-            fragmentManager.beginTransaction()
-                    .replace(R.id.fragmentContainer, articleFragment)
-                    .addToBackStack(null) // add to back stack so we can return to this fragment
-                    .commit();
+            fragment.showProgressBar();
+
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            Handler handler = new Handler(Looper.getMainLooper());
+
+            executor.execute(() -> {
+                // only translate words if we haven't previously done so or if the user has changed their
+                // target language since the article's translation
+                Article article = articles.get(position);
+                String currentTargetLanguage = Utils.getCurrentTargetLanguage();
+                boolean isCorrectLanguage = article.getLanguage().equals(currentTargetLanguage);
+                if (article.getWordList() == null || !isCorrectLanguage) {
+                    article.translateWordsOnInterval(3, 60);
+                }
+
+                // executed when async work is completed
+                handler.post(() -> {
+                    fragment.hideProgressBar();
+
+                    AppCompatActivity activity = (AppCompatActivity) fragment.getActivity();
+                    if (activity == null) return;
+
+                    final FragmentManager fragmentManager = activity.getSupportFragmentManager();
+                    final Fragment articleFragment = ArticleFragment.newInstance(articles.get(position));
+
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.fragmentContainer, articleFragment)
+                            .addToBackStack(null)
+                            .commit();
+                });
+            });
         }
     }
 }

@@ -5,6 +5,7 @@ plugins {
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
+    useLibrary 'org.apache.http.legacy'
 
     defaultConfig {
         applicationId "com.example.lexis"
@@ -34,6 +35,7 @@ android {
     packagingOptions {
         exclude 'project.properties'
         exclude 'META-INF/INDEX.LIST'
+        exclude 'META-INF/DEPENDENCIES'
     }
 }
 
@@ -61,6 +63,11 @@ dependencies {
     }
     annotationProcessor 'com.google.cloud:google-cloud-translate:1.12.0'
 
+    // Google NLP API for entity recognition
+    implementation platform('com.google.cloud:libraries-bom:20.9.0')
+    implementation 'com.google.cloud:google-cloud-language'
+    implementation 'io.grpc:grpc-okhttp:0.9.0'
+
     // Parceler for passing objects
     implementation 'org.parceler:parceler-api:1.1.12'
     annotationProcessor 'org.parceler:parceler:1.1.12'
@@ -78,7 +85,7 @@ dependencies {
     implementation 'com.yuyakaido.android:card-stack-view:2.3.4'
 
     // Coordinator layout for collapsing search bar
-    implementation "androidx.coordinatorlayout:coordinatorlayout:1.1.0"
+    implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
 
     // SwipeDecorator for adding background when swiping
     implementation 'it.xabaras.android:recyclerview-swipedecorator:1.2.3'

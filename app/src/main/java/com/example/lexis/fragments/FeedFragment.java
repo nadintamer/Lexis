@@ -19,7 +19,6 @@ import com.example.lexis.R;
 import com.example.lexis.adapters.ArticlesAdapter;
 import com.example.lexis.databinding.FragmentFeedBinding;
 import com.example.lexis.models.Article;
-import com.example.lexis.utilities.Const;
 import com.example.lexis.utilities.Utils;
 
 import org.json.JSONArray;
@@ -60,10 +59,18 @@ public class FeedFragment extends Fragment {
         // only fetch articles if we haven't already fetched them
         if (articles == null) {
             articles = new ArrayList<>();
+            showProgressBar();
             fetchTopWikipediaArticles(Utils.getYesterday(), false);
         }
 
-        // set up recyclerView
+        setUpRecyclerView();
+        Utils.setLanguageLogo(binding.toolbar.ivLogo);
+    }
+
+    /*
+    Set up the recyclerView for displaying articles.
+    */
+    private void setUpRecyclerView() {
         adapter = new ArticlesAdapter(this, articles);
         binding.rvArticles.setAdapter(adapter);
         binding.rvArticles.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -78,8 +85,6 @@ public class FeedFragment extends Fragment {
                 R.color.light_cyan,
                 R.color.orange_peel,
                 R.color.mellow_apricot);
-
-        Utils.setLanguageLogo(binding.toolbar.ivLogo);
     }
 
     /*
@@ -159,6 +164,11 @@ public class FeedFragment extends Fragment {
                     Article article = new Article(title, intro, "Wikipedia");
                     articles.add(article);
                     adapter.notifyItemInserted(articles.size() - 1);
+
+                    // we just added the last item, hide progress bar
+                    if (adapter.getItemCount() == 20) {
+                        hideProgressBar();
+                    }
                 } catch (JSONException e) {
                     Log.d(TAG, "JSON Exception", e);
                 }
@@ -169,5 +179,16 @@ public class FeedFragment extends Fragment {
                 Log.d(TAG, "onFailure to fetch Wikipedia article");
             }
         });
+    }
+
+    /*
+    Helper functions to hide and show progress bar.
+    */
+    public void showProgressBar() {
+        binding.progressBar.setVisibility(View.VISIBLE);
+    }
+
+    public void hideProgressBar() {
+        binding.progressBar.setVisibility(View.INVISIBLE);
     }
 }

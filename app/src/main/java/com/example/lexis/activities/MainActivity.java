@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         TranslateUtils.getTranslateService(this);
+        TranslateUtils.getNLPService(this);
 
         // set up tab navigation
         binding.bottomNavigation.setOnNavigationItemSelectedListener(item -> {
