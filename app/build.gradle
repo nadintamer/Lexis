@@ -87,6 +87,12 @@ dependencies {
     // Coordinator layout for collapsing search bar
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
 
+    // Drag select for word search
+    implementation 'com.github.MFlisar:DragSelectRecyclerView:0.3'
+
     // SwipeDecorator for adding background when swiping
     implementation 'it.xabaras.android:recyclerview-swipedecorator:1.2.3'
+
+    // ICU4J for internationalization
+    implementation 'com.ibm.icu:icu4j:51.1'
 }

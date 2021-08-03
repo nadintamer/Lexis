@@ -34,10 +34,15 @@
     <string name="alphabetically">Alphabetically</string>
     <string name="number_of_flashcards">Number of flashcards</string>
     <string name="back_to_vocabulary">Back to vocabulary</string>
-    <string name="practice_end_congratulations">Congratulations on wrapping up your learning session! 💪</string>
+    <string name="practice_end_congratulations">Congratulations on wrapping up your flashcard session! 💪</string>
+    <string name="word_search_congratulations">Congratulations, you finished the word puzzle! 🎉\n\nYour time was: %s</string>
     <string name="knew">Knew</string>
     <string name="forgot">Forgot</string>
     <string name="add_new_word_to_vocabulary">Add new word to vocabulary</string>
     <string name="target_language">Target language</string>
     <string name="english_word">English word</string>
+    <string name="practice_with">Practice with...</string>
+    <string name="flashcards">Flashcards</string>
+    <string name="word_search">Word search</string>
+    <string name="word_search_puzzle">Word search puzzle</string>
 </resources>

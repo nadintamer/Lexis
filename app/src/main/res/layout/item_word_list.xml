@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="200dp"
+    android:layout_height="wrap_content"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/tvWord"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:textSize="24sp"
+        android:textColor="@color/black"
+        tools:text="red" />
+
+    <View
+        android:id="@+id/wordHighlight"
+        android:layout_width="wrap_content"
+        android:layout_height="5dp"
+        android:layout_alignStart="@id/tvWord"
+        android:layout_alignEnd="@id/tvWord"
+        android:layout_marginTop="-2dp"
+        android:layout_below="@id/tvWord"
+        android:background="@drawable/word_list_highlight" />
+
+</RelativeLayout>
