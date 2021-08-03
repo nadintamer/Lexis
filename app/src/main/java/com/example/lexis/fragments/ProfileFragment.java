@@ -107,6 +107,9 @@ public class ProfileFragment extends Fragment {
         binding.drawerLayout.openDrawer(binding.slider);
     }
 
+    /*
+    Set up the contents of the MaterialDrawer navigation view.
+    */
     private void setUpMaterialDrawer() {
         header = new AccountHeaderView(this.getActivity()) {{
             addProfiles(
@@ -116,6 +119,7 @@ public class ProfileFragment extends Fragment {
                         setName(new StringHolder(ParseUser.getCurrentUser().getUsername()));
                         setDescription(new StringHolder(ParseUser.getCurrentUser().getEmail()));
                         setIcon(new ImageHolder(Utils.getProfilePictureUrl(ParseUser.getCurrentUser())));
+                        setProfileImagesClickable(false);
                     }}
             );
             attachToSliderView(binding.slider);
