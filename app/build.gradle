@@ -95,4 +95,7 @@ dependencies {
 
     // ICU4J for internationalization
     implementation 'com.ibm.icu:icu4j:51.1'
+
+    // Like button for starring animation
+    implementation 'com.github.jd-alexander:LikeButton:0.2.3'
 }

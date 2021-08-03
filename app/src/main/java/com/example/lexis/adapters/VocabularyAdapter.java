@@ -11,6 +11,8 @@ import com.example.lexis.fragments.PracticeFragment;
 import com.example.lexis.models.Word;
 import com.example.lexis.utilities.Utils;
 import com.google.android.material.snackbar.Snackbar;
+import com.like.LikeButton;
+import com.like.OnLikeListener;
 
 import java.util.List;
 
@@ -95,15 +97,24 @@ public class VocabularyAdapter extends RecyclerView.Adapter<VocabularyAdapter.Vo
             binding.tvEnglish.setText(word.getEnglishWord());
             binding.tvFlag.setText(Utils.getFlagEmoji(word.getTargetLanguage()));
 
-            binding.ibStar.setSelected(word.getIsStarred());
-            binding.ibStar.setOnClickListener(v -> toggleStarred(word));
+            binding.btnStar.setLiked(word.getIsStarred());
+            binding.btnStar.setOnLikeListener(new OnLikeListener() {
+                @Override
+                public void liked(LikeButton likeButton) {
+                    toggleStarred(word);
+                }
+
+                @Override
+                public void unLiked(LikeButton likeButton) {
+                    toggleStarred(word);
+                }
+            });
         }
 
         /*
         Toggle whether the word is starred and save to Parse.
         */
         private void toggleStarred(Word word) {
-            binding.ibStar.setSelected(!binding.ibStar.isSelected());
             word.toggleIsStarred();
             word.saveInBackground();
         }
