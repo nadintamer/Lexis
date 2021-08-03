@@ -117,8 +117,16 @@ public class PracticeIntroFragment extends Fragment {
         binding.btnFlashcards.setStrokeWidth(6);
         binding.btnWordSearch.setStrokeWidth(2);
 
-        binding.btnFlashcards.setOnClickListener(v -> togglePracticeSelection());
-        binding.btnWordSearch.setOnClickListener(v -> togglePracticeSelection());
+        binding.btnFlashcards.setOnClickListener(v -> {
+            if (!binding.btnFlashcards.isSelected()) {
+                togglePracticeSelection();
+            }
+        });
+        binding.btnWordSearch.setOnClickListener(v -> {
+            if (!binding.btnWordSearch.isSelected()) {
+                togglePracticeSelection();
+            }
+        });
     }
 
     /*
