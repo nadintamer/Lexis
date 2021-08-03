@@ -18,13 +18,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.example.lexis.R;
 import com.example.lexis.adapters.WordListAdapter;
 import com.example.lexis.adapters.WordSearchAdapter;
 import com.example.lexis.databinding.FragmentWordSearchBinding;
 import com.example.lexis.models.Clue;
+import com.example.lexis.models.GridLocation;
 import com.example.lexis.models.Word;
 import com.example.lexis.models.WordSearch;
 import com.example.lexis.utilities.Utils;
@@ -63,8 +63,7 @@ public class WordSearchFragment extends Fragment implements WordSearchHelpDialog
     private List<Clue> clues;
     private int numCluesFound;
 
-    private int startCol;
-    private int startRow;
+    private GridLocation startLocation;
     private int startIndex;
     private DragDirection dragDirection;
 
@@ -110,17 +109,12 @@ public class WordSearchFragment extends Fragment implements WordSearchHelpDialog
             clues = new ArrayList<>();
             letters = new char[]{};
             numCluesFound = 0;
+            showProgressBar();
             fetchWords(targetLanguage);
         }
 
-        wordListAdapter = new WordListAdapter(this, clues);
-        binding.rvWordList.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-        binding.rvWordList.setAdapter(wordListAdapter);
-
         binding.btnFinish.setOnClickListener(v -> returnToPracticeTab());
         setUpToolbar();
-
-        binding.toolbar.timer.start();
     }
 
     /*
@@ -133,38 +127,56 @@ public class WordSearchFragment extends Fragment implements WordSearchHelpDialog
         query.whereEqualTo(Word.KEY_TARGET_LANGUAGE, targetLanguage);
         query.orderByAscending(Word.KEY_SCORE);
         query.addAscendingOrder(Word.KEY_LAST_PRACTICED);
-        // get short words first for easier display
-        query.addAscendingOrder(Word.KEY_WORD_LENGTH);
+        query.addAscendingOrder(Word.KEY_WORD_LENGTH); // get short words first for easier display
         query.setLimit(DEFAULT_WORD_NUM);
         query.findInBackground((words, e) -> {
             if (e != null) {
                 Log.e(TAG, "Issue with getting vocabulary", e);
                 return;
             }
-
-            int gridSize = DEFAULT_GRID_SIZE;
-            int longestWord = Word.getLongestWord(words);
-            if (longestWord >= gridSize) {
-                gridSize = longestWord + 1;
-            }
-            wordSearch = new WordSearch(words, gridSize);
-            this.words.addAll(words);
-
-            // set up drag selection listener
-            DragSelectionProcessor onDragSelectionListener = createOnDragSelectionListener();
-            DragSelectTouchListener dragSelectTouchListener = new DragSelectTouchListener()
-                    .withSelectListener(onDragSelectionListener);
-            binding.rvWordSearch.addOnItemTouchListener(dragSelectTouchListener);
-
-            wordSearchAdapter = new WordSearchAdapter(
-                    this, letters, targetLanguage, selectedPositions, currentlySelected, dragSelectTouchListener);
-            wordSearchLayoutManager = new GridLayoutManager(getActivity(), wordSearch.getWidth());
-            binding.rvWordSearch.setLayoutManager(wordSearchLayoutManager);
-            binding.rvWordSearch.setAdapter(wordSearchAdapter);
-
-            wordSearchAdapter.setLetters(wordSearch.getFlatGrid());
-            wordListAdapter.addAll(wordSearch.getClues());
+            hideProgressBar();
+            createWordSearch(words);
+            setUpRecyclerViews();
+            startTimer();
         });
+    }
+
+    /*
+    Generate a word search puzzle for the given list of words.
+    */
+    private void createWordSearch(List<Word> words) {
+        int gridSize = DEFAULT_GRID_SIZE;
+        int longestWord = Word.getLongestWord(words);
+        if (longestWord >= gridSize) {
+            gridSize = longestWord + 1;
+        }
+        wordSearch = new WordSearch(words, gridSize);
+        this.words.addAll(words);
+    }
+
+    /*
+    Set up the word search and word list recycler views.
+    */
+    private void setUpRecyclerViews() {
+        // set up drag selection listener to highlight cells
+        DragSelectionProcessor onDragSelectionListener = createOnDragSelectionListener();
+        DragSelectTouchListener dragSelectTouchListener = new DragSelectTouchListener()
+                .withSelectListener(onDragSelectionListener);
+        binding.rvWordSearch.addOnItemTouchListener(dragSelectTouchListener);
+
+        // set up word list recycler view
+        wordListAdapter = new WordListAdapter(this, clues);
+        binding.rvWordList.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        binding.rvWordList.setAdapter(wordListAdapter);
+        wordListAdapter.addAll(wordSearch.getClues());
+
+        // set up word search grid recycler view
+        wordSearchAdapter = new WordSearchAdapter(
+                this, letters, targetLanguage, selectedPositions, currentlySelected, dragSelectTouchListener);
+        wordSearchLayoutManager = new GridLayoutManager(getActivity(), wordSearch.getWidth());
+        binding.rvWordSearch.setLayoutManager(wordSearchLayoutManager);
+        binding.rvWordSearch.setAdapter(wordSearchAdapter);
+        wordSearchAdapter.setLetters(wordSearch.getFlatGrid());
     }
 
     /*
@@ -179,6 +191,7 @@ public class WordSearchFragment extends Fragment implements WordSearchHelpDialog
                 actionBar.setTitle("");
             }
 
+            // set up exit button
             binding.toolbar.getRoot().setNavigationIcon(R.drawable.clear_icon);
             Drawable navigationIcon = binding.toolbar.getRoot().getNavigationIcon();
             if (navigationIcon != null) {
@@ -186,10 +199,10 @@ public class WordSearchFragment extends Fragment implements WordSearchHelpDialog
             }
             binding.toolbar.getRoot().setNavigationOnClickListener(v -> returnToPracticeTab());
 
+            // set up language flag and help button
             binding.toolbar.tvFlag.setText(Utils.getFlagEmoji(targetLanguage));
             binding.toolbar.btnQuestion.setOnClickListener(v -> {
-                timeWhenPaused = binding.toolbar.timer.getBase() - SystemClock.elapsedRealtime();
-                binding.toolbar.timer.stop();
+                pauseTimer();
 
                 FragmentManager fm = activity.getSupportFragmentManager();
                 WordSearchHelpDialogFragment dialog = WordSearchHelpDialogFragment.newInstance(targetLanguage);
@@ -228,35 +241,30 @@ public class WordSearchFragment extends Fragment implements WordSearchHelpDialog
 
             @Override
             public void updateSelection(int start, int end, boolean isSelected, boolean calledFromOnStart) {
+                // starting a new drag action, store starting location
                 if (calledFromOnStart) {
                     startIndex = start;
-                    startCol = start % wordSearch.getWidth();
-                    startRow = start / wordSearch.getWidth();
+                    startLocation = getLocation(start);
                 }
 
+                // check if dragging upwards or to the left
                 int current = end;
-                if (start < startIndex) { // dragging vertically upwards
-                    current = start;
-                }
+                if (start < startIndex) current = start;
 
-                // TODO: reset previous cells if switching direction mid-drag
-                int currentCol = current % wordSearch.getWidth();
-                int currentRow = current / wordSearch.getWidth();
-                if (currentCol == startCol) {
+                // update current drag direction
+                GridLocation currentLocation = getLocation(current);
+                if (currentLocation.col == startLocation.col) {
                     dragDirection = DragDirection.VERTICAL;
-                } else if (currentRow == startRow) {
+                } else if (currentLocation.row == startLocation.row) {
                     dragDirection = DragDirection.HORIZONTAL;
                 } else {
                     dragDirection = DragDirection.NONE;
                 }
 
+                // update each valid cell with new selection state
                 for (int i = start; i <= end; i++) {
-                    currentCol = i % wordSearch.getWidth();
-                    currentRow = i / wordSearch.getWidth();
-
-                    if (startCol != currentCol && dragDirection == DragDirection.VERTICAL) continue;
-                    if (startRow != currentRow && dragDirection == DragDirection.HORIZONTAL) continue;
-                    if (dragDirection == DragDirection.NONE) continue;
+                    currentLocation = getLocation(i);
+                    if (!isValid(currentLocation.row, currentLocation.col)) continue;
 
                     if (isSelected) {
                         wordSearchAdapter.addCurrentlySelected(i);
@@ -265,22 +273,29 @@ public class WordSearchFragment extends Fragment implements WordSearchHelpDialog
                     }
                 }
             }
-        }).withMode(DragSelectionProcessor.Mode.Simple).withStartFinishedListener(new DragSelectionProcessor.ISelectionStartFinishedListener() {
+        }).withMode(DragSelectionProcessor.Mode.Simple).withStartFinishedListener(createSelectionFinishedListener());
+    }
+
+    /*
+    Create an ISelectionStartFinishedListener to check whether the highlighted word is valid and
+    update the UI accordingly.
+    */
+    private DragSelectionProcessor.ISelectionStartFinishedListener createSelectionFinishedListener() {
+        return new DragSelectionProcessor.ISelectionStartFinishedListener() {
             @Override
-            public void onSelectionStarted(int start, boolean originalSelectionState) {
-                Log.i(TAG, "started dragging");
-            }
+            public void onSelectionStarted(int start, boolean originalSelectionState) {}
 
             @Override
             public void onSelectionFinished(int end) {
-                int endCol = end % wordSearch.getWidth();
-                int endRow = end / wordSearch.getWidth();
+                GridLocation endLocation = getLocation(end);
 
+                // check whether a word exists between the start & end locations
                 Pair<Boolean, String> hasWordBetween = wordSearch.hasWordBetween(
-                        startRow, startCol, endRow, endCol);
+                        startLocation.row, startLocation.col, endLocation.row, endLocation.col);
                 boolean wordExists = hasWordBetween.getLeft();
                 String direction = hasWordBetween.getRight();
 
+                // if dragging upwards or to the left, invert start and end indices
                 int beginHighlight = startIndex;
                 int endHighlight = end;
                 if (end < startIndex) {
@@ -289,23 +304,25 @@ public class WordSearchFragment extends Fragment implements WordSearchHelpDialog
                 }
 
                 if (wordExists) {
+                    // set selected cells as permanently highlighted
                     for (int i = beginHighlight; i <= endHighlight; i++) {
-                        int currentCol = i % wordSearch.getWidth();
-                        int currentRow = i / wordSearch.getWidth();
+                        GridLocation currentLocation = getLocation(i);
 
-                        if (isValid(currentRow, currentCol)) {
+                        if (isValid(currentLocation.row, currentLocation.col)) {
                             wordSearchAdapter.removeCurrentlySelected(i);
                             wordSearchAdapter.addSelected(i);
                         }
                     }
 
+                    // get the word highlighted by the user
                     Word word;
                     if (direction.equals("regular")) {
-                        word = wordSearch.getWordStartingAt(startRow, startCol);
+                        word = wordSearch.getWordStartingAt(startLocation.row, startLocation.col);
                     } else {
-                        word = wordSearch.getWordStartingAt(endRow, endCol);
+                        word = wordSearch.getWordStartingAt(endLocation.row, endLocation.col);
                     }
 
+                    // update data models to mark word as found
                     int index = words.indexOf(word);
                     Clue clue = clues.get(index);
                     clue.setFound(true);
@@ -316,42 +333,55 @@ public class WordSearchFragment extends Fragment implements WordSearchHelpDialog
                     word.setLastPracticed(new Date());
                     word.saveInBackground();
 
+                    // finish puzzle if all clues are found
                     if (numCluesFound == clues.size()) {
-                        binding.toolbar.timer.stop();
+                        pauseTimer();
                         String time = binding.toolbar.timer.getText().toString();
-                        // display congratulations message after 0.5 seconds
                         final Handler handler = new Handler(Looper.getMainLooper());
-                        handler.postDelayed(() -> {
-                            binding.rvWordSearch.setVisibility(View.GONE);
-                            binding.rvWordList.setVisibility(View.GONE);
-                            binding.toolbar.tvFlag.setVisibility(View.GONE);
-                            binding.toolbar.timer.setVisibility(View.GONE);
-                            binding.toolbar.btnQuestion.setVisibility(View.GONE);
-                            binding.layoutFinished.setVisibility(View.VISIBLE);
-                            binding.tvFinished.setText(String.format(getString(R.string.word_search_congratulations), time));
-                        }, 500);
+                        handler.postDelayed(() -> finishWordPuzzle(time), 500);
                     }
                 } else { // not a valid word, automatically de-select
-                    // TODO: lots of repeated code, need to refactor
                     for (int i = beginHighlight; i <= endHighlight; i++) {
-                        int currentCol = i % wordSearch.getWidth();
-                        int currentRow = i / wordSearch.getWidth();
+                        GridLocation currentLocation = getLocation(i);
 
-                        if (isValid(currentRow, currentCol)) {
+                        if (isValid(currentLocation.row, currentLocation.col)) {
                             wordSearchAdapter.removeCurrentlySelected(i);
                         }
                     }
                 }
             }
-        });
+        };
     }
 
-    // TODO: add comment here
+    /*
+    Check whether the move to the current row & column is valid given the direction of movement so far.
+    */
     private boolean isValid(int currentRow, int currentCol) {
-        if (startCol != currentCol && dragDirection == DragDirection.VERTICAL) return false;
-        if (startRow != currentRow && dragDirection == DragDirection.HORIZONTAL) return false;
-        if (dragDirection == DragDirection.NONE) return false;
-        return true;
+        if (startLocation.col != currentCol && dragDirection == DragDirection.VERTICAL) return false;
+        if (startLocation.row != currentRow && dragDirection == DragDirection.HORIZONTAL) return false;
+        return dragDirection != DragDirection.NONE;
+    }
+
+    /*
+    Return a GridLocation for the cell at the specified index.
+    */
+    private GridLocation getLocation(int index) {
+        int currentRow = index / wordSearch.getWidth();
+        int currentCol = index % wordSearch.getWidth();
+        return new GridLocation(currentRow, currentCol);
+    }
+
+    /*
+    Finish the word puzzle and display a congratulatory message + time taken to solve the puzzle.
+    */
+    private void finishWordPuzzle(String time) {
+        binding.rvWordSearch.setVisibility(View.GONE);
+        binding.rvWordList.setVisibility(View.GONE);
+        binding.toolbar.tvFlag.setVisibility(View.GONE);
+        binding.toolbar.timer.setVisibility(View.GONE);
+        binding.toolbar.btnQuestion.setVisibility(View.GONE);
+        binding.layoutFinished.setVisibility(View.VISIBLE);
+        binding.tvFinished.setText(String.format(getString(R.string.word_search_congratulations), time));
     }
 
     /*
@@ -359,7 +389,30 @@ public class WordSearchFragment extends Fragment implements WordSearchHelpDialog
     */
     @Override
     public void onFinishDialog() {
+        startTimer();
+    }
+
+    /*
+    Helper functions to show and hide progress bar while puzzle loads.
+    */
+    private void showProgressBar() {
+        binding.progressBar.setVisibility(View.VISIBLE);
+    }
+
+    private void hideProgressBar() {
+        binding.progressBar.setVisibility(View.GONE);
+    }
+
+    /*
+    Helper functions to pause and resume timer.
+    */
+    private void startTimer() {
         binding.toolbar.timer.setBase(SystemClock.elapsedRealtime() + timeWhenPaused);
         binding.toolbar.timer.start();
+    }
+
+    private void pauseTimer() {
+        timeWhenPaused = binding.toolbar.timer.getBase() - SystemClock.elapsedRealtime();
+        binding.toolbar.timer.stop();
     }
 }

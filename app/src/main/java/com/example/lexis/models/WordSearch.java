@@ -7,7 +7,6 @@ import com.ibm.icu.util.ULocale;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,15 +33,13 @@ public class WordSearch {
 
         for (int i = 0; i < words.size(); i++) {
             // attempt to place the word until we succeed
+            // this cannot fail because the size we specified means that in the worst case, we can
+            // place each word in its own row / column
             while (!placeWord(words.get(i))) {}
         }
 
         fillGrid();
         printGrid();
-    }
-
-    public char[][] getGrid() {
-        return grid;
     }
 
     /*
@@ -132,7 +129,7 @@ public class WordSearch {
         for (int row = 0; row < grid.length; row++) {
             for (int col = 0; col < grid[0].length; col++) {
                 if (grid[row][col] == '.') {
-                    int i = new Random().nextInt(characters.length);
+                    int i = random.nextInt(characters.length);
                     grid[row][col] = characters[i].charAt(0);
                 }
             }
@@ -206,25 +203,6 @@ public class WordSearch {
             if (d[1] == 1) end.row += word.getTargetWord().length() - 1;
             this.endLocation = end;
             this.direction = d;
-        }
-    }
-
-    /*
-    Represents a single row-column location within the word search grid.
-    */
-    public class GridLocation {
-        public int row;
-        public int col;
-
-        public GridLocation(int row, int col) {
-            this.row = row;
-            this.col = col;
-        }
-
-        @NotNull
-        @Override
-        public String toString() {
-            return "(" + row +  ", " + col + ")";
         }
     }
 }
