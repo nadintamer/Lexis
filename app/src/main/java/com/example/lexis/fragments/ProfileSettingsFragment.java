@@ -22,6 +22,7 @@ import com.example.lexis.databinding.FragmentProfileSettingsBinding;
 import com.example.lexis.utilities.Const;
 import com.example.lexis.utilities.Utils;
 import com.google.android.material.navigation.NavigationView;
+import com.mikepenz.materialdrawer.widget.MaterialDrawerSliderView;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
@@ -135,9 +136,8 @@ public class ProfileSettingsFragment extends Fragment {
         fragmentManager.beginTransaction().replace(R.id.profileFragmentContainer, infoFragment).commit();
 
         // set profile item as selected in drawer navigation
-        Menu menuNav = ((NavigationView) getActivity().findViewById(R.id.navView)).getMenu();
-        MenuItem profile = menuNav.getItem(0);
-        profile.setChecked(true);
+        MaterialDrawerSliderView drawerSliderView = getActivity().findViewById(R.id.slider);
+        drawerSliderView.setSelectedItemIdentifier(0);
     }
 
     /*

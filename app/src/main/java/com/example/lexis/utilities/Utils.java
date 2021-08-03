@@ -1,6 +1,11 @@
 package com.example.lexis.utilities;
 
+import android.graphics.Bitmap;
+import android.graphics.ImageDecoder;
 import android.graphics.Rect;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.MediaStore;
 import android.text.Layout;
 import android.text.SpannableString;
 import android.text.style.ClickableSpan;
@@ -9,14 +14,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.lexis.adapters.VocabularyAdapter;
 import com.example.lexis.models.Word;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -346,5 +354,35 @@ public class Utils {
                 recyclerView.scrollToPosition(0);
             }
         });
+    }
+
+    /*
+    Return the URL for the profile picture of the provided ParseUser.
+    */
+    public static String getProfilePictureUrl(ParseUser user) {
+        ParseFile profilePic = user.getParseFile("profilePicture");
+        if (profilePic != null) {
+            return profilePic.getUrl();
+        }
+        return null;
+    }
+
+    /*
+    Create a Bitmap from the image at the specified URI.
+    */
+    public static Bitmap loadFromUri(Fragment fragment, Uri photoUri) {
+        Bitmap image = null;
+        try {
+            // check version of Android on device
+            if (Build.VERSION.SDK_INT > 27){
+                ImageDecoder.Source source = ImageDecoder.createSource(fragment.getActivity().getContentResolver(), photoUri);
+                image = ImageDecoder.decodeBitmap(source);
+            } else {
+                image = MediaStore.Images.Media.getBitmap(fragment.getActivity().getContentResolver(), photoUri);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return image;
     }
 }

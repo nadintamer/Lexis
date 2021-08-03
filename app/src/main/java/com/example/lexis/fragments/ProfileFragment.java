@@ -6,12 +6,10 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -19,7 +17,6 @@ import com.example.lexis.R;
 import com.example.lexis.activities.LoginActivity;
 import com.example.lexis.databinding.FragmentProfileBinding;
 import com.example.lexis.utilities.Utils;
-import com.google.android.material.navigation.NavigationView;
 import com.mikepenz.materialdrawer.holder.ImageHolder;
 import com.mikepenz.materialdrawer.holder.StringHolder;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
@@ -36,6 +33,7 @@ public class ProfileFragment extends Fragment {
 
     FragmentProfileBinding binding;
     private ParseUser user;
+    private AccountHeaderView header;
 
     public ProfileFragment() {}
 
@@ -76,7 +74,6 @@ public class ProfileFragment extends Fragment {
         Utils.setLanguageLogo(binding.toolbar.ivLogo);
         binding.toolbar.ibHamburger.setOnClickListener(v -> openDrawerMenu());
         setUpMaterialDrawer();
-        // setupDrawerContent(binding.navView);
 
         // set profile info fragment as default
         Fragment infoFragment = ProfileInfoFragment.newInstance(user);
@@ -98,12 +95,32 @@ public class ProfileFragment extends Fragment {
     Open drawer navigation view when hamburger icon is clicked.
     */
     private void openDrawerMenu() {
-        // binding.drawerLayout.openDrawer(GravityCompat.END);
+        // check for updates to user e-mail or profile picture
+        header.updateProfile(new ProfileDrawerItem()
+        {{
+            setIdentifier(100);
+            setName(new StringHolder(ParseUser.getCurrentUser().getUsername()));
+            setDescription(new StringHolder(ParseUser.getCurrentUser().getEmail()));
+            setIcon(new ImageHolder(Utils.getProfilePictureUrl(ParseUser.getCurrentUser())));
+        }});
+
         binding.drawerLayout.openDrawer(binding.slider);
     }
 
     private void setUpMaterialDrawer() {
-        // binding.slider.setStickyHeaderView();
+        header = new AccountHeaderView(this.getActivity()) {{
+            addProfiles(
+                    new ProfileDrawerItem()
+                    {{
+                        setIdentifier(100);
+                        setName(new StringHolder(ParseUser.getCurrentUser().getUsername()));
+                        setDescription(new StringHolder(ParseUser.getCurrentUser().getEmail()));
+                        setIcon(new ImageHolder(Utils.getProfilePictureUrl(ParseUser.getCurrentUser())));
+                    }}
+            );
+            attachToSliderView(binding.slider);
+            setSelectionListEnabledForSingleProfile(false);
+        }};
 
         MaterialDrawerSliderViewExtensionsKt.addItems(binding.slider,
                 new PrimaryDrawerItem()
@@ -111,6 +128,7 @@ public class ProfileFragment extends Fragment {
                     {
                         setName(new StringHolder(R.string.profile_label));
                         setIcon(new ImageHolder(R.drawable.profile_icon));
+                        setIconTinted(true);
                         setSelectable(true);
                         setSelected(true);
                         setIdentifier(0);
@@ -121,6 +139,7 @@ public class ProfileFragment extends Fragment {
                     {
                         setName(new StringHolder(R.string.settings_label));
                         setIcon(new ImageHolder(R.drawable.settings_icon));
+                        setIconTinted(true);
                         setSelectable(true);
                         setIdentifier(1);
                     }
@@ -130,6 +149,7 @@ public class ProfileFragment extends Fragment {
                     {
                         setName(new StringHolder(R.string.log_out_label));
                         setIcon(new ImageHolder(R.drawable.log_out_icon));
+                        setIconTinted(true);
                         setSelectable(true);
                         setIdentifier(2);
                     }
@@ -154,54 +174,5 @@ public class ProfileFragment extends Fragment {
             }
             return false;
         }));
-
-        new AccountHeaderView(this.getActivity()) {{
-            addProfiles(
-                    new ProfileDrawerItem()
-                    {{
-                        setName(new StringHolder(ParseUser.getCurrentUser().getUsername()));
-                        setDescription(new StringHolder(ParseUser.getCurrentUser().getEmail()));
-                        setIcon(new ImageHolder(R.drawable.logo_animation));
-                    }}
-            );
-            attachToSliderView(binding.slider);
-            setSelectionListEnabledForSingleProfile(false);
-        }};
-    }
-
-    /*
-    Set up listener to handle selections in the drawer navigation view.
-    */
-    private void setupDrawerContent(NavigationView navigationView) {
-        navigationView.setNavigationItemSelectedListener(menuItem -> {
-            selectDrawerItem(menuItem);
-            return true;
-        });
-    }
-
-    /*
-    Navigate to the fragment selected through the drawer navigation view.
-    */
-    private void selectDrawerItem(MenuItem menuItem) {
-        Fragment fragment;
-        switch (menuItem.getItemId()) {
-            case R.id.nav_settings:
-                fragment = ProfileSettingsFragment.newInstance(ParseUser.getCurrentUser());
-                break;
-            case R.id.nav_log_out:
-                ParseUser.logOut();
-                goLoginActivity();
-                return;
-            case R.id.nav_profile:
-            default:
-                fragment = ProfileInfoFragment.newInstance(ParseUser.getCurrentUser());
-        }
-
-        // replace current fragment with the selected one and highlight selected item
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.profileFragmentContainer, fragment).commit();
-
-        menuItem.setChecked(true);
-        binding.drawerLayout.closeDrawers();
     }
 }

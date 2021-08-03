@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.ProfileInfoFragment">
 
     <TextView
@@ -26,6 +27,38 @@
         android:textColor="@color/black"
         android:textSize="16sp"
         tools:text="Joined July 13, 2021" />
+
+    <ImageView
+        android:id="@+id/ivProfilePicture"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignEnd="@id/tvTargetLanguage"
+        android:layout_alignBottom="@id/tvMemberSince"
+        tools:src="@drawable/placeholder" />
+
+    <ru.nikartm.support.ImageBadgeView
+        android:id="@+id/badgeView"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_alignBottom="@id/ivProfilePicture"
+        android:layout_alignStart="@id/ivProfilePicture"
+        android:layout_gravity="center"
+        app:ibv_showCounter="false"
+        app:ibv_visibleBadge="true"
+        app:ibv_fixedBadgeRadius="10dp"
+        app:ibv_badgePosition="top_right"
+        app:ibv_badgeBackground="@drawable/edit_badge"
+        android:src="@null" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:indeterminateTint="@color/light_gray"
+        android:visibility="invisible"
+        android:layout_alignEnd="@id/tvTargetLanguage"
+        android:layout_alignBottom="@id/tvMemberSince"
+        android:layout_width="50dp"
+        android:layout_height="50dp" />
 
     <TextView
         android:id="@+id/tvLearning"
