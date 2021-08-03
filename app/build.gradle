@@ -98,4 +98,7 @@ dependencies {
 
     // Like button for starring animation
     implementation 'com.github.jd-alexander:LikeButton:0.2.3'
+
+    // MaterialDrawer for custom navigation drawer
+    implementation 'com.mikepenz:materialdrawer:8.4.2'
 }
