@@ -447,4 +447,11 @@ public class Utils {
         user.put("bestTime", millis);
         user.saveInBackground();
     }
+
+    /*
+    Return the translation frequency interval for the provided ParseUser.
+    */
+    public static int getTranslationInterval(ParseUser user) {
+        return user.getInt("frequencyInterval");
+    }
 }

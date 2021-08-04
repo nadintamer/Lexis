@@ -18,6 +18,7 @@ import com.example.lexis.fragments.ArticleFragment;
 import com.example.lexis.fragments.FeedFragment;
 import com.example.lexis.models.Article;
 import com.example.lexis.utilities.Utils;
+import com.parse.ParseUser;
 
 import java.util.Collections;
 import java.util.List;
@@ -131,8 +132,11 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.Articl
                 Article article = articles.get(position);
                 String currentTargetLanguage = Utils.getCurrentTargetLanguage();
                 boolean isCorrectLanguage = article.getLanguage().equals(currentTargetLanguage);
-                if (article.getWordList() == null || !isCorrectLanguage) {
-                    article.translateWordsOnInterval(3, 30);
+                int translationInterval = Utils.getTranslationInterval(ParseUser.getCurrentUser());
+                boolean isCorrectFrequency = (article.getFrequency() == translationInterval);
+
+                if (article.getWordList() == null || !isCorrectLanguage || !isCorrectFrequency) {
+                    article.translateWordsOnInterval(3, translationInterval);
                 }
 
                 // executed when async work is completed

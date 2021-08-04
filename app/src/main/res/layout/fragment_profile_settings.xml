@@ -7,6 +7,18 @@
     android:orientation="vertical"
     tools:context=".fragments.ProfileSettingsFragment">
 
+    <TextView
+        android:id="@+id/tvAccountOptions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="start"
+        android:layout_marginHorizontal="50dp"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:text="@string/account_settings" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="50dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:ems="10"
             android:inputType="textEmailAddress"
             android:hint="@string/email_label" />
@@ -70,10 +82,22 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
+        android:id="@+id/tvLearning"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="35dp"
+        android:layout_gravity="start"
+        android:layout_marginHorizontal="50dp"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:text="@string/language_options" />
+
+    <TextView
         android:id="@+id/tvSpinnerHint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:layout_gravity="start"
         android:layout_marginHorizontal="50dp"
         android:text="@string/language_spinner_label" />
@@ -88,6 +112,47 @@
         android:layout_marginHorizontal="50dp"
         android:background="@drawable/spinner_background_shape"
         android:entries="@array/languages_array" />
+
+    <TextView
+        android:id="@+id/tvFrequencyHint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="start"
+        android:layout_marginHorizontal="50dp"
+        android:text="@string/translation_frequency" />
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="50dp"
+        android:orientation="horizontal">
+        <RadioButton
+            android:id="@+id/radioFrequent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:text="@string/frequent" />
+        <RadioButton
+            android:id="@+id/radioRegular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:text="@string/regular" />
+        <RadioButton
+            android:id="@+id/radioRare"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:text="@string/rare" />
+    </RadioGroup>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSave"
