@@ -46,11 +46,12 @@ public class FeedFragment extends Fragment {
 
     private static final String TAG = "FeedFragment";
     private static final String TOP_HEADLINES_URL = "https://newsapi.org/v2/top-headlines";
+    private static final String NYT_ARTICLE_SEARCH_URL = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
     private static final String SHORT_STORIES_URL = "https://shortstories-api.herokuapp.com/stories";
     private static final String WIKI_ARTICLE_URL = "https://en.wikipedia.org/w/api.php";
     private static final String WIKI_TOP_ARTICLES_URL = "https://wikimedia.org/api/rest_v1/metrics/pageviews/top/en.wikipedia.org/all-access/%s/%s/%s";
-    private static final int NUM_STORIES_TO_FETCH = 20;
-    private static final int NUM_APIS = 3;
+    private static final int NUM_STORIES_TO_FETCH = 10;
+    private static final int NUM_APIS = 4;
 
     private int numCallsCompleted = 0;
 
@@ -71,9 +72,7 @@ public class FeedFragment extends Fragment {
         if (articles == null) {
             articles = new ArrayList<>();
             showProgressBar();
-            fetchTopWikipediaArticles(Utils.getYesterday(), false);
-            fetchTopHeadlines(Arrays.asList("bbc-news", "time", "wired", "the-huffington-post"));
-            fetchShortStories(NUM_STORIES_TO_FETCH);
+            fetchContent();
         }
 
         setUpRecyclerView();
@@ -91,15 +90,23 @@ public class FeedFragment extends Fragment {
         // set up pull to refresh
         binding.swipeContainer.setOnRefreshListener(() -> {
             adapter.clear();
-            fetchTopWikipediaArticles(Utils.getYesterday(), false);
-            fetchTopHeadlines(Arrays.asList("bbc-news", "time", "wired", "the-huffington-post"));
-            fetchShortStories(NUM_STORIES_TO_FETCH);
-            binding.swipeContainer.setRefreshing(false);
+            numCallsCompleted = 0;
+            fetchContent();
         });
         binding.swipeContainer.setColorSchemeResources(R.color.tiffany_blue,
                 R.color.light_cyan,
                 R.color.orange_peel,
                 R.color.mellow_apricot);
+    }
+
+    /*
+    Fetch content from all integrated APIs.
+    */
+    private void fetchContent() {
+        fetchTopWikipediaArticles(Utils.getYesterday(), false);
+        fetchTopHeadlines(Arrays.asList("bbc-news", "time", "wired", "the-huffington-post"));
+        fetchShortStories(NUM_STORIES_TO_FETCH);
+        fetchNYTArticles();
     }
 
     /*
@@ -175,8 +182,9 @@ public class FeedFragment extends Fragment {
                     String title = articleObject.getString("title");
                     String intro = articleObject.getString("extract");
                     intro = intro.replace("\n", "\n\n");
+                    String source = "Wikipedia";
 
-                    Article article = new Article(title, intro, "Wikipedia");
+                    Article article = new Article(title, intro, source, null);
                     articles.add(article);
                     adapter.notifyItemInserted(articles.size() - 1);
 
@@ -219,7 +227,7 @@ public class FeedFragment extends Fragment {
                         String content = articleObject.getString("content");
                         String source = articleObject.getJSONObject("source").getString("name");
 
-                        Article article = new Article(title, content, source);
+                        Article article = new Article(title, content, source, null);
                         articles.add(article);
                         adapter.notifyItemInserted(articles.size() - 1);
                     }
@@ -259,10 +267,10 @@ public class FeedFragment extends Fragment {
 
                         JSONObject story = jsonArray.getJSONObject(index);
                         String title = story.getString("title");
-                        String content = story.getString("story");
+                        String content = story.getString("story") + " " + story.getString("moral");
                         String source = "Short stories";
 
-                        Article article = new Article(title, content, source);
+                        Article article = new Article(title, content, source, null);
                         articles.add(article);
                         adapter.notifyItemInserted(articles.size() - 1);
                     }
@@ -281,11 +289,60 @@ public class FeedFragment extends Fragment {
         });
     }
 
+    /*
+    Fetch recent NYT articles.
+    */
+    private void fetchNYTArticles() {
+        AsyncHttpClient client = new AsyncHttpClient();
+        RequestParams params = new RequestParams();
+        params.put("api-key", getString(R.string.new_york_times_api_key));
+
+        client.get(NYT_ARTICLE_SEARCH_URL, params, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                JSONObject jsonObject = json.jsonObject;
+                try {
+                    JSONArray articlesArray = jsonObject
+                            .getJSONObject("response")
+                            .getJSONArray("docs");
+                    for (int i = 0; i < NUM_STORIES_TO_FETCH; i++) {
+                        JSONObject articleObject = articlesArray.getJSONObject(i);
+
+                        String title = articleObject
+                                .getJSONObject("headline")
+                                .getString("main");
+                        String content = articleObject.getString("lead_paragraph");
+                        String source = "New York Times";
+                        String url = articleObject.getString("web_url");
+
+                        Article article = new Article(title, content, source, url);
+                        articles.add(article);
+                        adapter.notifyItemInserted(articles.size() - 1);
+                    }
+
+                    numCallsCompleted++;
+                    checkIfFetchingCompleted();
+                } catch (JSONException e) {
+                    Log.e(TAG, "JSON Exception", e);
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                Log.e(TAG, "onFailure to fetch top headlines", throwable);
+            }
+        });
+    }
+
+    /*
+    Check if all API calls have finished and hide progress indicator if so.
+    */
     private void checkIfFetchingCompleted() {
         // shuffle articles list for variety in source ordering
         adapter.shuffle();
         if (numCallsCompleted == NUM_APIS) {
             hideProgressBar();
+            binding.swipeContainer.setRefreshing(false);
         }
     }
 

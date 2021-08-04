@@ -24,6 +24,7 @@ public class Article {
     private String title;
     private String body;
     private String source;
+    private String url;
     private String language;
     private String[] words; // TODO: think about performance -- storing only translated words?
     private List<Integer> translatedIndices;
@@ -31,10 +32,11 @@ public class Article {
 
     public Article() {}
 
-    public Article(String title, String body, String source) {
+    public Article(String title, String body, String source, String url) {
         this.title = title;
         this.body = body;
         this.source = source;
+        this.url = url;
 
         language = "";
         translatedIndices = new ArrayList<>();

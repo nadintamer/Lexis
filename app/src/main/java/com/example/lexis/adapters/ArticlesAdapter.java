@@ -101,6 +101,9 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.Articl
                 case "Short stories":
                     logoId = R.drawable.aesop;
                     break;
+                case "New York Times":
+                    logoId = R.drawable.new_york_times_logo;
+                    break;
                 default:
                     logoId = null;
             }
@@ -129,7 +132,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.Articl
                 String currentTargetLanguage = Utils.getCurrentTargetLanguage();
                 boolean isCorrectLanguage = article.getLanguage().equals(currentTargetLanguage);
                 if (article.getWordList() == null || !isCorrectLanguage) {
-                    article.translateWordsOnInterval(3, 60);
+                    article.translateWordsOnInterval(3, 10);
                 }
 
                 // executed when async work is completed
