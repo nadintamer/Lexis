@@ -75,7 +75,7 @@ public class ArticleFragment extends Fragment {
         binding.tvBody.setMovementMethod(LinkMovementMethod.getInstance());
         if (article.getUrl() != null) {
             binding.tvUrl.setVisibility(View.VISIBLE);
-            binding.tvUrl.setText(Html.fromHtml(String.format("<a href=\"%s\">Read more...</a>", article.getUrl())));
+            binding.tvUrl.setText(Html.fromHtml(String.format("<a href=\"%s\">Read more on %s...</a>", article.getUrl(), article.getSource())));
             binding.tvUrl.setMovementMethod(LinkMovementMethod.getInstance());
         } else {
             binding.tvUrl.setVisibility(View.GONE);

@@ -319,7 +319,7 @@ public class FeedFragment extends Fragment {
                                 .getJSONObject("headline")
                                 .getString("main");
                         String content = articleObject.getString("lead_paragraph");
-                        String source = "New York Times";
+                        String source = "The New York Times";
                         String url = articleObject.getString("web_url");
 
                         Article article = new Article(title, content, source, url);

@@ -101,7 +101,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.Articl
                 case "Short stories":
                     logoId = R.drawable.aesop;
                     break;
-                case "New York Times":
+                case "The New York Times":
                     logoId = R.drawable.new_york_times_logo;
                     break;
                 default:
