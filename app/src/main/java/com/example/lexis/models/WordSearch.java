@@ -83,6 +83,9 @@ public class WordSearch {
         int height = getHeight();
 
         String word = wordObject.getTargetWord();
+        if (word.contains(" ")) {
+            word = word.replace(" ", "");
+        }
         String reverse = new StringBuffer(word).reverse().toString();
         String[] options = { word, reverse };
         Random random = new java.util.Random();
@@ -112,7 +115,7 @@ public class WordSearch {
             grid[y + d[1] * i][x + d[0] * i] = letter;
         }
 
-        wordItems.add(new WordSearchItem(wordObject, y, x, d));
+        wordItems.add(new WordSearchItem(wordObject, word, y, x, d));
         return true;
     }
 
@@ -195,12 +198,12 @@ public class WordSearch {
         GridLocation endLocation;
         int[] direction;
 
-        public WordSearchItem(Word word, int row, int col, int[] d) {
+        public WordSearchItem(Word word, String gridWord, int row, int col, int[] d) {
             this.word = word;
             this.startLocation = new GridLocation(row, col);
             GridLocation end = new GridLocation(row, col);
-            if (d[0] == 1) end.col += word.getTargetWord().length() - 1;
-            if (d[1] == 1) end.row += word.getTargetWord().length() - 1;
+            if (d[0] == 1) end.col += gridWord.length() - 1;
+            if (d[1] == 1) end.row += gridWord.length() - 1;
             this.endLocation = end;
             this.direction = d;
         }
