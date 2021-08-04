@@ -225,6 +225,8 @@ public class FeedFragment extends Fragment {
 
                         String title = articleObject.getString("title");
                         String content = articleObject.getString("content");
+                        int truncatedIndex = content.indexOf("[+");
+                        content = content.substring(0, truncatedIndex);
                         String source = articleObject.getJSONObject("source").getString("name");
 
                         Article article = new Article(title, content, source, null);
