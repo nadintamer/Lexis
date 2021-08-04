@@ -84,6 +84,13 @@ public class ProfileInfoFragment extends Fragment {
         binding.tvTargetLanguage.setText(String.format("%s %s", flag, targetLanguage));
         binding.tvVocabularyTarget.setText(String.format("%s words studied", targetLanguage));
 
+        long bestTime = Utils.getBestTime(user);
+        if (bestTime == 0) {
+            binding.tvNumPersonalBest.setText("N/A");
+        } else {
+            binding.tvNumPersonalBest.setText(Utils.millisToTimerString(bestTime));
+        }
+
         fetchProfilePicture();
         binding.ivProfilePicture.setOnClickListener(v -> launchGallery());
 

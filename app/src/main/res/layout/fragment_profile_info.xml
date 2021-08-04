@@ -127,4 +127,26 @@
         android:textStyle="bold"
         tools:text="1370" />
 
+    <TextView
+        android:id="@+id/tvPersonalBest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@id/tvVocabularyTotal"
+        android:layout_below="@id/tvVocabularyTotal"
+        android:layout_marginTop="20dp"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:text="@string/best_word_search_time" />
+
+    <TextView
+        android:id="@+id/tvNumPersonalBest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@id/tvNumTotal"
+        android:layout_alignTop="@id/tvPersonalBest"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        tools:text="00:38" />
+
 </RelativeLayout>
