@@ -4,6 +4,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
+import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -72,6 +73,13 @@ public class ArticleFragment extends Fragment {
         binding.tvBody.setText(content);
         // needed so that translated words are clickable
         binding.tvBody.setMovementMethod(LinkMovementMethod.getInstance());
+        if (article.getUrl() != null) {
+            binding.tvUrl.setVisibility(View.VISIBLE);
+            binding.tvUrl.setText(Html.fromHtml(String.format("<a href=\"%s\">Read more...</a>", article.getUrl())));
+            binding.tvUrl.setMovementMethod(LinkMovementMethod.getInstance());
+        } else {
+            binding.tvUrl.setVisibility(View.GONE);
+        }
     }
 
     /*

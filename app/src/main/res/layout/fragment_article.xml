@@ -33,10 +33,22 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/tvTitle"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="10dp"
             android:layout_marginHorizontal="30dp"
             android:textColor="@color/black"
             android:textSize="16sp"
             tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec quis euismod tellus. Maecenas nec elementum felis. Mauris iaculis, dui quis tristique scelerisque, erat erat varius metus, id ullamcorper lacus enim ut lectus. Nullam turpis eu fringilla volutpat. Integer et convallis risus. Cras enim neque, viverra eu urna non, sagittis posuere dui. In tincidunt ut velit ultricies mattis. Maecenas et porta justo. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Phasellus sagittis erat eu eros bibendum pretium. Vivamus efficitur ex ut nunc imperdiet tincidunt id ut ante. Etiam non iaculis purus. Vestibulum sit amet pretium metus. Sed quam nulla, iaculis sed tortor vitae, sodales suscipit lectus. Quisque euismod tortor vitae elit sollicitudin convallis. In hac habitasse platea dictumst. Pellentesque lobortis neque sit amet suscipit malesuada. Suspendisse lacus risus, vestibulum sit amet velit nec, ultrices venenatis velit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec quis euismod tellus. Maecenas nec elementum felis. Mauris iaculis, dui quis tristique scelerisque, erat erat varius metus, id ullamcorper lacus enim ut lectus. Nullam turpis eu fringilla volutpat. Integer et convallis risus. Cras enim neque, viverra eu urna non, sagittis posuere dui. In tincidunt ut velit ultricies mattis. Maecenas et porta justo. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Phasellus sagittis erat eu eros bibendum pretium. Vivamus efficitur ex ut nunc imperdiet tincidunt id ut ante. Etiam non iaculis purus. Vestibulum sit amet pretium metus. Sed quam nulla, iaculis sed tortor vitae, sodales suscipit lectus. Quisque euismod tortor vitae elit sollicitudin convallis. In hac habitasse platea dictumst. Pellentesque lobortis neque sit amet suscipit malesuada. Suspendisse lacus risus, vestibulum sit amet velit nec, ultrices venenatis velit." />
+
+        <TextView
+            android:id="@+id/tvUrl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvBody"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginHorizontal="30dp"
+            android:textSize="16sp"
+            android:textColorLink="@color/tiffany_blue"
+            tools:text="Read more" />
     </RelativeLayout>
 </ScrollView>

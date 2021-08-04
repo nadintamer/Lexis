@@ -55,6 +55,8 @@ public class Article {
         return source;
     }
 
+    public String getUrl() { return url; }
+
     public String getLanguage() {
         return language;
     }

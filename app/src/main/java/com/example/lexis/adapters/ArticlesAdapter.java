@@ -132,7 +132,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.Articl
                 String currentTargetLanguage = Utils.getCurrentTargetLanguage();
                 boolean isCorrectLanguage = article.getLanguage().equals(currentTargetLanguage);
                 if (article.getWordList() == null || !isCorrectLanguage) {
-                    article.translateWordsOnInterval(3, 10);
+                    article.translateWordsOnInterval(3, 30);
                 }
 
                 // executed when async work is completed

@@ -72,6 +72,7 @@ public class FeedFragment extends Fragment {
         if (articles == null) {
             articles = new ArrayList<>();
             showProgressBar();
+            binding.rvArticles.setClickable(false);
             fetchContent();
         }
 
@@ -91,6 +92,7 @@ public class FeedFragment extends Fragment {
         binding.swipeContainer.setOnRefreshListener(() -> {
             adapter.clear();
             numCallsCompleted = 0;
+            binding.rvArticles.setClickable(false);
             fetchContent();
         });
         binding.swipeContainer.setColorSchemeResources(R.color.tiffany_blue,
@@ -164,7 +166,8 @@ public class FeedFragment extends Fragment {
         params.put("action", "query");
         params.put("format", "json");
         params.put("titles", title);
-        params.put("prop", "extracts");
+        params.put("prop", "extracts|info");
+        params.put("inprop", "url");
         params.put("explaintext", true); // get plain text representation
         params.put("exintro", true); // only get intro paragraph
 
@@ -183,8 +186,9 @@ public class FeedFragment extends Fragment {
                     String intro = articleObject.getString("extract");
                     intro = intro.replace("\n", "\n\n");
                     String source = "Wikipedia";
+                    String url = articleObject.getString("fullurl");
 
-                    Article article = new Article(title, intro, source, null);
+                    Article article = new Article(title, intro, source, url);
                     articles.add(article);
                     adapter.notifyItemInserted(articles.size() - 1);
 
@@ -228,8 +232,9 @@ public class FeedFragment extends Fragment {
                         int truncatedIndex = content.indexOf("[+");
                         content = content.substring(0, truncatedIndex);
                         String source = articleObject.getJSONObject("source").getString("name");
+                        String url = articleObject.getString("url");
 
-                        Article article = new Article(title, content, source, null);
+                        Article article = new Article(title, content, source, url);
                         articles.add(article);
                         adapter.notifyItemInserted(articles.size() - 1);
                     }
@@ -345,6 +350,8 @@ public class FeedFragment extends Fragment {
         if (numCallsCompleted == NUM_APIS) {
             hideProgressBar();
             binding.swipeContainer.setRefreshing(false);
+            // user can only click on articles after everything has loaded to avoid crashes
+            binding.rvArticles.setClickable(true);
         }
     }
 
