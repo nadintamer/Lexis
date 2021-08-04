@@ -337,8 +337,14 @@ public class WordSearchFragment extends Fragment implements WordSearchHelpDialog
                     if (numCluesFound == clues.size()) {
                         pauseTimer();
                         String time = binding.toolbar.timer.getText().toString();
+                        long millis = Utils.timerStringToMillis(time);
+                        boolean isNewBest = Utils.isPersonalBest(millis, ParseUser.getCurrentUser());
+                        if (millis != 0 && isNewBest) {
+                            Utils.updateBestTime(millis, ParseUser.getCurrentUser());
+                        }
+
                         final Handler handler = new Handler(Looper.getMainLooper());
-                        handler.postDelayed(() -> finishWordPuzzle(time), 500);
+                        handler.postDelayed(() -> finishWordPuzzle(time, isNewBest), 500);
                     }
                 } else { // not a valid word, automatically de-select
                     for (int i = beginHighlight; i <= endHighlight; i++) {
@@ -374,7 +380,7 @@ public class WordSearchFragment extends Fragment implements WordSearchHelpDialog
     /*
     Finish the word puzzle and display a congratulatory message + time taken to solve the puzzle.
     */
-    private void finishWordPuzzle(String time) {
+    private void finishWordPuzzle(String time, boolean newBest) {
         binding.rvWordSearch.setVisibility(View.GONE);
         binding.rvWordList.setVisibility(View.GONE);
         binding.toolbar.tvFlag.setVisibility(View.GONE);

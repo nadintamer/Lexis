@@ -25,6 +25,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -33,12 +34,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Utils {
 
     private static final String TAG = "Utils";
+    private static final int MINUTE_STRING_LENGTH = 5;
+    private static final int MILLIS_PER_HOUR = 3600000;
+    private static final String CHRONOMETER_FORMAT_HOUR = "H:mm:ss";
+    private static final String CHRONOMETER_FORMAT_MINUTE = "mm:ss";
 
     /*
     Return a Rect object representing the bounds of the clickableSpan that was clicked. Used to
@@ -384,5 +390,61 @@ public class Utils {
             e.printStackTrace();
         }
         return image;
+    }
+
+    /*
+    Convert the provided string representing a time into milliseconds.
+    */
+    public static long timerStringToMillis(String time) {
+        boolean hasHour = time.length() > MINUTE_STRING_LENGTH;
+
+        // construct date object from given time string
+        String myDate = hasHour ? "1970/01/01 " : "1970/01/01 0:";
+        myDate += time;
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd H:mm:ss", Locale.US);
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date date;
+        try {
+            date = sdf.parse(myDate);
+            return date.getTime();
+        } catch (java.text.ParseException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    /*
+    Convert the provided milliseconds into a displayable timer string.
+    */
+    public static String millisToTimerString(long millis) {
+        boolean hasHour = millis >= MILLIS_PER_HOUR;
+        String format = hasHour ? CHRONOMETER_FORMAT_HOUR : CHRONOMETER_FORMAT_MINUTE;
+        DateFormat formatter = new SimpleDateFormat(format, Locale.US);
+        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return formatter.format(new Date(millis));
+    }
+
+    /*
+    Return the best word search time (in milliseconds) for the provided ParseUser.
+    */
+    public static long getBestTime(ParseUser user) {
+        return user.getLong("bestTime"); // TODO: how to do null-checking here?
+    }
+
+    /*
+    Check whether the provided milliseconds value is a personal best for the user.
+    */
+    public static boolean isPersonalBest(long millis, ParseUser user) {
+        long currentBest = getBestTime(user);
+        return currentBest == 0 || millis < currentBest;
+    }
+
+    /*
+    Update the best word search time for the provided ParseUser with the provided value.
+    */
+    public static void updateBestTime(long millis, ParseUser user) {
+        user.put("bestTime", millis);
+        user.saveInBackground();
     }
 }
