@@ -386,6 +386,12 @@ public class WordSearchFragment extends Fragment implements WordSearchHelpDialog
         binding.toolbar.tvFlag.setVisibility(View.GONE);
         binding.toolbar.timer.setVisibility(View.GONE);
         binding.toolbar.btnQuestion.setVisibility(View.GONE);
+        if (newBest) {
+            binding.tvPersonalBest.setText(R.string.personal_best);
+        } else {
+            String best = Utils.millisToTimerString(Utils.getBestTime(ParseUser.getCurrentUser()));
+            binding.tvPersonalBest.setText(String.format("Your personal best time is: %s. Can you beat it? 🎯", best));
+        }
         binding.layoutFinished.setVisibility(View.VISIBLE);
         binding.tvFinished.setText(String.format(getString(R.string.word_search_congratulations), time));
     }
