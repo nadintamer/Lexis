@@ -19,6 +19,7 @@ import com.example.lexis.fragments.FeedFragment;
 import com.example.lexis.models.Article;
 import com.example.lexis.utilities.Utils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -55,6 +56,11 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.Articl
         notifyDataSetChanged();
     }
 
+    public void shuffle() {
+        Collections.shuffle(articles);
+        notifyDataSetChanged();
+    }
+
     public void addAll(List<Article> list) {
         articles.addAll(list);
         notifyDataSetChanged();
@@ -75,8 +81,29 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.Articl
         public void bind(Article article) {
             binding.tvTitle.setText(article.getTitle());
             binding.tvSnippet.setText(article.getBody());
-            if (article.getSource().equals("Wikipedia")) {
-                binding.ivSource.setImageResource(R.drawable.wikipedia_logo);
+            Integer logoId;
+            switch (article.getSource()) {
+                case "Wikipedia":
+                    logoId = R.drawable.wikipedia_logo;
+                    break;
+                case "BBC News":
+                    logoId = R.drawable.bbc_news_logo;
+                    break;
+                case "Wired":
+                    logoId = R.drawable.wired_logo;
+                    break;
+                case "The Huffington Post":
+                    logoId = R.drawable.huffington_post_logo;
+                    break;
+                case "Time":
+                    logoId = R.drawable.time_logo;
+                    break;
+                default:
+                    logoId = null;
+            }
+
+            if (logoId != null) {
+                binding.ivSource.setImageResource(logoId);
             }
         }
 
