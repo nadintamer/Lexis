@@ -98,6 +98,9 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.Articl
                 case "Time":
                     logoId = R.drawable.time_logo;
                     break;
+                case "Short stories":
+                    logoId = R.drawable.aesop;
+                    break;
                 default:
                     logoId = null;
             }
