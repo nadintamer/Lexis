@@ -206,7 +206,7 @@ public class PracticeIntroFragment extends Fragment {
         if (activity != null) {
             FragmentManager fragmentManager = activity.getSupportFragmentManager();
             fragmentManager.beginTransaction()
-                    .replace(R.id.fragmentContainer, flashcardFragment)
+                    .replace(R.id.fragmentContainer, flashcardFragment, "FlashcardFragment")
                     .commit();
         }
     }
@@ -224,7 +224,7 @@ public class PracticeIntroFragment extends Fragment {
         if (activity != null) {
             FragmentManager fragmentManager = activity.getSupportFragmentManager();
             fragmentManager.beginTransaction()
-                    .replace(R.id.fragmentContainer, wordSearchFragment)
+                    .replace(R.id.fragmentContainer, wordSearchFragment, "WordSearchFragment")
                     .commit();
         }
     }
