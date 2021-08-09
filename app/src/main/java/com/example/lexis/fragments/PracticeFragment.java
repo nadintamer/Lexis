@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.lexis.R;
 import com.example.lexis.fragments.VocabularyFilterDialogFragment.Sort;
@@ -92,6 +93,22 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
         SwipeDeleteCallback callback = new SwipeDeleteCallback(adapter);
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(binding.rvVocabulary);
+
+        // hide practice button if on last item so that user can see star / flag
+        binding.rvVocabulary.addOnScrollListener(new RecyclerView.OnScrollListener(){
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                LinearLayoutManager layoutManager = (LinearLayoutManager) binding.rvVocabulary.getLayoutManager();
+                if (layoutManager != null) {
+                    int position = layoutManager.findLastCompletelyVisibleItemPosition();
+                    if (position == binding.rvVocabulary.getAdapter().getItemCount() - 1) {
+                        binding.btnPractice.hide();
+                    } else {
+                        binding.btnPractice.show();
+                    }
+                }
+            }
+        });
     }
 
     /*
