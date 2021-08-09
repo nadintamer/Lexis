@@ -182,11 +182,11 @@ public class FeedFragment extends Fragment {
                     JSONObject articleObject = pages.getJSONObject(pages.keys().next());
 
                     // extract information from JSON object and do text pre-processing
+                    String source = "Wikipedia";
+                    String url = articleObject.getString("fullurl");
                     String title = articleObject.getString("title");
                     String intro = articleObject.getString("extract");
                     intro = intro.replace("\n", "\n\n");
-                    String source = "Wikipedia";
-                    String url = articleObject.getString("fullurl");
 
                     Article article = new Article(title, intro, source, url);
                     articles.add(article);
@@ -230,7 +230,9 @@ public class FeedFragment extends Fragment {
                         String title = articleObject.getString("title");
                         String content = articleObject.getString("content");
                         int truncatedIndex = content.indexOf("[+");
-                        content = content.substring(0, truncatedIndex);
+                        if (truncatedIndex != -1) {
+                            content = content.substring(0, truncatedIndex);
+                        }
                         String source = articleObject.getJSONObject("source").getString("name");
                         String url = articleObject.getString("url");
 

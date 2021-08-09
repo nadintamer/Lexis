@@ -429,7 +429,7 @@ public class Utils {
     Return the best word search time (in milliseconds) for the provided ParseUser.
     */
     public static long getBestTime(ParseUser user) {
-        return user.getLong("bestTime"); // TODO: how to do null-checking here?
+        return user.getLong("bestTime");
     }
 
     /*
