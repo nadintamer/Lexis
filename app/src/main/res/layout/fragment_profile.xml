@@ -26,11 +26,10 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
     </RelativeLayout>
 
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/navView"
+    <com.mikepenz.materialdrawer.widget.MaterialDrawerSliderView
+        android:id="@+id/slider"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="end"
-        android:background="@android:color/white"
-        app:menu="@menu/profile_drawer_view" />
+        android:fitsSystemWindows="true" />
 </androidx.drawerlayout.widget.DrawerLayout>

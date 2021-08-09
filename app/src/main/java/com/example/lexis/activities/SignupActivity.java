@@ -1,9 +1,11 @@
 package com.example.lexis.activities;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -27,6 +29,7 @@ public class SignupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivitySignupBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        setUpToolbar();
 
         binding.btnSignUp.setOnClickListener(v -> {
             String username = binding.etUsername.getText().toString();
@@ -40,6 +43,24 @@ public class SignupActivity extends AppCompatActivity {
         binding.ivLogo.setBackgroundResource(R.drawable.logo_animation);
         AnimationDrawable frameAnimation = (AnimationDrawable) binding.ivLogo.getBackground();
         frameAnimation.start();
+    }
+
+    /*
+    Set up toolbar with custom back button.
+    */
+    private void setUpToolbar() {
+        setSupportActionBar(binding.toolbar.getRoot());
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle("");
+        }
+
+        binding.toolbar.getRoot().setNavigationIcon(R.drawable.back_arrow);
+        Drawable navigationIcon = binding.toolbar.getRoot().getNavigationIcon();
+        if (navigationIcon != null) {
+            navigationIcon.setTint(getResources().getColor(R.color.black));
+        }
+        binding.toolbar.getRoot().setNavigationOnClickListener(v -> onBackPressed());
     }
 
     /*

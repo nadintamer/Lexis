@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.lexis.databinding.ItemFlashcardBinding;
 import com.example.lexis.models.Word;
 import com.example.lexis.utilities.Utils;
+import com.like.LikeButton;
+import com.like.OnLikeListener;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -76,13 +78,13 @@ public class FlashcardsAdapter extends RecyclerView.Adapter<FlashcardsAdapter.Fl
             // flip card to ensure front side is always shown first
             binding.flipView.flipSilently(false);
 
-            ImageButton starButtonFront = binding.layoutFront.ibStar;
-            ImageButton starButtonRear = binding.layoutRear.ibStar;
+            LikeButton starButtonFront = binding.layoutFront.btnStar;
+            LikeButton starButtonRear = binding.layoutRear.btnStar;
 
-            starButtonFront.setSelected(word.getIsStarred());
-            starButtonRear.setSelected(word.getIsStarred());
-            starButtonFront.setOnClickListener(v -> toggleStarred(word));
-            starButtonRear.setOnClickListener(v -> toggleStarred(word));
+            starButtonFront.setLiked(word.getIsStarred());
+            starButtonRear.setLiked(word.getIsStarred());
+            starButtonFront.setOnLikeListener(createOnLikeListener(word));
+            starButtonRear.setOnLikeListener(createOnLikeListener(word));
 
             String english = word.getEnglishWord();
             String target = word.getTargetWord();
@@ -108,13 +110,29 @@ public class FlashcardsAdapter extends RecyclerView.Adapter<FlashcardsAdapter.Fl
         Toggle whether the word is starred and save to Parse.
         */
         private void toggleStarred(Word word) {
-            ImageButton starButtonFront = binding.layoutFront.ibStar;
-            ImageButton starButtonRear = binding.layoutRear.ibStar;
-
-            starButtonFront.setSelected(!starButtonFront.isSelected());
-            starButtonRear.setSelected(!starButtonRear.isSelected());
             word.toggleIsStarred();
             word.saveInBackground();
+        }
+
+        /*
+        Create an onLikeListener to handle starring/un-starring words.
+        */
+        private OnLikeListener createOnLikeListener(Word word) {
+            return new OnLikeListener() {
+                @Override
+                public void liked(LikeButton likeButton) {
+                    binding.layoutFront.btnStar.setLiked(true);
+                    binding.layoutRear.btnStar.setLiked(true);
+                    toggleStarred(word);
+                }
+
+                @Override
+                public void unLiked(LikeButton likeButton) {
+                    binding.layoutFront.btnStar.setLiked(false);
+                    binding.layoutRear.btnStar.setLiked(false);
+                    toggleStarred(word);
+                }
+            };
         }
     }
 }

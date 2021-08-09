@@ -45,4 +45,12 @@
     <string name="flashcards">Flashcards</string>
     <string name="word_search">Word search</string>
     <string name="word_search_puzzle">Word search puzzle</string>
+    <string name="best_word_search_time">Best word search time</string>
+    <string name="personal_best">You set a new personal best! 🏆</string>
+    <string name="language_options">Language options</string>
+    <string name="translation_frequency">Translation frequency</string>
+    <string name="frequent">Frequent</string>
+    <string name="regular">Regular</string>
+    <string name="rare">Rare</string>
+    <string name="account_settings">Account settings</string>
 </resources>

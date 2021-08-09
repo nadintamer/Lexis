@@ -22,6 +22,7 @@ import com.example.lexis.databinding.FragmentProfileSettingsBinding;
 import com.example.lexis.utilities.Const;
 import com.example.lexis.utilities.Utils;
 import com.google.android.material.navigation.NavigationView;
+import com.mikepenz.materialdrawer.widget.MaterialDrawerSliderView;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
@@ -33,6 +34,9 @@ import java.util.List;
 public class ProfileSettingsFragment extends Fragment {
 
     private static final String ARG_USER = "user";
+    private static final int FREQUENCY_INTERVAL_RARE = 60;
+    private static final int FREQUENCY_INTERVAL_REGULAR = 40;
+    private static final int FREQUENCY_INTERVAL_FREQUENT = 20;
 
     FragmentProfileSettingsBinding binding;
     ParseUser user;
@@ -68,6 +72,15 @@ public class ProfileSettingsFragment extends Fragment {
         binding.etEmail.setText(user.getEmail());
         binding.spinnerLanguage.setSelection(Const.languageCodes.indexOf(Utils.getCurrentTargetLanguage()));
         binding.btnSave.setOnClickListener(v -> updateUserInformation());
+
+        int translationInterval = Utils.getTranslationInterval(user);
+        if (translationInterval == FREQUENCY_INTERVAL_RARE) {
+            binding.radioRare.setChecked(true);
+        } else if (translationInterval == FREQUENCY_INTERVAL_REGULAR) {
+            binding.radioRegular.setChecked(true);
+        } else {
+            binding.radioFrequent.setChecked(true);
+        }
     }
 
     /*
@@ -98,6 +111,14 @@ public class ProfileSettingsFragment extends Fragment {
             user.setPassword(password); // only set new password if field is filled out
         }
 
+        if (binding.radioRare.isChecked()) {
+            user.put("frequencyInterval", FREQUENCY_INTERVAL_RARE);
+        } else if (binding.radioRegular.isChecked()) {
+            user.put("frequencyInterval", FREQUENCY_INTERVAL_REGULAR);
+        } else {
+            user.put("frequencyInterval", FREQUENCY_INTERVAL_FREQUENT);
+        }
+
         user.saveInBackground(e -> {
             if (e != null) {
                 showErrorMessage(e);
@@ -106,7 +127,7 @@ public class ProfileSettingsFragment extends Fragment {
             if (!password.isEmpty()) {
                 logInWithNewPassword(password);
             } else {
-                Toast.makeText(getActivity(), "Profile updated successfully!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Settings updated successfully!", Toast.LENGTH_SHORT).show();
                 resetToProfileInfoFragment();
             }
         });
@@ -135,9 +156,8 @@ public class ProfileSettingsFragment extends Fragment {
         fragmentManager.beginTransaction().replace(R.id.profileFragmentContainer, infoFragment).commit();
 
         // set profile item as selected in drawer navigation
-        Menu menuNav = ((NavigationView) getActivity().findViewById(R.id.navView)).getMenu();
-        MenuItem profile = menuNav.getItem(0);
-        profile.setChecked(true);
+        MaterialDrawerSliderView drawerSliderView = getActivity().findViewById(R.id.slider);
+        drawerSliderView.setSelectedItemIdentifier(0);
     }
 
     /*

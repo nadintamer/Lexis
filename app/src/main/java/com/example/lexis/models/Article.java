@@ -24,19 +24,23 @@ public class Article {
     private String title;
     private String body;
     private String source;
+    private String url;
     private String language;
+    private int frequency;
     private String[] words; // TODO: think about performance -- storing only translated words?
     private List<Integer> translatedIndices;
     private List<String> originalWords;
 
     public Article() {}
 
-    public Article(String title, String body, String source) {
+    public Article(String title, String body, String source, String url) {
         this.title = title;
         this.body = body;
         this.source = source;
+        this.url = url;
 
         language = "";
+        frequency = 0;
         translatedIndices = new ArrayList<>();
         originalWords = new ArrayList<>();
     }
@@ -53,8 +57,14 @@ public class Article {
         return source;
     }
 
+    public String getUrl() { return url; }
+
     public String getLanguage() {
         return language;
+    }
+
+    public int getFrequency() {
+        return frequency;
     }
 
     public String[] getWordList() {
@@ -78,6 +88,7 @@ public class Article {
         words = body.split("\\s+"); // split on whitespace
         String targetLanguage = Utils.getCurrentTargetLanguage();
         language = targetLanguage;
+        frequency = interval;
 
         for (int i = start; i < words.length; i += interval) {
             int currentIndex = i;

@@ -12,5 +12,25 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="materialDrawerStyle">@style/Widget.MaterialDrawerStyleCustom</item>
+        <item name="materialDrawerHeaderStyle">@style/Widget.MaterialDrawerHeaderStyleCustom</item>
+    </style>
+
+    <style name="Widget.MaterialDrawerHeaderStyleCustom" parent="">
+        <item name="materialDrawerCompactStyle">true</item>
+        <item name="materialDrawerHeaderSelectionText">?colorOnSurface</item>
+        <item name="materialDrawerHeaderSelectionSubtext">?colorOnSurface</item>
+    </style>
+
+    <style name="Widget.MaterialDrawerStyleCustom" parent="Widget.MaterialDrawerStyle">
+        <item name="materialDrawerInsetForeground">#4000</item>
+        <!-- MaterialDrawer specific values -->
+        <item name="materialDrawerBackground">?colorSurface</item>
+        <item name="materialDrawerPrimaryText">?android:textColorPrimary</item>
+        <item name="materialDrawerPrimaryIcon">?android:textColorSecondary</item>
+        <item name="materialDrawerSecondaryText">?android:textColorSecondary</item>
+        <item name="materialDrawerSecondaryIcon">?android:textColorSecondary</item>
+        <item name="materialDrawerDividerColor">@color/white</item>
+        <item name="materialDrawerSelectedBackgroundColor">?colorPrimary</item>
     </style>
 </resources>

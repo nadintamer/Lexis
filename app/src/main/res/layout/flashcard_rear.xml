@@ -31,13 +31,15 @@
         android:textSize="24sp"
         tools:text="🇩🇪" />
 
-    <ImageButton
-        android:id="@+id/ibStar"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+    <com.like.LikeButton
+        android:id="@+id/btnStar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:backgroundTint="@android:color/transparent"
-        android:layout_margin="10dp"
-        app:srcCompat="@drawable/star_icon" />
+        app:anim_scale_factor="1.5"
+        app:like_drawable="@drawable/star_icon_filled"
+        app:unlike_drawable="@drawable/star_icon_outline"
+        app:icon_type="star"
+        app:icon_size="40dp" />
 </RelativeLayout>
