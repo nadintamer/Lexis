@@ -52,6 +52,7 @@ public class VocabularyAdapter extends RecyclerView.Adapter<VocabularyAdapter.Vo
     public void insertAt(int position, Word word) {
         vocabulary.add(position, word);
         notifyItemInserted(position);
+        fragment.checkVocabularyEmpty(vocabulary);
     }
 
     public void clear() {
