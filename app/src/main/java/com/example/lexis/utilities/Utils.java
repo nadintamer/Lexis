@@ -10,6 +10,7 @@ import android.text.Layout;
 import android.text.SpannableString;
 import android.text.style.ClickableSpan;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -453,5 +454,23 @@ public class Utils {
     */
     public static int getTranslationInterval(ParseUser user) {
         return user.getInt("frequencyInterval");
+    }
+
+    /*
+    Return true if two views overlap on the screen, false otherwise.
+    */
+    public static boolean viewsOverlap(View firstView, View secondView) {
+        int[] firstPosition = new int[2];
+        int[] secondPosition = new int[2];
+
+        firstView.getLocationOnScreen(firstPosition);
+        secondView.getLocationOnScreen(secondPosition);
+
+        // Rect constructor parameters: left, top, right, bottom
+        Rect rectFirstView = new Rect(firstPosition[0], firstPosition[1],
+                firstPosition[0] + firstView.getMeasuredWidth(), firstPosition[1] + firstView.getMeasuredHeight());
+        Rect rectSecondView = new Rect(secondPosition[0], secondPosition[1],
+                secondPosition[0] + secondView.getMeasuredWidth(), secondPosition[1] + secondView.getMeasuredHeight());
+        return rectFirstView.intersect(rectSecondView);
     }
 }

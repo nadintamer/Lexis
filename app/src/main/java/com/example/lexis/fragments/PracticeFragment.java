@@ -101,8 +101,12 @@ public class PracticeFragment extends Fragment implements VocabularyFilterDialog
                 LinearLayoutManager layoutManager = (LinearLayoutManager) binding.rvVocabulary.getLayoutManager();
                 if (layoutManager != null) {
                     int position = layoutManager.findLastCompletelyVisibleItemPosition();
-                    if (position == binding.rvVocabulary.getAdapter().getItemCount() - 1) {
-                        binding.btnPractice.hide();
+                    View lastVisibleView = layoutManager.findViewByPosition(position);
+                    int lastItemIndex = binding.rvVocabulary.getAdapter().getItemCount() - 1;
+                    if (position != -1 && position == lastItemIndex) {
+                        if (Utils.viewsOverlap(lastVisibleView, binding.btnPractice)) {
+                            binding.btnPractice.hide();
+                        }
                     } else {
                         binding.btnPractice.show();
                     }
