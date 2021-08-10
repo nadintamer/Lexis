@@ -138,9 +138,6 @@ public class FeedFragment extends Fragment {
                     for (int i = 2; i < 22; i++) {
                         JSONObject jsonArticle = jsonArticles.getJSONObject(i);
                         String title = jsonArticle.getString("article");
-                        if (title.startsWith("Wikipedia:") || title.startsWith("Special:")) {
-                            continue; // skip special Wikipedia pages
-                        }
                         fetchWikipediaArticle(title, i);
                     }
                 } catch (JSONException e) {
@@ -176,21 +173,24 @@ public class FeedFragment extends Fragment {
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 JSONObject jsonObject = json.jsonObject;
                 try {
-                    JSONObject pages = jsonObject
-                            .getJSONObject("query")
-                            .getJSONObject("pages");
-                    JSONObject articleObject = pages.getJSONObject(pages.keys().next());
+                    // skip special Wikipedia pages
+                    if (!title.startsWith("Wikipedia:") && !title.startsWith("Special:")) {
+                        JSONObject pages = jsonObject
+                                .getJSONObject("query")
+                                .getJSONObject("pages");
+                        JSONObject articleObject = pages.getJSONObject(pages.keys().next());
 
-                    // extract information from JSON object and do text pre-processing
-                    String source = "Wikipedia";
-                    String url = articleObject.getString("fullurl");
-                    String title = articleObject.getString("title");
-                    String intro = articleObject.getString("extract");
-                    intro = intro.replace("\n", "\n\n");
+                        // extract information from JSON object and do text pre-processing
+                        String source = "Wikipedia";
+                        String url = articleObject.getString("fullurl");
+                        String title = articleObject.getString("title");
+                        String intro = articleObject.getString("extract");
+                        intro = intro.replace("\n", "\n\n");
 
-                    Article article = new Article(title, intro, source, url);
-                    articles.add(article);
-                    adapter.notifyItemInserted(articles.size() - 1);
+                        Article article = new Article(title, intro, source, url);
+                        articles.add(article);
+                        adapter.notifyItemInserted(articles.size() - 1);
+                    }
 
                     // finished adding articles
                     if (index == 21) {
