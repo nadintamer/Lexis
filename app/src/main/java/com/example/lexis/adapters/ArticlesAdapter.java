@@ -147,7 +147,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.Articl
                     if (activity == null) return;
 
                     final FragmentManager fragmentManager = activity.getSupportFragmentManager();
-                    final Fragment articleFragment = ArticleFragment.newInstance(articles.get(position));
+                    final Fragment articleFragment = ArticleFragment.newInstance(article);
 
                     fragmentManager.beginTransaction()
                             .replace(R.id.fragmentContainer, articleFragment)
