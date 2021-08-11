@@ -86,7 +86,9 @@ public class SignupActivity extends AppCompatActivity {
                 showErrorMessage(e);
                 return;
             }
-            goMainActivity();
+            Toast.makeText(this, "Account created! Please verify your e-mail before logging in.", Toast.LENGTH_SHORT).show();
+            ParseUser.logOut();
+            goLoginActivity();
         });
     }
 
@@ -99,10 +101,10 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     /*
-    Navigate to the main activity and finish current one so user doesn't return to login screen.
+    Navigate to the login activity.
     */
-    private void goMainActivity() {
-        Intent i = new Intent(this, MainActivity.class);
+    private void goLoginActivity() {
+        Intent i = new Intent(this, LoginActivity.class);
         startActivity(i);
         finish();
     }

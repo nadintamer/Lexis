@@ -91,6 +91,7 @@ public class ProfileSettingsFragment extends Fragment {
         String email = binding.etEmail.getText().toString();
         String password = binding.etPassword.getText().toString();
         String passwordConfirm = binding.etPasswordConfirm.getText().toString();
+        boolean shouldReturnToProfile = true;
 
         if (email.isEmpty()) {
             Toast.makeText(getActivity(), "E-mail cannot be empty!", Toast.LENGTH_SHORT).show();
@@ -106,9 +107,20 @@ public class ProfileSettingsFragment extends Fragment {
         int selectedItemPosition = binding.spinnerLanguage.getSelectedItemPosition();
         String targetLanguage = Const.languageCodes.get(selectedItemPosition);
         user.put("targetLanguage", targetLanguage);
-        user.setEmail(email);
-        if (!password.isEmpty()) {
-            user.setPassword(password); // only set new password if field is filled out
+        if (!user.getEmail().equals(email)) { // e-mail is updated
+            user.setEmail(email);
+        }
+        if (!password.isEmpty()) { // only set new password if field is filled out
+            try {
+                if (user.fetch().getBoolean("emailVerified")) {
+                    user.setPassword(password);
+                } else {
+                    Toast.makeText(getActivity(), "Please verify your e-mail before updating your password!", Toast.LENGTH_SHORT).show();
+                    shouldReturnToProfile = false;
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
 
         if (binding.radioRare.isChecked()) {
@@ -119,16 +131,25 @@ public class ProfileSettingsFragment extends Fragment {
             user.put("frequencyInterval", FREQUENCY_INTERVAL_FREQUENT);
         }
 
+        boolean finalShouldReturnToProfile = shouldReturnToProfile;
         user.saveInBackground(e -> {
             if (e != null) {
                 showErrorMessage(e);
                 return;
             }
-            if (!password.isEmpty()) {
-                logInWithNewPassword(password);
-            } else {
-                Toast.makeText(getActivity(), "Settings updated successfully!", Toast.LENGTH_SHORT).show();
-                resetToProfileInfoFragment();
+            try {
+                if (!password.isEmpty() && user.fetch().getBoolean("emailVerified")) {
+                    logInWithNewPassword(password);
+                } else if (finalShouldReturnToProfile) {
+                    String message = "Settings updated successfully!";
+                    if (!user.fetch().getBoolean("emailVerified")) {
+                        message += " Please verify your e-mail.";
+                    }
+                    Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+                    resetToProfileInfoFragment();
+                }
+            } catch (ParseException parseException) {
+                parseException.printStackTrace();
             }
         });
     }

@@ -67,6 +67,9 @@ public class LoginActivity extends AppCompatActivity {
             case 201:
                 errorMessage = "Password cannot be empty!";
                 break;
+            case 205:
+                errorMessage = "User e-mail is not verified.";
+                break;
             default:
                 errorMessage = "Error with log in!";
                 break;
