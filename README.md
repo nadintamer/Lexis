@@ -1,19 +1,47 @@
 # Lexis — an immersive language learning app
 
+## Table of Contents
+1. [Demo](#demo-header)
+1. [Overview](#overview-header)
+1. [Product Spec](#product-spec-header)
+1. [Wireframes](#wireframes-header)
+2. [Schema](#schema-header)
+
+<a name="demo-header"></a>
+## Demo
+Watch my demo video for a 2-minute intro of what Lexis is all about, or see below for walkthrough GIFs of individual features!
+
+coming soon
+
+### Feature Walkthroughs
+
+| Home feed | Vocabulary |
+| -------- | -------- |
+| coming soon | coming soon |
+
+| Flashcards | Word search puzzle |  
+| -------- | -------- | 
+| coming soon | coming soon |
+
+| Profile + settings | Login & signup |
+| -------- | -------- |
+| coming soon | coming soon |
+
+<a name="overview-header"></a>
 ## Overview
 ### Description
-Fetches articles / reading material on desired topics from various sources like the New York Times, Wikipedia, books, or poems, but translates random words into target learning language to allow language learning in context. Users can also study seen words through flashcards / writing quizzes or upload their own content. 
+It can be difficult to find the motivation or time to learn a new language — so what if you could learn new words while reading regular internet content? Lexis is a language learning app designed to be immersive and fun. Users can see translated words embedded within internet content for in-context learning and practice in a fun way through flashcards & word search puzzles. 
 
 ### App Evaluation
 - **Category:** Education
-- **Mobile:** Allows language learning on the go, plus games and quizzes are very suited for mobile. It could also use the camera for uploading content. 
+- **Mobile:** Allows language learning on the go + games and quizzes are very suited for mobile 
 - **Story:** Users can simultaneously learn their target language and get more information / current news on topics that they're interested in. Games allow them to practice their vocabulary in a more "traditional" language learning context. 
 - **Market:** Anybody who wants to practice their target language could potentially use this app. One challenge would be to ensure the difficulty is appropriate for the level of the learner (but this is probably beyond the scope of my FBU project).
 - **Habit:** Could display stats + push notifications about their vocabulary learning to keep users coming back. The content being curated to the user's interests would also help them use the app more. 
 - **Scope:** V1 would fetch content from an outside source and translate random words within it into the target language, plus show the translations + meaning of the words. V2 would incorporate a vocabulary view where users can see words that they've previously seen, and games / flashcards for additional practice. V3 would allow users to choose the type of content that they want to see. V4 would allow users to upload their own content. 
 
+<a name="product-spec-header"></a>
 ## Product Spec
-
 ### 1. User Stories (Required and Optional)
 
 **Required Must-have Stories**
@@ -79,6 +107,7 @@ Fetches articles / reading material on desired topics from various sources like 
     => Settings
     => Vocabulary
 
+<a name="wireframes-header"></a>
 ## Wireframes
 [Link to Figma wireframes](https://www.figma.com/file/iQN1JEZPj5flUwn1eo0e6l/FBU-App-Wireframes?node-id=0%3A1)
 ### Home Tab
@@ -88,6 +117,7 @@ Fetches articles / reading material on desired topics from various sources like 
 ### Profile Tab
 ![](https://i.imgur.com/UKVVTAp.png)
 
+<a name="schema-header"></a>
 ## Schema 
 ### Models
 **Word**
