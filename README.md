@@ -9,9 +9,9 @@
 
 <a name="demo-header"></a>
 ## Demo
-Watch my demo video for a 2-minute intro of what Lexis is all about, or see below for walkthrough GIFs of individual features!
+Watch my demo video for a quick 2-minute intro of what Lexis is all about, or see below for walkthrough GIFs of individual features!
 
-coming soon
+https://user-images.githubusercontent.com/17547686/129096818-e587ccce-e38d-4ba8-8366-9f46ee932222.mov
 
 ### Feature Walkthroughs
 
