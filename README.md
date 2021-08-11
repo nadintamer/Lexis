@@ -17,15 +17,15 @@ https://user-images.githubusercontent.com/17547686/129096818-e587ccce-e38d-4ba8-
 
 | Home feed | Vocabulary |
 | -------- | -------- |
-| coming soon | coming soon |
+| ![home-feed](https://user-images.githubusercontent.com/17547686/129098735-139fbb1d-a738-4155-ac48-9a67133e0856.gif)| ![vocabulary](https://user-images.githubusercontent.com/17547686/129100653-1ac4dae8-2a11-49d9-aa1f-af58abc4577b.gif) |
 
 | Flashcards | Word search puzzle |  
 | -------- | -------- | 
-| coming soon | coming soon |
+| ![flashcards](https://user-images.githubusercontent.com/17547686/129101019-9e14df00-47d1-4358-a512-e7f35324a8a5.gif) | ![word-search](https://user-images.githubusercontent.com/17547686/129101515-2766a368-1360-4ea1-b016-df783f745224.gif) |
 
 | Profile + settings | Login & signup |
 | -------- | -------- |
-| coming soon | coming soon |
+| ![profile](https://user-images.githubusercontent.com/17547686/129101755-8d375370-baf7-4dac-b214-1482f0f1b2e7.gif) | ![login](https://user-images.githubusercontent.com/17547686/129102657-442f2572-0797-45a6-b9a6-a9b814ac286c.gif) |
 
 <a name="overview-header"></a>
 ## Overview
