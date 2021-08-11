@@ -1,6 +1,7 @@
 package com.example.lexis.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
@@ -9,10 +10,13 @@ import android.widget.Toast;
 
 import com.example.lexis.R;
 import com.example.lexis.databinding.ActivityLoginBinding;
+import com.example.lexis.fragments.ForgotPasswordDialogFragment;
+import com.example.lexis.fragments.WordSearchFragment;
+import com.example.lexis.fragments.WordSearchHelpDialogFragment;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements ForgotPasswordDialogFragment.ForgotPasswordDialogListener {
 
     ActivityLoginBinding binding;
 
@@ -26,6 +30,7 @@ public class LoginActivity extends AppCompatActivity {
             goMainActivity();
         }
 
+        binding.tvForgotPassword.setOnClickListener(v -> forgotPasswordClicked());
         binding.tvSignup.setOnClickListener(v -> goSignUpActivity());
         binding.btnLogin.setOnClickListener(v -> {
             String username = binding.etUsername.getText().toString();
@@ -49,6 +54,29 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
             goMainActivity();
+        });
+    }
+
+    /*
+    Show the forgot password dialog fragment.
+    */
+    private void forgotPasswordClicked() {
+        FragmentManager fm = getSupportFragmentManager();
+        ForgotPasswordDialogFragment dialog = new ForgotPasswordDialogFragment();
+        dialog.show(fm, "fragment_forgot_password");
+    }
+
+    /*
+    Send a password reset e-mail to the provided address.
+    */
+    @Override
+    public void onFinishDialog(String email) {
+        ParseUser.requestPasswordResetInBackground(email, e -> {
+            if (e == null) {
+                Toast.makeText(this, "Password reset e-mail sent.", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         });
     }
 

@@ -53,4 +53,7 @@
     <string name="regular">Regular</string>
     <string name="rare">Rare</string>
     <string name="account_settings">Account settings</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="forgot_password_title">Forgot password</string>
+    <string name="reset_password_instructions">Enter the e-mail associated with your account below and we\'ll send you a link to reset your password!</string>
 </resources>

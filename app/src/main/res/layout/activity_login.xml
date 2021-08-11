@@ -73,6 +73,15 @@
             android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <TextView
+        android:id="@+id/tvForgotPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="50dp"
+        android:gravity="end"
+        android:layout_marginTop="10dp"
+        android:text="@string/forgot_password" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnLogin"
         android:layout_width="120dp"
@@ -80,6 +89,12 @@
         android:layout_marginTop="20dp"
         app:cornerRadius="10dp"
         android:text="@string/log_in_label" />
+
+    <View
+        android:layout_width="150dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="15dp"
+        android:background="@color/light_gray"/>
 
     <TextView
         android:id="@+id/tvSignup"
