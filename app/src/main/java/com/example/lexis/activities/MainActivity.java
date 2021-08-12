@@ -10,8 +10,11 @@ import android.view.MenuItem;
 import com.example.lexis.R;
 import com.example.lexis.databinding.ActivityMainBinding;
 import com.example.lexis.fragments.FeedFragment;
+import com.example.lexis.fragments.PracticeFlashcardFragment;
 import com.example.lexis.fragments.PracticeFragment;
 import com.example.lexis.fragments.ProfileFragment;
+import com.example.lexis.fragments.WordSearchFragment;
+import com.example.lexis.models.WordSearch;
 import com.example.lexis.utilities.TranslateUtils;
 import com.parse.ParseUser;
 
@@ -64,5 +67,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return false; // need to return false so that control is passed down to fragments
+    }
+
+    @Override
+    public void onBackPressed() {
+        WordSearchFragment wordSearchFragment = (WordSearchFragment) getSupportFragmentManager().findFragmentByTag("WordSearchFragment");
+        PracticeFlashcardFragment flashcardFragment = (PracticeFlashcardFragment) getSupportFragmentManager().findFragmentByTag("FlashcardFragment");
+        if (wordSearchFragment != null && wordSearchFragment.isVisible()) {
+            wordSearchFragment.returnToPracticeTab();
+        } else if (flashcardFragment != null && flashcardFragment.isVisible()) {
+            flashcardFragment.returnToPracticeTab();
+        } else {
+            super.onBackPressed();
+        }
     }
 }

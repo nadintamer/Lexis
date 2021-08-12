@@ -176,7 +176,7 @@ public class PracticeFlashcardFragment extends Fragment implements CardStackList
     /*
     Exit the practice session and return to the vocabulary view.
     */
-    private void returnToPracticeTab() {
+    public void returnToPracticeTab() {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         if (activity != null) {
             activity.getSupportFragmentManager().beginTransaction()

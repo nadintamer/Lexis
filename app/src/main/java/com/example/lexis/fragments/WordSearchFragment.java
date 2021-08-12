@@ -215,7 +215,7 @@ public class WordSearchFragment extends Fragment implements WordSearchHelpDialog
     /*
     Exit the practice session and return to the vocabulary view.
     */
-    private void returnToPracticeTab() {
+    public void returnToPracticeTab() {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         if (activity != null) {
             activity.getSupportFragmentManager().beginTransaction()
